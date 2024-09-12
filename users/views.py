@@ -1,6 +1,9 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.contrib import messages
 from django.views.generic.edit import CreateView
+from django.contrib.auth.views import LoginView, LogoutView
 
 from .forms import RegisterUserForm
 
@@ -10,3 +13,19 @@ class UserRegisterView(CreateView):
     success_url = reverse_lazy('login')
     form_class = RegisterUserForm
     success_message = 'Пользователь успешно зарегестрирован.'
+
+
+class UserLoginView(LoginView):
+    redirect_authenticated_user = True
+    template_name = 'users/login.html'
+
+    def get_success_url(self):
+        return reverse_lazy('raports:home')
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Неверный логин или пароль')
+        return self.render_to_response(self.get_context_data(form=form))
+
+
+class UserLogoutView(LogoutView):
+    template_name = 'users/login.html'

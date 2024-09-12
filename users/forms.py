@@ -8,7 +8,7 @@ from .models import User
 class RegisterUserForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['username', 'last_name', 'first_name', 'surname', 'department',]
+        fields = ['username', 'last_name', 'first_name', 'surname', 'department']
 
         def clean_username(self):
             if User.objects.filter(username__iexact=self.cleaned_data['username']):
@@ -19,3 +19,6 @@ class RegisterUserForm(UserCreationForm):
             if self.cleaned_data['password1'] != self.cleaned_data['password2']:
                 raise ValidationError(_("Пароли не совпадают."), code='invalid')
             return self.cleaned_data['password2']
+
+    def __init__(self, *args, **kwargs):
+        super(RegisterUserForm, self).__init__(*args, **kwargs)

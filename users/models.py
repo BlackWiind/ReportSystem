@@ -39,6 +39,12 @@ class User(AbstractUser):
     def __str__(self):
         return f'{self.last_name} {self.first_name} {self.surname}'
 
+    def __init__(self, *args, **kwargs):
+        self._meta.get_field('username').verbose_name = 'Логин'
+        self._meta.get_field('last_name').verbose_name = 'Фамилия'
+        self._meta.get_field('first_name').verbose_name = 'Имя'
+        super(User, self).__init__(*args, **kwargs)
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
