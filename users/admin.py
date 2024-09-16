@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import User, Department
+from .models import User, Department, CuratorsGroup
 
 
 class CustomUserAdmin(UserAdmin):
@@ -17,6 +17,7 @@ class CustomUserAdmin(UserAdmin):
         'first_name',
         'surname',
         'department',
+        'curators_group',
     )
     list_display = list_of_fields
 
@@ -40,6 +41,7 @@ class CustomUserAdmin(UserAdmin):
                 'fields': (
                     'surname',
                     'department',
+                    'curators_group',
                 )
             }
         )
@@ -52,5 +54,12 @@ class DepartmentAdmin(admin.ModelAdmin):
     list_display_links = list_of_fields
 
 
+class CuratorsGroupAdmin(admin.ModelAdmin):
+    list_of_fields = ('id', 'name')
+    list_display = list_of_fields
+    list_display_links = list_of_fields
+
+
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Department, DepartmentAdmin)
+admin.site.register(CuratorsGroup, CuratorsGroupAdmin)

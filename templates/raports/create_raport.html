@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="card mx-auto" style="width: 40em;">
+    <div class="card-body">
+        <h4 class="card-title">Новый рапорт</h4>
+        <form method="POST" id="createRaportForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for form_field in form %}
+            <div class="mb-3">
+                <label class="form-label">{{form_field.label_tag}}</label>
+                {% render_field form_field %}
+            </div>
+            {% endfor %}
+            <div class="mb-3">
+                {% render_field file_upload.file_field class="form-control" %}
+            </div>
+            <input type="submit" class="btn btn-primary" value="Создать">
+        </form>
+    </div>
+</div>
+<div id="dropZoneFiles" class="dropZone dropZoneFiles">
+    <label class="myLabel labelForDropZone" for="dropZoneFiles">Дополнительные файлы.</label>
+</div>
+
+
+{% endblock content %}

@@ -2,13 +2,14 @@ from django import template
 
 register = template.Library()
 
-CREATE = {'Создать': '#'}
+CREATE = {'Создать': 'raports:create_raport'}
 QUEUE = {'Консультации': '#'}
 OI_DASHBOARD = {'Рабочий стол': '#'}
 CHANGE = {'Статус': '#'}
 PROFILES = {'Профили пользователей': '#'}
-ADMIN_PAGE = {'Админка': '#'}
+ADMIN_PAGE = {'Админка': 'raports:admin_page'}
 MED_ORGS = {'Список МО': '#'}
+NEW_USER = {'Новый пользователь': 'users:register'}
 
 
 @register.simple_tag()
@@ -18,6 +19,6 @@ def get_links(user):
     for group in groups:
         if group.name == 'user':
             links_list = links_list | CREATE | QUEUE | PROFILES
-        if user.is_superuser:
-            links_list |= ADMIN_PAGE
+    if user.is_superuser:
+        links_list |= CREATE | NEW_USER | ADMIN_PAGE
     return links_list

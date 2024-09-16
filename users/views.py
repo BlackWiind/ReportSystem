@@ -10,7 +10,7 @@ from .forms import RegisterUserForm
 
 class UserRegisterView(CreateView):
     template_name = 'users/register.html'
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('users:login')
     form_class = RegisterUserForm
     success_message = 'Пользователь успешно зарегестрирован.'
 
@@ -28,4 +28,5 @@ class UserLoginView(LoginView):
 
 
 class UserLogoutView(LogoutView):
-    template_name = 'users/login.html'
+    def get_success_url(self):
+        return reverse_lazy('users:login')

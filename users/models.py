@@ -17,8 +17,21 @@ class MyUserManager(BaseUserManager):
         return user
 
 
+class CuratorsGroup(models.Model):
+    name = models.CharField(max_length=255, verbose_name='Курируемая группа')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Карируемая группа'
+        verbose_name_plural = 'Курируемые группы'
+
+
 class Department(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название отдела')
+    curators_group = models.ForeignKey(CuratorsGroup, on_delete=models.CASCADE, null=True,
+                                       verbose_name='Курируемая группа')
 
     def __str__(self):
         return self.name
@@ -31,6 +44,9 @@ class Department(models.Model):
 class User(AbstractUser):
     surname = models.CharField(max_length=255, verbose_name='Отчество')
     department = models.ForeignKey(Department, on_delete=models.PROTECT, verbose_name='Отдел')
+    job_title = models.CharField(max_length=255, verbose_name='Должность', default='Не указанна')
+    curators_group = models.ForeignKey(CuratorsGroup, on_delete=models.PROTECT, null=True,
+                                       verbose_name='Курируемая группа')
 
     custom_objects = MyUserManager()
 
@@ -49,6 +65,7 @@ class User(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
-# class CuratorToDepartment(models.Model):
-#     curator = models.ForeignKey(User, 'Куратор')
-#     department = models.ForeignKey(Department, 'Курируемый отдел')
+
+class CuratorToDepartment(models.Model):
+    curator = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Куратор')
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name='Курируемый отдел')

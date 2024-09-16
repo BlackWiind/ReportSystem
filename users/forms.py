@@ -1,4 +1,7 @@
+from django import forms
+
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import Group
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -6,9 +9,11 @@ from .models import User
 
 
 class RegisterUserForm(UserCreationForm):
+    groups = forms.ModelChoiceField(queryset=Group.objects.all(), required=True, label='Группа')
+
     class Meta:
         model = User
-        fields = ['username', 'last_name', 'first_name', 'surname', 'department']
+        fields = ['username', 'last_name', 'first_name', 'surname', 'department', 'job_title', ]
 
         def clean_username(self):
             if User.objects.filter(username__iexact=self.cleaned_data['username']):
