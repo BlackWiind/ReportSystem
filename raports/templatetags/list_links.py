@@ -3,7 +3,7 @@ from django import template
 register = template.Library()
 
 CREATE = {'Создать': 'raports:create_raport'}
-QUEUE = {'Консультации': '#'}
+LIST = {'Список': 'raports:list'}
 OI_DASHBOARD = {'Рабочий стол': '#'}
 CHANGE = {'Статус': '#'}
 PROFILES = {'Профили пользователей': '#'}
@@ -18,7 +18,7 @@ def get_links(user):
     links_list = {}
     for group in groups:
         if group.name == 'user':
-            links_list = links_list | CREATE | QUEUE | PROFILES
+            links_list = links_list | CREATE | PROFILES
     if user.is_superuser:
-        links_list |= CREATE | NEW_USER | ADMIN_PAGE
+        links_list |= CREATE | LIST | NEW_USER | ADMIN_PAGE
     return links_list

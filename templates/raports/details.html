@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load get_verbose_name %}
+{% load permitted_actions %}
+
+{% load widget_tweaks %}
+{% block content %}
+<div class="container px-0 mt-4">
+    <div class="row">
+        <div class="col-8">
+            <div class="card" xmlns="http://www.w3.org/1999/html">
+                <div class="card-body">
+                    <h1>Рапорт №{{ object.pk }}</h1>
+                    <b>{{ object|verbose_name:'creator'}}: </b>
+                    <small>{{ object.creator }}</small><p/>
+                    <b>{{ object|verbose_name:'tags'}}: </b>
+                    {% for tag in object.tags.all %}
+                    <small>{{ tag.name }}, </small>
+                    {% endfor %}<p/>
+                    <small>{{ object.text }}</small><p/>
+                    <small>{{ object.justification }}</small><p/>
+                    <b>{{ object|verbose_name:'price'}}: </b>
+                    <small>{{ object.price }}р.</small><p/>
+                    {% if object.one_time %}
+                    <b>{{ object|verbose_name:'one_time'}}&emsp; </b>
+                    {% endif %}
+                    <b>{{ object|verbose_name:'status'}}: </b>
+                    <small>{{ object.get_status_display }}</small></p>
+                    <b>{{ object|verbose_name:'files'}}:</b></p>
+                    {% for file in object.files.all %}
+                    <a href="{{file.file.url}}" target="_blank" rel="noopener noreferrer">{{file.filename}}</a><br>
+                    {% endfor %}
+                </div>
+            </div>
+            <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+                <div class="btn-group">
+                {% get_buttons request.user as permission %}
+                    {% for name,link in permission.items %}
+                            <button class="btn btn-outline-primary" value="{{link}}">{{name}}</button>
+                    {% endfor %}
+                </div>
+            </footer>
+        </div>
+
+
+        <div class="col">
+            <div class="card">
+                <div class="card-title">
+                    <h4>{{ object|verbose_name:'history'}}</h4>
+                </div>
+                <div class="card-body">
+                    {% for status in object.history.all %}
+                    <small>{{status.user}} {{status.action}} {{status.action_date}}</small>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

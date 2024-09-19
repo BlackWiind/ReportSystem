@@ -33,7 +33,13 @@ class RaportAdmin(admin.ModelAdmin):
 
 
 class FilesAdmin(admin.ModelAdmin):
-    list_of_fields = ('id', 'file', 'raport',)
+    list_of_fields = ('id', 'file', )
+    list_display = list_of_fields
+    list_display_links = list_of_fields
+
+
+class HistoryAdmin(admin.ModelAdmin):
+    list_of_fields = ('id','action', 'user', )
     list_display = list_of_fields
     list_display_links = list_of_fields
 
@@ -41,3 +47,4 @@ class FilesAdmin(admin.ModelAdmin):
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Raport, RaportAdmin)
 admin.site.register(Files, FilesAdmin)
+admin.site.register(History, HistoryAdmin)
