@@ -18,6 +18,7 @@ class CustomUserAdmin(UserAdmin):
         'surname',
         'department',
         'curators_group',
+        'job_title',
     )
     list_display = list_of_fields
 
@@ -30,6 +31,7 @@ class CustomUserAdmin(UserAdmin):
         'first_name',
         'surname',
         'department__name',
+        'job_title',
     )
     list_filter = ['department__name', ]
 
@@ -42,6 +44,7 @@ class CustomUserAdmin(UserAdmin):
                     'surname',
                     'department',
                     'curators_group',
+                    'job_title',
                 )
             }
         )

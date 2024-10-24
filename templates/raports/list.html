@@ -2,45 +2,64 @@
 {% load static %}
 
 {% load widget_tweaks %}
+{% load bootstrap %}
 
 {% block content %}
-<div class="accordion">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="flush-headingOne">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-            Accordion Item #1
-          </button>
-        </h2>
-        <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-          <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the first item's accordion body.</div>
-        </div>
-    </div>
-</div>
-<div class="container px-0 mt-4">
-    {% for object in object_list %}
-    <div class="card border-success mb-3">
-        <div class="card-header bg-transparent border-success">
-            <H5 class="card-title d-flex justify-content-between">
-                <span>{{object}}</span>
-                <span>{{object.creator.department}}</span>
-            </H5>
-        </div>
-            <div class="card-body">
-                {% autoescape on %}
-                {{object.text|linebreaks|truncatewords:50}}
-                {{object.justification|linebreaks|truncatewords:50}}
-                <div class="d-flex justify-content-end">
-                    Стоимость: {{object.price}} Р.
-                </div>
-                {% endautoescape %}
+
+
+<div class="container" id="wrapper">
+    <div class="overlay"></div>
+    <div id="page-content-wrapper">
+        {% for object in object_list %}
+        <div class="card border-success mb-3">
+            <div class="card-header bg-transparent border-success">
+                <H5 class="card-title d-flex justify-content-between">
+                    <span>{{object}}</span>
+                    <span>{{object.creator.department}}</span>
+                </H5>
             </div>
-        <div class="card-footer bg-transparent border-success d-flex justify-content-between">
-            Статус: {{object.get_status_display}}
-            <a class="card-link" href="{{object.get_absolute_url}}">Подробности</a>
+                <div class="card-body">
+                    {% autoescape on %}
+                    {{object.text|linebreaks|truncatewords:50}}
+                    {{object.justification|linebreaks|truncatewords:50}}
+                    Дата создания: {{object.date_create}}
+                    <div class="d-flex justify-content-end">
+                        Стоимость: {{object.price}} Р.
+                    </div>
+                    {% endautoescape %}
+                </div>
+            <div class="card-footer bg-transparent border-success d-flex justify-content-between">
+                Статус: {{object.get_status_display}}
+                <a class="card-link" href="{{object.get_absolute_url}}">Подробности</a>
+            </div>
         </div>
+        {% endfor %}
     </div>
 
 
-    {% endfor %}
+    <nav class="navbar navbar-inverse fixed-top" id="sidebar-wrapper" role="navigation">
+        <ul class="nav sidebar-nav">
+           <div class="sidebar-header">
+           <div class="sidebar-brand">
+             <a href="#">Фильтры</a></div></div>
+            <form class="filter-form" method="GET">
+                {{ filter.form|bootstrap }}
+                <div class="container-buttons">
+                    <button class="btn btn-outline-info centerbtn" type="submit">Принять</button>
+                    <a class="btn btn-outline-danger centerbtn" href="{%  url 'raports:list' %}">Сброс</a>
+                </div>
+            </form>
+
+        </ul>
+    </nav>
+    <button class="hamburger fadeInLeft animated is-closed" id="offcanvasBtn" data-toggle="offcanvas">
+        <i class="bi bi-search fs-3" id="searchIcon"></i>
+    </button>
+
 </div>
+
+
+<script type="text/javascript" src={% static 'raports/js/list.js' %}></script>
+
+
 {% endblock content %}

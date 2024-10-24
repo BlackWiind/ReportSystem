@@ -46,7 +46,7 @@ class User(AbstractUser):
     department = models.ForeignKey(Department, on_delete=models.PROTECT, verbose_name='Отдел')
     job_title = models.CharField(max_length=255, verbose_name='Должность', default='Не указанна')
     curators_group = models.ForeignKey(CuratorsGroup, on_delete=models.PROTECT, null=True,
-                                       verbose_name='Курируемая группа')
+                                       blank=True, verbose_name='Курируемая группа')
 
     custom_objects = MyUserManager()
 

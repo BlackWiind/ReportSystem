@@ -8,6 +8,10 @@ from django.db import models
 from users.models import User, CuratorsGroup
 
 
+def raport_directory_path(instance, filename):
+    return 'print_forms/raport_{0}/{1}'.format(instance.id, filename)
+
+
 class Tag(models.Model):
     name = models.CharField(max_length=255, verbose_name='Тэг')
     curators_group = models.ForeignKey(CuratorsGroup, on_delete=models.CASCADE, null=True,
@@ -52,6 +56,7 @@ class Raport(models.Model):
         ('approved_by_director', 'Одобрен главным врачём'),
         ('in_purchasing_department', 'В отделе закупок'),
         ('rejected', 'Отклонён'),
+        ('done', 'Выплнен'),
     )
 
     creator = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Создатель рапорта')
@@ -59,12 +64,14 @@ class Raport(models.Model):
     justification = models.TextField(verbose_name='Основание')
     union = models.BooleanField(default=False, verbose_name='Объеденённый рапорт')
     status = models.CharField(max_length=255, choices=status_choices, default='created', verbose_name='Статус')
-    rejection_reason = models.TextField(null=True)
+    rejection_reason = models.TextField(null=True, blank=True)
     tags = models.ManyToManyField(Tag, verbose_name='Теги')
     price = models.FloatField(default=0.00, verbose_name='Цена')
     one_time = models.BooleanField(default=True, verbose_name='Единовременная закупка')
-    history = models.ManyToManyField(History, verbose_name='История')
-    files = models.ManyToManyField(Files, verbose_name='Прикреплённые файлы', null=True)
+    history = models.ManyToManyField(History, verbose_name='История', blank=True)
+    files = models.ManyToManyField(Files, verbose_name='Прикреплённые файлы', null=True, blank=True)
+    date_create = models.DateField(auto_now_add=True, verbose_name='Дата создания')
+    print_form = models.FileField(upload_to=raport_directory_path)
 
     curators_group = models.ForeignKey(CuratorsGroup, on_delete=models.CASCADE, null=True,
                                        verbose_name='Курируемая группа')

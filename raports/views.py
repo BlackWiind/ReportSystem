@@ -1,12 +1,16 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, DetailView, UpdateView
+from django_filters.views import FilterView
+
 from users.models import User, CuratorsGroup
-from .form_utils import create_new_raport
-from .forms import CuratorToDepartmentForm, CreateRaportForm, FileFieldForm
 from .models import Raport, Tag
-from .utils import get_queryset_dependent_group
+from .form_utils import create_new_raport
+from .forms import CuratorToDepartmentForm, CreateRaportForm
+from .filters import RaportFilter
+from raports.utils.utils import get_queryset_dependent_group, change_raport_status_by_request
+from raports.utils.unloads import create_pdf_unloading
 
 
 def temp_view(request):
@@ -49,12 +53,22 @@ class RaportCreateView(CreateView):
         return super(RaportCreateView, self).form_invalid(form)
 
 
-class RaportListView(ListView):
+class RaportListView(FilterView):
+    model = Raport
+    template_name = 'raports/list.html'
+    paginate_by = 10
+    filterset_class = RaportFilter
+
+    def get_queryset(self):
+        return get_queryset_dependent_group(self.request.user)
+
+
+class ArchiveListView(ListView):
     model = Raport
     template_name = 'raports/list.html'
 
     def get_queryset(self):
-        return get_queryset_dependent_group(self.request.user)
+        return Raport.objects.filter(status__in=['rejected', 'done'])
 
 
 class RaportDetailView(DetailView):
@@ -62,13 +76,32 @@ class RaportDetailView(DetailView):
     template_name = 'raports/details.html'
 
 
-def agreement(request):
+def get_curator_groups(request):
+    if request.method == 'GET':
+        context = {'groups': CuratorsGroup.objects.all()}
+        return render(request, 'additional_pages/modal_of_curator_groups.html', context)
+
+
+def download_pdf_report(request, pk):
+    return create_pdf_unloading(pk)
+
+
+def change_curators_group(request, pk):
+    if request.method == 'POST':
+        _ = Raport.objects.filter(pk=pk).update(curators_group=request.POST['new_group'])
+        return JsonResponse(data={'message': 'Рапорт успешно обновлён'})
+
+
+def get_purchasing_specialist(request):
     pass
 
 
 class UpdateRaportStatusView(UpdateView):
     model = Raport
     template_name = 'raports/details.html'
+    fields = ['status']
 
     def post(self, request, *args, **kwargs):
-        pass
+        my_object = self.get_object()
+        resp = change_raport_status_by_request(request.user, my_object.pk, request.POST['status'])
+        return JsonResponse(data={'response': resp})

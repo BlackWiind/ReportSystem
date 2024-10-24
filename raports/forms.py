@@ -40,7 +40,6 @@ class CuratorToDepartmentForm(forms.ModelForm):
 
 
 class CreateRaportForm(forms.ModelForm):
-    # file_input = forms.FileField(required=False)
 
     class Meta:
         model = Raport
@@ -59,3 +58,12 @@ class CreateRaportForm(forms.ModelForm):
     )
 
     files = MultipleFileField(required=False)
+
+    def main_group(self):
+        return [field for field in self if field.name in ['text',
+                                                          'justification',
+                                                          'price',
+                                                          'files', ]]
+
+    def checkbox_group(self):
+        return [field for field in self if field.name in ['tags',]]

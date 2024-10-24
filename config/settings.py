@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '10.40.10.125', ]
 
 
 INSTALLED_APPS = [
@@ -23,6 +23,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'widget_tweaks',
+    'bootstrapform',
+    'django_filters',
 
     'users',
     'raports',
@@ -100,7 +102,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = 'static'
-STATICFILES_DIR = ['/RaportSystem/static',]
+STATICFILES_DIR = ['/RaportSystem/static', ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'

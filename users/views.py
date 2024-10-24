@@ -1,5 +1,3 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views.generic.edit import CreateView
@@ -13,6 +11,11 @@ class UserRegisterView(CreateView):
     success_url = reverse_lazy('users:login')
     form_class = RegisterUserForm
     success_message = 'Пользователь успешно зарегестрирован.'
+
+    def form_valid(self, form):
+        response = super(UserRegisterView, self).form_valid(form)
+        self.object.groups.add(form.cleaned_data['groups'])
+        return response
 
 
 class UserLoginView(LoginView):

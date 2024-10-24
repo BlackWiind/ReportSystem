@@ -6,22 +6,37 @@
 {% block content %}
 <div class="container px-0 mt-4">
     <div class="card mx-auto" style="width: 40em;">
+        <h4 class="card-title text-center">Новый рапорт</h4>
         <div class="card-body">
-            <h4 class="card-title">Новый рапорт</h4>
             <form method="POST" id="createRaportForm" enctype="multipart/form-data">
                 {% csrf_token %}
-                {% for form_field in form %}
+                {% for form_field in form.main_group %}
                 <div class="mb-3">
                     <label class="form-label">{{form_field.label_tag}}</label>
-                    {% render_field form_field %}
+                    {% render_field form_field class="form-control" %}
                 </div>
                 {% endfor %}
+                {% for form_field in form.checkbox_group %}
+                <label>Тэги:</label>
+                <div class="mb-3 border">
+                    <div class="overflow-auto" style="height: 10vh;">
+                    {% render_field form_field %}
+                </div>
+                </div>
+                {% endfor %}
+                <div class="mb-3 border">
+                    {{form.one_time.label_tag}}
+                    {% render_field form.one_time %}
+                </div>
                 <input type="submit" class="btn btn-primary" value="Создать">
             </form>
         </div>
     </div>
 </div>
+<div id="dropZoneFiles" class="dropZone dropZoneFiles">
+    <label class="myLabel labelForDropZone" for="dropZoneFiles">Перетащите файлы сюда.</label>
+</div>
 
-
+<script type="text/javascript" src={% static 'raports/js/new_raport.js' %}></script>
 
 {% endblock content %}
