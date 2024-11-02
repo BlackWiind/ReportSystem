@@ -12,7 +12,7 @@ def create_new_raport(request, form):
     new_raport.tags.add(*form.cleaned_data['tags'])
     for file in form.cleaned_data['files']:
         new_raport.files.add(Files.objects.create(file=file).pk)
-    new_raport.history.add(add_history_record(request.user, 'created').pk)
+    new_raport.history.add(add_history_record(request.user, 'Создан').pk)
     new_raport.save()
     print('Good')
 

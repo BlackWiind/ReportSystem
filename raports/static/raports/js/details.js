@@ -1,61 +1,74 @@
 function execute_command(command, pk){
-    if (command == 'transfer'){
+    if (command == 'created'){
         $.ajax({
             url: '/home/curators_modal/',
             type: "GET",
             success: function (data) {
-              $("#curatorsModal").modal('show');
-              $("#curatorsModal").html(data);
+              $("#UpdateModal").modal('show');
+              $("#UpdateModalBody").html(data);
             }
         });
     }
-    else if (command == 'to_performer'){
-        console.log(command)
+    else if (command == '4'){
+        $.ajax({
+            url: '/home/purchasers_modal/',
+            type: "GET",
+            success: function (data) {
+              $("#PurchasersModal").modal('show');
+              $("#PurchasersModalBody").html(data);
+            }
+        });
     }
     else{
-        changeStatus(command, pk)
+        let ajax_data = {
+            'status': command,
+            'pk': pk,
+        }
+        changeStatus(pk, ajax_data);
     }
 
 }
 
 function transferToPerformer(){
-    console.log('aaaaaa')
+    let purchaser_pk = $("#purchasingSpecialistSelect").val();
+    let ajax_data = {
+        'assigned_purchasing_specialist': purchaser_pk,
+    }
+    $("#PurchasersModal").modal('hide');
+    changeStatus(my_pk, ajax_data);
 }
 
 function changeCuratorsGroup(pk){
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    let url = '/home/change_curators_group/' + parseInt(pk) + '/'
     let new_group = $("#curatorGroupsSelect").val();
     let ajax_data = {
-        'new_group': new_group,
+        'curators_group': new_group,
         'pk': pk,
-        'csrfmiddlewaretoken': csrftoken,
     }
+    $("#UpdateModal").modal('hide');
+    changeStatus(pk, ajax_data);
+}
+
+function changeStatus(pk, data){
+    let url = '/home/update_raport/' + parseInt(pk) + '/'
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    data.csrfmiddlewaretoken = csrftoken;
     $.ajax({
         url: url,
         type: 'POST',
-        data: ajax_data,
+        dataType: "json",
+        data: data,
         success: function(response) {
             location.replace('/home/list/');
+        },
+        error: function(data) {
+            $("#AlertText").html(data.responseJSON.message)
+            $(".alert").hide().show('medium');
         }
     })
 }
 
-function changeStatus(status, pk){
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    let url = '/home/update_raport/' + parseInt(pk) + '/'
-    let ajax_data = {
-        'status': status,
-        'csrfmiddlewaretoken': csrftoken,
-    }
-    $.ajax({
-        url: url,
-        type: 'POST',
-        data: ajax_data,
-        success: function(response) {
-            location.replace(url);
-        }
-    })
+function hideAlert(){
+    $(".alert").hide();
 }
 
 function hideShow(){

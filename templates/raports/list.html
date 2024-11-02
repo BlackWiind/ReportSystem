@@ -10,30 +10,35 @@
 <div class="container" id="wrapper">
     <div class="overlay"></div>
     <div id="page-content-wrapper">
-        {% for object in object_list %}
-        <div class="card border-success mb-3">
-            <div class="card-header bg-transparent border-success">
-                <H5 class="card-title d-flex justify-content-between">
-                    <span>{{object}}</span>
-                    <span>{{object.creator.department}}</span>
-                </H5>
-            </div>
-                <div class="card-body">
-                    {% autoescape on %}
-                    {{object.text|linebreaks|truncatewords:50}}
-                    {{object.justification|linebreaks|truncatewords:50}}
-                    Дата создания: {{object.date_create}}
-                    <div class="d-flex justify-content-end">
-                        Стоимость: {{object.price}} Р.
-                    </div>
-                    {% endautoescape %}
+        {% if object_list %}
+            {% for object in object_list %}
+            <div class="card border-success mb-3">
+                <div class="card-header bg-transparent border-success">
+                    <H5 class="card-title d-flex justify-content-between">
+                        <span>{{object}}</span>
+                        <span>{{object.creator.department}}</span>
+                    </H5>
                 </div>
-            <div class="card-footer bg-transparent border-success d-flex justify-content-between">
-                Статус: {{object.get_status_display}}
-                <a class="card-link" href="{{object.get_absolute_url}}">Подробности</a>
+                    <div class="card-body">
+                        {% autoescape on %}
+                        {{object.text|linebreaks|truncatewords:50}}
+                        {{object.justification|linebreaks|truncatewords:50}}
+                        Дата создания: {{object.date_create}}
+                        <div class="d-flex justify-content-end">
+                            Стоимость: {{object.price}} Р.
+                        </div>
+                        {% endautoescape %}
+                    </div>
+                <div class="card-footer bg-transparent border-success d-flex justify-content-between">
+                    Статус: {{object.status.verbose_name}}
+                    <a class="card-link" href="{{object.get_absolute_url}}">Подробности</a>
+                </div>
             </div>
-        </div>
-        {% endfor %}
+            {% endfor %}
+        {% else %}
+        <h4>Не найдено ни одного рапорта.</h4>
+        {% endif %}
+        {% include 'additional_pages/pagination.html' %}
     </div>
 
 

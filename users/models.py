@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 
 
 class MyUserManager(BaseUserManager):
@@ -69,3 +69,54 @@ class User(AbstractUser):
 class CuratorToDepartment(models.Model):
     curator = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Куратор')
     department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name='Курируемый отдел')
+
+
+class Statuses(models.Model):
+    status = models.CharField(max_length=255, null=True, blank=True, verbose_name='Статус')
+    verbose_name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Видимое имя')
+
+    class Meta:
+        verbose_name = 'Статус'
+        verbose_name_plural = 'Статусы'
+
+    def __str__(self):
+        return self.status
+
+
+class PossibleActions(models.Model):
+    name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Действие')
+    verbose_name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Видимое имя')
+    new_status = models.ForeignKey(Statuses, on_delete=models.CASCADE, verbose_name='Новый статус')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Действие'
+        verbose_name_plural = 'Возможные действия'
+
+
+class Links(models.Model):
+    name = models.CharField(max_length=255, verbose_name='Название ссылки')
+    link = models.CharField(max_length=255, verbose_name='Ссылка на страницу')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Ссылка'
+        verbose_name_plural = 'Доступные ссылки'
+
+
+class CustomGroups(Group):
+    description = models.CharField(max_length=255, null=True, blank=True, verbose_name='Название группы')
+    statuses = models.ManyToManyField(Statuses, blank=True, verbose_name='Доступные статусы')
+    possible_actions = models.ManyToManyField(PossibleActions, verbose_name='Возможные действия')
+    links = models.ManyToManyField(Links, verbose_name='Доступные страницы')
+
+    def __str__(self):
+        return self.description
+
+    class Meta:
+        verbose_name = 'Кастомная группа'
+        verbose_name_plural = 'Кастомные группы'

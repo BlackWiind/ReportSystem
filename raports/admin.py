@@ -18,18 +18,17 @@ class TagAdmin(admin.ModelAdmin):
 
 
 class RaportAdmin(admin.ModelAdmin):
-    list_of_fields = ('id', 'creator', 'status', 'price', 'one_time',)
+    list_of_fields = ('id', 'creator',  'price', 'one_time',)
     list_display = list_of_fields
     list_display_links = list_of_fields
 
     search_fields = (
         'id',
-        'status',
         'creator__last_name',
         'one_time',
     )
 
-    list_filter = ['creator__last_name', 'status', 'one_time', ]
+    list_filter = ['creator__last_name',  'one_time', ]
 
 
 class FilesAdmin(admin.ModelAdmin):

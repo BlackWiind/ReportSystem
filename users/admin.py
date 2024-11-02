@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import User, Department, CuratorsGroup
+from .models import User, Department, CuratorsGroup, Statuses, CustomGroups, PossibleActions, Links
 
 
 class CustomUserAdmin(UserAdmin):
@@ -52,17 +52,47 @@ class CustomUserAdmin(UserAdmin):
 
 
 class DepartmentAdmin(admin.ModelAdmin):
-    list_of_fields = ('id', 'name')
+    list_of_fields = ('id', 'name',)
     list_display = list_of_fields
     list_display_links = list_of_fields
 
 
 class CuratorsGroupAdmin(admin.ModelAdmin):
-    list_of_fields = ('id', 'name')
+    list_of_fields = ('id', 'name',)
     list_display = list_of_fields
     list_display_links = list_of_fields
+
+
+class StatusesAdmin(admin.ModelAdmin):
+    list_of_fields = ('id', 'status','verbose_name',)
+    list_display = list_of_fields
+    list_display_links = list_of_fields
+
+
+class PossibleActionsAdmin(admin.ModelAdmin):
+    list_of_fields = ('id', 'name',)
+    list_display = list_of_fields
+    list_display_links = list_of_fields
+
+
+class LinksAdmin(admin.ModelAdmin):
+    list_of_fields = ('id', 'name', 'link',)
+    list_display = list_of_fields
+    list_display_links = list_of_fields
+
+
+class CustomGroupAdmin(admin.ModelAdmin):
+    list_of_fields = ('id', 'description',)
+    list_display = list_of_fields
+    list_display_links = list_of_fields
+
+    filter_horizontal = ('statuses', 'possible_actions', 'links',)
 
 
 admin.site.register(User, CustomUserAdmin)
 admin.site.register(Department, DepartmentAdmin)
 admin.site.register(CuratorsGroup, CuratorsGroupAdmin)
+admin.site.register(Statuses, StatusesAdmin)
+admin.site.register(PossibleActions, PossibleActionsAdmin)
+admin.site.register(CustomGroups, CustomGroupAdmin)
+admin.site.register(Links, LinksAdmin)

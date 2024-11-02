@@ -1,7 +1,7 @@
 <div class="modal-body">
   <select class="form-select" id="purchasingSpecialistSelect" aria-label="Default select example">
-    {% for group in groups %}
-      <option value="{{user}}">{{user}}</option>
+    {% for user in purchasers %}
+      <option value="{{user.pk}}">{{user}}</option>
     {% endfor %}
   </select>
 </div>

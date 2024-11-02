@@ -23,7 +23,7 @@ class UserLoginView(LoginView):
     template_name = 'users/login.html'
 
     def get_success_url(self):
-        return reverse_lazy('raports:home')
+        return reverse_lazy('raports:list')
 
     def form_invalid(self, form):
         messages.error(self.request, 'Неверный логин или пароль')

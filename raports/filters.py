@@ -17,7 +17,7 @@ class RaportFilter(django_filters.FilterSet):
         )
     )
 
-    tags = django_filters.ChoiceFilter(queryset=get_tags_queryset)
+    # tags = django_filters.ChoiceFilter(queryset=get_tags_queryset)
 
     class Meta:
         model = Raport

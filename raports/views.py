@@ -1,20 +1,17 @@
+import json
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView, DetailView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView
 from django_filters.views import FilterView
 
 from users.models import User, CuratorsGroup
-from .models import Raport, Tag
+from .models import Raport, Tag, History
 from .form_utils import create_new_raport
 from .forms import CuratorToDepartmentForm, CreateRaportForm
 from .filters import RaportFilter
-from raports.utils.utils import get_queryset_dependent_group, change_raport_status_by_request
+from raports.utils.utils import get_queryset_dependent_group, ajax_decoder
 from raports.utils.unloads import create_pdf_unloading
-
-
-def temp_view(request):
-    return render(request, 'raports/home.html')
 
 
 def admin_page(request):
@@ -29,7 +26,7 @@ def admin_page(request):
 class RaportCreateView(CreateView):
     form_class = CreateRaportForm
     template_name = 'raports/create_raport.html'
-    success_url = reverse_lazy('raports:home')
+    success_url = reverse_lazy('raports:list')
 
     def get_form(self, *args, **kwargs):
         form = super(RaportCreateView, self).get_form(*args, **kwargs)
@@ -38,37 +35,35 @@ class RaportCreateView(CreateView):
         return form
 
     def form_valid(self, form):
-        print('form is valid')
         try:
             create_new_raport(self.request, form)
         except Exception as e:
-            print('error')
             raise Exception(f"Create new raport error: {e.args} {e.__traceback__.tb_lineno}")
         else:
             return HttpResponseRedirect(self.success_url)
 
     def form_invalid(self, form):
-        print('form invalid')
-        print(form.errors.as_data())
         return super(RaportCreateView, self).form_invalid(form)
 
 
 class RaportListView(FilterView):
     model = Raport
     template_name = 'raports/list.html'
-    paginate_by = 10
+    paginate_by = 5
     filterset_class = RaportFilter
 
     def get_queryset(self):
         return get_queryset_dependent_group(self.request.user)
 
 
-class ArchiveListView(ListView):
+class ArchiveListView(FilterView):
     model = Raport
     template_name = 'raports/list.html'
+    paginate_by = 5
+    filterset_class = RaportFilter
 
     def get_queryset(self):
-        return Raport.objects.filter(status__in=['rejected', 'done'])
+        return Raport.objects.filter(status__status__in=['rejected', 'done'])
 
 
 class RaportDetailView(DetailView):
@@ -93,7 +88,9 @@ def change_curators_group(request, pk):
 
 
 def get_purchasing_specialist(request):
-    pass
+    if request.method == 'GET':
+        context = {'purchasers': User.objects.filter(groups__name='purchasing_specialist')}
+        return render(request, 'additional_pages/modal_of_purchasing_specialists.html', context)
 
 
 class UpdateRaportStatusView(UpdateView):
@@ -102,6 +99,12 @@ class UpdateRaportStatusView(UpdateView):
     fields = ['status']
 
     def post(self, request, *args, **kwargs):
-        my_object = self.get_object()
-        resp = change_raport_status_by_request(request.user, my_object.pk, request.POST['status'])
-        return JsonResponse(data={'response': resp})
+        print(11111)
+        try:
+            raport = Raport.objects.filter(pk=self.get_object().pk)
+            raport.update(**ajax_decoder(request))
+            for q in raport:
+                q.history.create(user=request.user, action=q.status)
+            return JsonResponse(data={'message': 'ok'}, status=200)
+        except:
+            return JsonResponse(data={'message': 'huita'}, status=400)

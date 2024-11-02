@@ -1,10 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load get_verbose_name %}
-{% load permitted_actions %}
+{% load possible_actions %}
 
 {% load widget_tweaks %}
 {% block content %}
+<div class="alert alert-danger align-items-center alert-dismissible fade show" role="alert">
+  <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+  <div id="AlertText">
+    An example danger alert with an icon
+  </div>
+    <button type="button" class="btn-close" onclick="hideAlert()" aria-label="Close"></button>
+</div>
+
 <div class="container px-0 mt-4">
     <div class="row">
         <div class="col-8">
@@ -25,14 +33,14 @@
                     <b>{{ object|verbose_name:'one_time'}}&emsp; </b>
                     {% endif %}
                     <b>{{ object|verbose_name:'status'}}: </b>
-                    <small>{{ object.get_status_display }}</small></p>
+                    <small>{{ object.status.verbose_name }}</small></p>
                     <b>{{ object|verbose_name:'files'}}:</b></p>
                     {% for file in object.files.all %}
                     <a href="{{file.file.url}}" target="_blank" rel="noopener noreferrer">{{file.filename}}</a><br>
                     {% endfor %}
                 </div>
             </div>
-            {% if object.status not in 'rejected,done' %}
+            {% if object.status.status not in 'rejected,done' %}
             <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
                 <div class="btn-group">
                 {% get_buttons request.user as permission %}
@@ -53,7 +61,7 @@
                 <div class="card-body">
                     {% for status in object.history.all %}
                     {% if forloop.first %}
-                    <small>{{status.user}} {{status.action}} {{status.action_date}}</small></p>
+                    <small>{{status.user}} {{status.action.verbose_name}} {{status.action_date}}</small></p>
                     {% else %}
                     <small class="hiddenElement">{{status.user}} {{status.action}} {{status.action_date}}</small></p>
                     {% endif %}
@@ -64,12 +72,20 @@
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" aria-hidden="true" id="curatorsModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-        {% include "additional_pages/modal_of_curator_groups.html" %}
+<div class="modal fade" tabindex="-1" data-bs-backdrop="static" aria-hidden="true" id="UpdateModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" id="UpdateModalBody">
+            {% include "additional_pages/modal_of_curator_groups.html" %}
+        </div>
     </div>
-  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" data-bs-backdrop="static" aria-hidden="true" id="PurchasersModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" id="PurchasersModalBody">
+            {% include "additional_pages/modal_of_purchasing_specialists.html" %}
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript" src={% static 'raports/js/details.js' %}></script>
