@@ -1,0 +1,8 @@
+<form id="addTagForm">
+    {% csrf_token %}
+    <div class="mb-3">
+    <label for="tagNameInput" class="form-label">Название тега</label>
+    <input type="text" name="name" class="form-control" id="tagNameInput" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Подтвердить</button>
+</form>

@@ -26,6 +26,17 @@
     z-index: 999;
     visibility: hidden;
 }
+
+.dropZoneUpdate {
+    border: dashed red;
+    position: fixed;
+    top: 6%;
+    width: 80%;
+    height: 80%;
+    z-index: 999;
+    visibility: hidden;
+}
+
 .dropZoneXlsx {
     background: rgba(180,180,180,.6);
     left: 0;
@@ -34,6 +45,9 @@
     background: rgba(240,240,240,.6);
 }
 
+.textAreaRows6 {
+    height: 300px;
+}
 
 
 
@@ -467,3 +481,4 @@ a[href*="#followme"]::before {
 .alert{
   display:none;
 }
+

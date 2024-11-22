@@ -4,7 +4,6 @@ from . import views
 app_name = 'raports'
 
 urlpatterns = [
-    path('admin_page/', views.admin_page, name='admin_page'),
     path('create_raport/', views.RaportCreateView.as_view(), name='create_raport'),
     path('list/', views.RaportListView.as_view(), name='list'),
     path('details/<int:pk>/', views.RaportDetailView.as_view(), name='details'),
@@ -14,4 +13,8 @@ urlpatterns = [
     path('change_curators_group/<int:pk>/', views.change_curators_group, name='change_curators_group'),
     path('archive/', views.ArchiveListView.as_view(), name='archive'),
     path('download_pdf/<int:pk>/', views.download_pdf_report, name='download_pdf'),
+    path('sources_of_funding_form/<int:pk>/', views.AddSourcesOfFundingView.as_view(), name='sources_of_funding_form'),
+    path('add_files_form/<int:pk>/', views.AddFilesToExistedRaport.as_view(), name='add_files_form'),
+    path('add_new_tag/', views.AddNewTag.as_view(), name='add_new_tag'),
+    path('feedback/', views.Feedback.as_view(), name='feedback'),
 ]

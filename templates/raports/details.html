@@ -2,6 +2,7 @@
 {% load static %}
 {% load get_verbose_name %}
 {% load possible_actions %}
+{% load has_group %}
 
 {% load widget_tweaks %}
 {% block content %}
@@ -40,10 +41,20 @@
                     {% endfor %}
                 </div>
             </div>
+            {% if object.status.status in 'in_purchasing_department_1,in_purchasing_department_2' %}
+            <form id="addFilesForm">
+                {% include "additional_pages/add_files_form.html" %}
+            </form>
+            {% endif %}
+            {% if object.status.status in 'at_economist_1,at_economist_chief' %}
+            <form id="sourcesOfFundingForm">
+                {% include "additional_pages/sources_of_funding_form.html" %}
+            </form>
+            {% endif %}
             {% if object.status.status not in 'rejected,done' %}
             <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
                 <div class="btn-group">
-                {% get_buttons request.user as permission %}
+                {% get_buttons request.user object.status as permission %}
                     {% for name,link in permission.items %}
                             <button class="btn btn-outline-primary" onclick="execute_command('{{link}}', {{object.pk}})">{{name}}</button>
                     {% endfor %}

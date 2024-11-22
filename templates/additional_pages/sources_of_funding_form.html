@@ -1,0 +1,9 @@
+{% load widget_tweaks %}
+
+{% csrf_token %}
+{% for form_field in form %}
+<div class="mb-3">
+    <label class="form-label">{{form_field.label_tag}}</label>
+    {% render_field form_field class="form-control" %}
+</div>
+{% endfor %}

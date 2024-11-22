@@ -19,6 +19,26 @@ function execute_command(command, pk){
             }
         });
     }
+    else if (document.getElementById("addFilesForm")){
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        let form = document.querySelector('#addFilesForm');
+        data = new FormData(form);
+        data.append('status', command);
+        data.append('pk', pk);
+        let url = '/home/add_files_form/' + parseInt(my_pk) + '/';
+
+        ajaxRequestFromForm(url, data);
+    }
+    else if (document.getElementById("sourcesOfFundingForm")){
+        let url = '/home/sources_of_funding_form/' + parseInt(my_pk) + '/';
+        let form = document.querySelector("#sourcesOfFundingForm")
+        data = new FormData(form);
+        data.append('status', command);
+        data.append('pk', pk);
+
+        ajaxRequestFromForm(url, data);
+
+    }
     else{
         let ajax_data = {
             'status': command,
@@ -27,6 +47,19 @@ function execute_command(command, pk){
         changeStatus(pk, ajax_data);
     }
 
+}
+
+function ajaxRequestFromForm(url, data){
+    $.ajax({
+        url: url,
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        data: data,
+        success: function(response) {
+            location.replace('/home/list/');
+        },
+    })
 }
 
 function transferToPerformer(){
@@ -78,5 +111,41 @@ function hideShow(){
     }
     else {
         $(elements).hide();
+    }
+}
+
+
+$(document).ready(function() {
+    loadFileForm();
+    loadSourcesOfFundingForm();
+});
+
+function loadFileForm(){
+    var elementExists = document.getElementById("addFilesForm");
+    let pk = my_pk;
+    if (elementExists) {
+        let url = '/home/add_files_form/' + parseInt(pk) + '/'
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(data) {
+                    $("#addFilesForm").html(data);
+            },
+        })
+    }
+}
+
+function loadSourcesOfFundingForm(){
+    var elementExists = document.getElementById("sourcesOfFundingForm");
+    let pk = my_pk;
+    if (elementExists) {
+        let url = '/home/sources_of_funding_form/' + parseInt(pk) + '/'
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(data) {
+                    $("#sourcesOfFundingForm").html(data);
+            },
+        })
     }
 }

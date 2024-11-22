@@ -16,6 +16,9 @@
     <link rel="stylesheet" href="{% static 'raports/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'raports/css/my_style.css' %}">
     <script type="text/javascript" src={% static 'raports/js/bootstrap.min.js' %}></script>
+    <script type="text/javascript" src={% static 'raports/js/crypto-pro.min.js' %}></script>
+    <script type="text/javascript" src={% static 'raports/js/base.js' %}></script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>Рапорты</title>
 
@@ -32,15 +35,23 @@
                     {% get_links request.user as links %}
                     {% for name,link in links.items %}
                         <li class="nav-item">
-                            <a class="nav-link active" href="{% url link %}">{{name}}</a>
-                        <li class="nav-item">
+                            <a class="btn btn-dark" href="{% url link %}">{{name}}</a>
+                        </li>>
                     {% endfor %}
+                        <li class="nav-item">
+                            <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#tagModal">Новый тег</button>
+                        </li>
                     <li class="nav-item">
                         <a class="nav-link disabler" href="#" tabindex="-1" aria-disabled="true">
                             {{ request.user }}
                         </a>
                     </li>
                 </ul>
+
+                <li class="nav-item">
+                    <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#feedbackModal">Обратная связь</button>
+                </li>
+                <li></li>
                 <form method="post" action="{% url 'users:logout' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary me-2">Выход</button>
@@ -51,15 +62,35 @@
 </head>
 
 <body>
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{message.tags}} mx-auto" role="alert">
-            <b>{{message}}</b>
-        </div>
-        {% endfor %}
-        {% endif %}
+    <div class="alert alert-danger align-items-center alert-dismissible fade show" role="alert">
+    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+    <div id="AlertText">
+        An example danger alert with an icon
+    </div>
+    <button type="button" class="btn-close" onclick="hideAlert()" aria-label="Close"></button>
+    </div>
 
-        {% block content %}
-        {% endblock content %}
+    {% block content %}
+    {% endblock content %}
 </body>
+
+
+<div class="modal fade" id="tagModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        {% include "additional_pages/add_new_tag.html" %}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body">
+        {% include "additional_pages/feedback_modal.html" %}
+      </div>
+    </div>
+  </div>
+</div>
 </html>

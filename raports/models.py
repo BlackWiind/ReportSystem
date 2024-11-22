@@ -51,8 +51,18 @@ class Files(models.Model):
         verbose_name_plural = 'Файлы'
 
 
-class Raport(models.Model):
+class SourcesOfFunding(models.Model):
+    name = models.CharField(max_length=255, verbose_name='Название')
 
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Источник финансирования'
+        verbose_name_plural = 'Источники финансирования'
+
+
+class Raport(models.Model):
     creator = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Создатель рапорта')
     text = models.TextField(verbose_name='Текст')
     justification = models.TextField(verbose_name='Основание')
@@ -70,9 +80,12 @@ class Raport(models.Model):
     curators_group = models.ForeignKey(CuratorsGroup, on_delete=models.CASCADE, null=True,
                                        verbose_name='Курируемая группа')
 
-    assigned_purchasing_specialist = models.ForeignKey(User, on_delete=models.PROTECT, blank=True,null=True,
+    assigned_purchasing_specialist = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True,
                                                        verbose_name='Специалист отдела закупок',
                                                        related_name='assigned_purchasing_specialist')
+
+    sources_of_funding = models.ManyToManyField(SourcesOfFunding, verbose_name='Источники финансирования', blank=True)
+    sign = models.TextField(verbose_name='ЭЦП', blank=True)
 
     def __str__(self):
         return f'Рапорт №{self.pk} от {self.creator}'

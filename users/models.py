@@ -87,6 +87,8 @@ class PossibleActions(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Действие')
     verbose_name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Видимое имя')
     new_status = models.ForeignKey(Statuses, on_delete=models.CASCADE, verbose_name='Новый статус')
+    required_status = models.ForeignKey(Statuses, on_delete=models.CASCADE, null=True, blank=True,
+                                        verbose_name='Требуемый статус', related_name='required_status')
 
     def __str__(self):
         return self.name

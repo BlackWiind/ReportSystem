@@ -70,7 +70,7 @@ class StatusesAdmin(admin.ModelAdmin):
 
 
 class PossibleActionsAdmin(admin.ModelAdmin):
-    list_of_fields = ('id', 'name',)
+    list_of_fields = ('id', 'name', 'required_status', )
     list_display = list_of_fields
     list_display_links = list_of_fields
 

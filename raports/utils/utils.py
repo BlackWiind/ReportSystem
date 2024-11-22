@@ -14,37 +14,8 @@ def get_queryset_dependent_group(user):
     if user.is_superuser:
         set_for_return = Raport.objects.all()
     else:
-        set_for_return = Raport.objects.filter(Q(**parameters) | Q(creator=user))
+        set_for_return = Raport.objects.filter(Q(**parameters) | Q(creator=user) | Q(assigned_purchasing_specialist=user))
     return set_for_return.exclude(status__status__in=['rejected', 'done'])
-
-
-# def change_raport_status_by_request(user, pk: int, action: str):
-#     raport = Raport.objects.get(pk=pk)
-#     new_status: str
-#     try:
-#
-#         if action in [st.REJECT, st.WAITING]:
-#             new_status = action
-#         elif action == st.APPROVE:
-#             new_status = new_status_by_approve(user)
-#         raport.history.create(user=user, action=st.STATUSES[new_status])
-#         raport.status = new_status
-#         raport.save()
-#
-#         return True
-#     except:
-#         return False
-
-
-# def new_status_by_approve(user):
-#     new_status: str
-#     groups = user.groups.all()
-#     for group in groups:
-#         if group.name == 'curator':
-#             new_status = st.APPROVED_BY_CURATOR
-#         elif group.name == 'chief_medical':
-#             new_status = st.APPROVED_BY_DIRECTOR
-#     return new_status
 
 
 def word_to_genitive(word: str) -> str:
@@ -56,6 +27,16 @@ def word_to_genitive(word: str) -> str:
 
 def ajax_decoder(request_data) -> dict:
     data = request_data.POST.dict()
-    data.pop('csrfmiddlewaretoken')
+    data.pop('csrfmiddlewaretoken', None)
+    data.pop('sources_of_funding', None)
     data.pop('pk', None)
+    data.pop('files', None)
     return data
+
+
+def update_status(pk, request):
+    raport = Raport.objects.filter(pk=pk)
+    raport.update(**ajax_decoder(request))
+    for q in raport:
+        q.history.create(user=request.user, action=q.status)
+    return True

@@ -1,4 +1,5 @@
 from raports.models import Raport, Files, History
+from users.models import Statuses
 
 
 def create_new_raport(request, form):
@@ -8,11 +9,12 @@ def create_new_raport(request, form):
         justification=form.cleaned_data['justification'],
         price=form.cleaned_data['price'],
         curators_group=request.user.department.curators_group,
+        sign=form.cleaned_data['sign'],
     )
     new_raport.tags.add(*form.cleaned_data['tags'])
     for file in form.cleaned_data['files']:
         new_raport.files.add(Files.objects.create(file=file).pk)
-    new_raport.history.add(add_history_record(request.user, 'Создан').pk)
+    new_raport.history.add(add_history_record(request.user, Statuses.objects.get(status='created')).pk)
     new_raport.save()
     print('Good')
 

@@ -70,6 +70,18 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+#
+# DATABASES = {
+#         'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.getenv('POSTGRES_NAME', 'db'),
+#         'USER': os.getenv('POSTGRES_USER', 'postgres'),
+#         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+#         'HOST': os.getenv('POSTGRES_HOST'),
+#         'PORT': os.getenv('POSTGRES_PORT', 5432),
+#     }
+# }
+
 
 
 # Password validation
@@ -112,3 +124,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 
 LOGOUT_REDIRECT_UR = 'users:login'
+
+
+# REDIS settings
+REDIS_HOST = 'redis'
+REDIS_PORT = '6379'
+CELERY_BROKER_URL = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+
+EMAIL_USE_TLS =True
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+
+EMAIL_RECIPIENTS = os.getenv('EMAIL_RECIPIENTS').split(',')

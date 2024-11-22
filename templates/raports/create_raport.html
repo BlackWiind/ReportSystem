@@ -28,15 +28,41 @@
                     {{form.one_time.label_tag}}
                     {% render_field form.one_time %}
                 </div>
-                <input type="submit" class="btn btn-primary" value="Создать">
+<!--                <input type="submit" class="btn btn-primary" value="Создать">-->
             </form>
+            <a href="#" class="btn btn-primary" id="saveBtn" data-bs-toggle="modal" data-bs-target="#completeModal">
+        Создать</a>
         </div>
     </div>
 </div>
+
 <div id="dropZoneFiles" class="dropZone dropZoneFiles">
     <label class="myLabel labelForDropZone" for="dropZoneFiles">Перетащите файлы сюда.</label>
 </div>
 
-<script type="text/javascript" src={% static 'raports/js/new_raport.js' %}></script>
+
+<div class="modal fade" id="completeModal" tabindex="-1" aria-labelledby="completeModalLabel" aria-hidden="true">
+    \\ Модальное окно для сохранения тикета
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="completeModalLabel">Выбирите подпись.</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+            <select class="form-select" id="certList"></select>
+            <pre id="errorMessage"></pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" id="createSign" class="btn btn-primary" data-bs-dismiss="modal" disabled>Подписать</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src={% static 'raports/js/drag&drop.js' %}></script>
+<script type="text/javascript" src={% static 'raports/js/sign.js' %}></script>
+
 
 {% endblock content %}

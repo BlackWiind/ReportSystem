@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
 from users.models import Department
-from .models import Raport, Tag
+from .models import Raport, Tag, SourcesOfFunding
 
 
 class MultipleFileInput(forms.ClearableFileInput):
@@ -50,7 +50,9 @@ class CreateRaportForm(forms.ModelForm):
             'price',
             'one_time',
             'files',
+            'sign',
         ]
+        widgets = {'sign': forms.HiddenInput()}
 
     tags = forms.ModelMultipleChoiceField(
         queryset=Tag.objects.all(),
@@ -63,7 +65,27 @@ class CreateRaportForm(forms.ModelForm):
         return [field for field in self if field.name in ['text',
                                                           'justification',
                                                           'price',
-                                                          'files', ]]
+                                                          'files',
+                                                          'sign',]]
 
     def checkbox_group(self):
         return [field for field in self if field.name in ['tags',]]
+
+
+class AddFilesAndNewPriceForm(forms.ModelForm):
+    class Meta:
+        model = Raport
+        fields = ['files', 'price', ]
+
+    files = MultipleFileField(required=False, label='Прикреплённые файлы')
+
+
+class AddSourcesOfFundingForm(forms.ModelForm):
+    class Meta:
+        model = Raport
+        fields = ['sources_of_funding', ]
+
+        sources_of_funding = forms.ModelMultipleChoiceField(
+            queryset=SourcesOfFunding.objects.all(),
+            widget=forms.CheckboxSelectMultiple
+        )

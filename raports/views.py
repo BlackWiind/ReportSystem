@@ -1,26 +1,20 @@
-import json
+import threading
+
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, DetailView, UpdateView
 from django_filters.views import FilterView
 
 from users.models import User, CuratorsGroup
-from .models import Raport, Tag, History
+from .mail import send_email
+from .models import Raport, Tag, Files
 from .form_utils import create_new_raport
-from .forms import CuratorToDepartmentForm, CreateRaportForm
+from .forms import CreateRaportForm, AddFilesAndNewPriceForm, AddSourcesOfFundingForm
 from .filters import RaportFilter
-from raports.utils.utils import get_queryset_dependent_group, ajax_decoder
+from raports.utils.utils import get_queryset_dependent_group, update_status
 from raports.utils.unloads import create_pdf_unloading
-
-
-def admin_page(request):
-    curators_set = User.objects.filter(groups__name='curator')
-    context = {
-        'curators_set': curators_set,
-        'form': CuratorToDepartmentForm
-    }
-    return render(request, 'raports/admin_page.html', context=context)
 
 
 class RaportCreateView(CreateView):
@@ -99,12 +93,59 @@ class UpdateRaportStatusView(UpdateView):
     fields = ['status']
 
     def post(self, request, *args, **kwargs):
-        print(11111)
         try:
-            raport = Raport.objects.filter(pk=self.get_object().pk)
-            raport.update(**ajax_decoder(request))
-            for q in raport:
-                q.history.create(user=request.user, action=q.status)
+            update_status(self.get_object().pk, request)
             return JsonResponse(data={'message': 'ok'}, status=200)
         except:
-            return JsonResponse(data={'message': 'huita'}, status=400)
+            return JsonResponse(data={'message': 'Произошла ошибка!'}, status=400)
+
+
+class AddFilesToExistedRaport(UpdateView):
+    model = Raport
+    form_class = AddFilesAndNewPriceForm
+    template_name = 'additional_pages/add_files_form.html'
+
+    def post(self, request, *args, **kwargs):
+        try:
+            my_object = self.get_object()
+            files = request.FILES.getlist('files')
+            update_status(my_object.pk, request)
+            if files:
+                for file in files:
+                    _ = Files.objects.create(file=file)
+                    request.FILES['files'] = _
+                    my_object.files.add(_)
+                my_object.save()
+        except:
+            return JsonResponse(data={'message': 'Произошла ошибка!'}, status=400)
+
+
+class AddSourcesOfFundingView(UpdateView):
+    model = Raport
+    form_class = AddSourcesOfFundingForm
+    template_name = 'additional_pages/sources_of_funding_form.html'
+
+    def post(self, request, *args, **kwargs):
+        update_status(self.get_object().pk, request)
+        return super(AddSourcesOfFundingView, self).post(request, *args, **kwargs)
+
+
+class AddNewTag(View):
+    template_name = 'add_new_tag.html'
+
+    def post(self, request, *args, **kwargs):
+        try:
+            _ = Tag.objects.create(name=request.POST['name'], curators_group=request.user.curators_group)
+            return JsonResponse(data={'message': f'Создан новый тег: {_.name}'}, status=200)
+        except Exception as e:
+            return JsonResponse(data={'message': f'Произошла ошибка: {type(e).__name__}, {e}'}, status=400)
+
+
+class Feedback(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            thread = threading.Thread(target=send_email, args=(request.POST['message'], request.POST['user']))
+            thread.start()
+            return JsonResponse(data={'message': f'Сообщение отправлено'}, status=200)
+        except Exception as e:
+            return JsonResponse(data={'message': f'Произошла ошибка: {type(e).__name__}, {e}'}, status=400)
