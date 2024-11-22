@@ -4,17 +4,14 @@ from .models import Tag, Raport, History, Files, SourcesOfFunding
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_of_fields = ('id', 'name', 'curators_group')
+    list_of_fields = ('id', 'name', )
     list_display = list_of_fields
     list_display_links = list_of_fields
 
     search_fields = (
         'id',
         'name',
-        'curators_group__name',
     )
-
-    list_filter = ['curators_group__name', ]
 
 
 class RaportAdmin(admin.ModelAdmin):

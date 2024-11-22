@@ -13,11 +13,11 @@ from users.models import User, CuratorsGroup, Statuses
 def raport_directory_path(instance, filename):
     return 'print_forms/raport_{0}/{1}'.format(instance.id, filename)
 
+def file_directory_path(instance, filename):
+    return 'raport_{0}/{1}'.format(instance.pk, filename)
 
 class Tag(models.Model):
     name = models.CharField(max_length=255, verbose_name='Тэг')
-    curators_group = models.ForeignKey(CuratorsGroup, on_delete=models.CASCADE, null=True,
-                                       verbose_name='Курируемая группа')
 
     def __str__(self):
         return self.name
@@ -34,10 +34,6 @@ class History(models.Model):
 
     class Meta:
         ordering = ['-id']
-
-
-def file_directory_path(instance, filename):
-    return 'raport_{0}/{1}'.format(instance.pk, filename)
 
 
 class Files(models.Model):

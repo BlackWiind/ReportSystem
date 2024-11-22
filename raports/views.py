@@ -10,7 +10,7 @@ from django_filters.views import FilterView
 from users.models import User, CuratorsGroup
 from .mail import send_email
 from .models import Raport, Tag, Files
-from .form_utils import create_new_raport
+from raports.utils.form_utils import create_new_raport
 from .forms import CreateRaportForm, AddFilesAndNewPriceForm, AddSourcesOfFundingForm
 from .filters import RaportFilter
 from raports.utils.utils import get_queryset_dependent_group, update_status
@@ -22,11 +22,11 @@ class RaportCreateView(CreateView):
     template_name = 'raports/create_raport.html'
     success_url = reverse_lazy('raports:list')
 
-    def get_form(self, *args, **kwargs):
-        form = super(RaportCreateView, self).get_form(*args, **kwargs)
-        curator_group = CuratorsGroup.objects.get(name=self.request.user.department.curators_group)
-        form.fields['tags'].queryset = Tag.objects.filter(curators_group=curator_group)
-        return form
+    # def get_form(self, *args, **kwargs):
+    #     form = super(RaportCreateView, self).get_form(*args, **kwargs)
+    #     curator_group = CuratorsGroup.objects.get(name=self.request.user.department.curators_group)
+    #     form.fields['tags'].queryset = Tag.objects.filter(curators_group=curator_group)
+    #     return form
 
     def form_valid(self, form):
         try:
@@ -135,7 +135,7 @@ class AddNewTag(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            _ = Tag.objects.create(name=request.POST['name'], curators_group=request.user.curators_group)
+            _ = Tag.objects.create(name=request.POST['name'])
             return JsonResponse(data={'message': f'Создан новый тег: {_.name}'}, status=200)
         except Exception as e:
             return JsonResponse(data={'message': f'Произошла ошибка: {type(e).__name__}, {e}'}, status=400)

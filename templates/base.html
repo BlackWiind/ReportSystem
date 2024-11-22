@@ -38,9 +38,11 @@
                             <a class="btn btn-dark" href="{% url link %}">{{name}}</a>
                         </li>>
                     {% endfor %}
+                    {% if request.user is superuser %}
                         <li class="nav-item">
                             <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#tagModal">Новый тег</button>
                         </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link disabler" href="#" tabindex="-1" aria-disabled="true">
                             {{ request.user }}
