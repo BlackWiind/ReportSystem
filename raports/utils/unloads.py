@@ -1,5 +1,6 @@
 import io
 
+from django.core.files.base import ContentFile
 from django.http import FileResponse
 from .utils import word_to_genitive
 
@@ -53,3 +54,8 @@ def create_pdf_unloading(pk):
 
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename=f"Рапорт{data.pk}.pdf")
+
+
+def create_file_from_buffer(data) -> ContentFile:
+    return ContentFile(data.getvalue(), 'print_form.pdf')
+
