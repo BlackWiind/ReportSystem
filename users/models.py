@@ -122,3 +122,11 @@ class CustomGroups(Group):
     class Meta:
         verbose_name = 'Кастомная группа'
         verbose_name_plural = 'Кастомные группы'
+
+
+class VocationsSchedule(models.Model):
+    vocation_start = models.DateField(verbose_name='Начало отпуска')
+    vocation_end = models.DateField(verbose_name='Конец отпуска')
+    vocation_user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь в отпуске')
+    deputy = models.ForeignKey(User, verbose_name='Заместитель', on_delete=models.CASCADE, related_name='deputy_user')
+    group = models.ForeignKey(CustomGroups,on_delete=models.CASCADE, verbose_name='группа заместителя')

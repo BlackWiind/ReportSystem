@@ -13,8 +13,10 @@ from users.models import User, CuratorsGroup, Statuses
 def raport_directory_path(instance, filename):
     return 'print_forms/raport_{0}/{1}'.format(instance.id, filename)
 
+
 def file_directory_path(instance, filename):
     return 'raport_{0}/{1}'.format(instance.pk, filename)
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=255, verbose_name='Тэг')

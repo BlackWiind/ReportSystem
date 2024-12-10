@@ -1,7 +1,9 @@
+from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
+from .models import User
 
 from .forms import RegisterUserForm
 
@@ -33,3 +35,9 @@ class UserLoginView(LoginView):
 class UserLogoutView(LogoutView):
     def get_success_url(self):
         return reverse_lazy('users:login')
+
+
+def get_all_users(request):
+    if request.method == 'GET':
+        users = User.objects.all()
+        return JsonResponse(data={'users': users})
