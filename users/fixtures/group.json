@@ -1,0 +1,98 @@
+[
+  {
+    "model": "auth.group",
+    "pk": 4,
+    "fields": {
+      "name": "others",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 7,
+    "fields": {
+      "name": "economist",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 10,
+    "fields": {
+      "name": "user_creator",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 11,
+    "fields": {
+      "name": "curator",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 12,
+    "fields": {
+      "name": "chief_medical",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 13,
+    "fields": {
+      "name": "head_of_purchasing_department",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 15,
+    "fields": {
+      "name": "purchasing_specialist",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 16,
+    "fields": {
+      "name": "economist_1",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 17,
+    "fields": {
+      "name": "chief_economist",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 18,
+    "fields": {
+      "name": "chief_accountant",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 19,
+    "fields": {
+      "name": "economist_2",
+      "permissions": []
+    }
+  },
+  {
+    "model": "auth.group",
+    "pk": 20,
+    "fields": {
+      "name": "admin",
+      "permissions": []
+    }
+  }
+]

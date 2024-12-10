@@ -1,1 +1,42 @@
-[{"model": "users.links", "pk": 1, "fields": {"name": "Создать", "link": "raports:create_raport"}}, {"model": "users.links", "pk": 2, "fields": {"name": "Список", "link": "raports:list"}}, {"model": "users.links", "pk": 3, "fields": {"name": "Архив", "link": "raports:archive"}}, {"model": "users.links", "pk": 4, "fields": {"name": "Новый пользователь", "link": "users:register"}}, {"model": "users.links", "pk": 5, "fields": {"name": "Добавить тег", "link": "raports:add_new_tag"}}]
+[
+  {
+    "model": "users.links",
+    "pk": 1,
+    "fields": {
+      "name": "РЎРѕР·РґР°С‚СЊ",
+      "link": "raports:create_raport"
+    }
+  },
+  {
+    "model": "users.links",
+    "pk": 2,
+    "fields": {
+      "name": "РЎРїРёСЃРѕРє",
+      "link": "raports:list"
+    }
+  },
+  {
+    "model": "users.links",
+    "pk": 3,
+    "fields": {
+      "name": "РђСЂС…РёРІ",
+      "link": "raports:archive"
+    }
+  },
+  {
+    "model": "users.links",
+    "pk": 4,
+    "fields": {
+      "name": "РќРѕРІС‹Р№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ",
+      "link": "users:register"
+    }
+  },
+  {
+    "model": "users.links",
+    "pk": 5,
+    "fields": {
+      "name": "Р”РѕР±Р°РІРёС‚СЊ С‚РµРі",
+      "link": "raports:add_new_tag"
+    }
+  }
+]
