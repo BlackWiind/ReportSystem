@@ -3,13 +3,13 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 
 
 class MyUserManager(BaseUserManager):
-    def create_superuser(self, username, department, password, email=None):
+    def create_superuser(self, username, password, department_id, email='', *args, **kwargs):
         if email:
             user = self.model(
-                username=username, email=email, department=Department.objects.get(pk=department))
+                username=username, email=email, department=Department.objects.get(pk=department_id))
         else:
             user = self.model(
-                username=username, department=Department.objects.get(pk=department))
+                username=username, department=Department.objects.get(pk=department_id))
         user.set_password(password)
         user.is_staff = True
         user.is_superuser = True

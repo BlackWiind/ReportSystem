@@ -1,3 +1,6 @@
+.width20 {
+    width: 20rem;
+}
 .hiddenElement {
     display: none;
 }

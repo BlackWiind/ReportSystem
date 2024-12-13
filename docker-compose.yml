@@ -35,6 +35,8 @@ services:
     command: sh -c "python manage.py collectstatic --noinput --link &&
               python manage.py makemigrations --noinput &&
               python manage.py migrate --noinput &&
+              python manage.py loaddata users/fixtures/*.json &&
+              python manage.py add_superuser &&
               python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/reports_web

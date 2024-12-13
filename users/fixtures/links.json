@@ -30,13 +30,5 @@
       "name": "Новый пользователь",
       "link": "users:register"
     }
-  },
-  {
-    "model": "users.links",
-    "pk": 5,
-    "fields": {
-      "name": "Добавить тег",
-      "link": "raports:add_new_tag"
-    }
   }
 ]

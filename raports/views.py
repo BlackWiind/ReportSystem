@@ -22,12 +22,6 @@ class RaportCreateView(CreateView):
     template_name = 'raports/create_raport.html'
     success_url = reverse_lazy('raports:list')
 
-    # def get_form(self, *args, **kwargs):
-    #     form = super(RaportCreateView, self).get_form(*args, **kwargs)
-    #     curator_group = CuratorsGroup.objects.get(name=self.request.user.department.curators_group)
-    #     form.fields['tags'].queryset = Tag.objects.filter(curators_group=curator_group)
-    #     return form
-
     def form_valid(self, form):
         try:
             create_new_raport(self.request, form)
@@ -149,3 +143,5 @@ class Feedback(View):
             return JsonResponse(data={'message': f'Сообщение отправлено'}, status=200)
         except Exception as e:
             return JsonResponse(data={'message': f'Произошла ошибка: {type(e).__name__}, {e}'}, status=400)
+
+

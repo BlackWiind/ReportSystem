@@ -39,19 +39,24 @@
                         </li>>
                     {% endfor %}
                     <li class="nav-item">
+                        <select class="js-example-basic-single width20 form-control" name="vocation_select" id="vocation_select" aria-label="Default select example">
+                                </select>
                         <div class="dropdown">
                             <button class="btn btn-dark dropdown-toggle" id="vocation_button" data-bs-toggle="dropdown" aria-expanded="false">Отпуск</button>
-                            <ul class="dropdown-menu" aria-labelledby="vocation_button">
-                                <select class="form-select" aria-label="Default select example">
-                                  <option selected>Open this select menu</option>
-                                  <option value="1">One</option>
-                                  <option value="2">Two</option>
-                                  <option value="3">Three</option>
-                                </select>
-                            </ul>
+                            <div class="dropdown-menu col-md-6">
+                                <div class="m-3">
+<!--                                <select class="js-example-basic-single width20 form-control" name="vocation_select" id="vocation_select" aria-label="Default select example">-->
+<!--                                </select>-->
+                                    <div class="input-group input-daterange">
+                                        <input type="text" class="form-control" value="2012-04-05">
+                                        <div class="input-group-addon">to</div>
+                                        <input type="text" class="form-control" value="2012-04-19">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </li>
-                    {% if request.user is superuser %}
+                    {% if user.is_superuser %}
                         <li class="nav-item">
                             <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#tagModal">Новый тег</button>
                         </li>

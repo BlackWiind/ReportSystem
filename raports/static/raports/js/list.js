@@ -1,5 +1,4 @@
 $(document).ready(function () {
-    console.log('hi')
   var trigger = $('#offcanvasBtn'),
       overlay = $('.overlay'),
       searchTrigger = $('#searchBtn'),

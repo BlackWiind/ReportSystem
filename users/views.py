@@ -1,11 +1,14 @@
+from django.db.models import Q
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.views import View
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
 from .models import User
 
 from .forms import RegisterUserForm
+from .utils.search_in_db import SearchUsers
 
 
 class UserRegisterView(CreateView):
@@ -41,3 +44,8 @@ def get_all_users(request):
     if request.method == 'GET':
         users = User.objects.all()
         return JsonResponse(data={'users': users})
+
+
+class SearchUser(View):
+    def get(self, request):
+        return SearchUsers(request.GET['search']).search()
