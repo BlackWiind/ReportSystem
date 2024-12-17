@@ -24,8 +24,8 @@ class MainLoader:
 class SearchUsers(MainLoader):
 
     def _get_data(self) ->list:
-        if self.what_are_looking == '':
-            return []
+        # if self.what_are_looking == '':
+        #     return []
         result = User.objects.filter(Q(first_name__icontains=self.what_are_looking) |
                                           Q(last_name__icontains=self.what_are_looking) |
                                           Q(surname__icontains=self.what_are_looking)).iterator()

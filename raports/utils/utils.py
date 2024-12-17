@@ -1,8 +1,10 @@
 from django.db.models import Q
+from django.http import JsonResponse
 
 from raports.models import Raport
-
 import pymorphy2
+
+from users.models import VocationsSchedule, User, CustomGroups
 
 
 def get_queryset_dependent_group(user):
@@ -40,3 +42,18 @@ def update_status(pk, request):
     for q in raport:
         q.history.create(user=request.user, action=q.status)
     return True
+
+def new_vocation(vocation_user, deputy, vocation_start, vocation_end):
+    if vocation_end <= vocation_start:
+        return JsonResponse(data={'message': 'Дата окончания отпуска должна быть позже даты начала.'}, status=403)
+    deputy = User.objects.get(pk=deputy)
+    if vocation_user == deputy:
+        return JsonResponse(data={'message': 'Вы не можете замещать самого себя.'}, status=403)
+    try:
+        group = vocation_user.groups.all()[0].name
+        VocationsSchedule.objects.create(vocation_start=vocation_start, vocation_end=vocation_end,
+                                        vocation_user=vocation_user, deputy=deputy,
+                                        group=CustomGroups.objects.get(name=group))
+        return JsonResponse(data={'message': 'Успешно'}, status=200)
+    except:
+        return JsonResponse(data={'message': 'Не получилось создать запись об отпуске'}, status=403)

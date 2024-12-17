@@ -1,0 +1,19 @@
+<div class="m-3">
+    <select class="js-example-basic-multiple width20 form-control" multiple="multiple" name="vocation_select" id="vocation_select" aria-label="Default select example">
+            </select>
+    <div class="row">
+        <div class="col-lg-4 col-sm-6">
+            <label for="startDate">Начало</label>
+            <input id="startDate" class="form-control" type="date" value="{% now 'Y-m-d' %}" min="{% now 'Y-m-d' %}" />
+            <span id="startDateSelected"></span>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <label for="endDate">Конец</label>
+            <input id="endDate" class="form-control" type="date" value={% now 'Y-m-d' %} min="{% now 'Y-m-d' %}" />
+            <span id="endDateSelected"></span>
+        </div>
+    </div>
+    <div class="modal-footer">
+         <button class="btn btn-primary" id="vocationOkButton">Ok</button>
+    </div>
+</div>

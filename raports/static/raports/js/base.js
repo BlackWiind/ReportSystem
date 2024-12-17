@@ -4,11 +4,74 @@ $(document).ready( function(){
         addNewTag();
         $('#tagModal').modal('hide');
     })
+
     $('#feedbackForm').on('submit', function(e){
         e.preventDefault();
         feedBack();
         $('#feedbackModal').modal('hide');
     })
+
+    $('#vocationOkButton').on('click', function () {
+            let url = '/new_vocation/'
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            let data = {'deputy': $('#vocation_select').val(),
+                        'vocation_start': $('#startDate').val(),
+                        'vocation_end': $('#endDate').val(),
+                        'csrfmiddlewaretoken': csrftoken,
+            };
+            $("#vocationModal").modal('hide');
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: data,
+                success: function(response) {
+                    $("#AlertText").html(response.message);
+                    $(".alert").hide().show('medium');
+                },
+                error: function(data) {
+                    $("#AlertText").html(data.responseJSON.message);
+                    $(".alert").hide().show('medium');
+                }
+            })
+      });
+
+    $('#vocation_select').select2({
+        placeholder: 'Введите имя',
+        allowClear: true,
+        maximumSelectionLength: 1
+    });
+
+    $('#vocation_select').select2({
+        dropdownParent: $('#vocationModal .modal-content')
+    });
+
+    $('.js-example-basic-multiple').select2();
+
+    $("#vocation_select").select2({
+        ajax: {
+          type: 'get',
+          url: '/usernames_loader/',
+          delay: 300,
+          dataType: 'json',
+          data: function (params) {
+            return params.term ? {search: params.term} : {search: ""};
+          },
+          success: function (data) {
+                return {
+                    result: $.map(data, function (item) {
+                        item.id =  item.id;
+                        item.text = item.text || item.name;
+
+                        return {
+                            text: item.text,
+                            id: item.id
+                        }
+                    })
+                };
+              }
+            },
+        }
+    )
 })
 
 function addNewTag() {
@@ -100,42 +163,3 @@ $(".js-data-example-ajax").select2({
     }
 )
 
-$(document).ready(function() {
-//    $('.js-example-basic-single').select2();
-    $("#vocation_select").select2({
-        ajax: {
-          type: 'get',
-          url: '/usernames_loader/',
-          delay: 300,
-          dataType: 'json',
-          data: function (params) {
-            return params.term ? {search: params.term} : {search: ""};
-          },
-          success: function (data) {
-//                    return {
-//                        results: data
-//                    };
-//                 data =  $.map(data, function (item) {
-//                                  return item;
-//                                });
-                return {
-                    result: $.map(data, function (item) {
-                        console.log(item);
-                        item.id =  item.id;
-                        item.text = item.text || item.name;
-
-                        return {
-                            text: item.text,
-                            id: item.id
-                        }
-                    })
-                };
-              }
-            },
-        }
-    )
-});
-
-$('.input-daterange input').each(function() {
-    $(this).datepicker('clearDates');
-});

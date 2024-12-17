@@ -39,22 +39,7 @@
                         </li>>
                     {% endfor %}
                     <li class="nav-item">
-                        <select class="js-example-basic-single width20 form-control" name="vocation_select" id="vocation_select" aria-label="Default select example">
-                                </select>
-                        <div class="dropdown">
-                            <button class="btn btn-dark dropdown-toggle" id="vocation_button" data-bs-toggle="dropdown" aria-expanded="false">Отпуск</button>
-                            <div class="dropdown-menu col-md-6">
-                                <div class="m-3">
-<!--                                <select class="js-example-basic-single width20 form-control" name="vocation_select" id="vocation_select" aria-label="Default select example">-->
-<!--                                </select>-->
-                                    <div class="input-group input-daterange">
-                                        <input type="text" class="form-control" value="2012-04-05">
-                                        <div class="input-group-addon">to</div>
-                                        <input type="text" class="form-control" value="2012-04-19">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#vocationModal">Отпуск</button>
                     </li>
                     {% if user.is_superuser %}
                         <li class="nav-item">
@@ -104,11 +89,22 @@
     </div>
   </div>
 </div>
+
 <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-body">
         {% include "additional_pages/feedback_modal.html" %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="vocationModal" data-focus="false" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        {% include "additional_pages/vocation_modal.html" %}
       </div>
     </div>
   </div>

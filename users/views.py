@@ -1,10 +1,11 @@
-from django.db.models import Q
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views import View
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
+
+from raports.utils.utils import new_vocation
 from .models import User
 
 from .forms import RegisterUserForm
@@ -49,3 +50,14 @@ def get_all_users(request):
 class SearchUser(View):
     def get(self, request):
         return SearchUsers(request.GET['search']).search()
+
+
+class NewVocation(View):
+    def post(self, request):
+        # try:
+        return new_vocation(request.user,
+                            request.POST['deputy[]'][0],
+                            request.POST['vocation_start'],
+                            request.POST['vocation_end'])
+        # except Exception as e:
+        #     return JsonResponse(data={'message': f'Произошла неизвестная ошибка: {type(e).__name__}'}, status=500)

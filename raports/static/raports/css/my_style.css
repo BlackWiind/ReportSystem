@@ -485,3 +485,7 @@ a[href*="#followme"]::before {
   display:none;
 }
 
+.select2-container {
+    z-index: 10000;
+}
+
