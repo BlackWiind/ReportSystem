@@ -9,7 +9,7 @@ from django_filters.views import FilterView
 
 from users.models import User, CuratorsGroup
 from .mail import send_email
-from .models import Raport, Tag, Files
+from .models import Raport, Tag, Files, WaitingStatusForUser
 from raports.utils.form_utils import create_new_raport
 from .forms import CreateRaportForm, AddFilesAndNewPriceForm, AddSourcesOfFundingForm
 from .filters import RaportFilter
@@ -143,5 +143,17 @@ class Feedback(View):
             return JsonResponse(data={'message': f'Сообщение отправлено'}, status=200)
         except Exception as e:
             return JsonResponse(data={'message': f'Произошла ошибка: {type(e).__name__}, {e}'}, status=400)
+
+
+class ChangeWaitingStatus(View):
+    def post(self, request, *args, **kwargs):
+        raport = Raport.objects.get(pk=self.request.pk)
+        if raport.waiting:
+            raport.waiting = False
+
+        else:
+            raport.waiting = True
+            _ = WaitingStatusForUser.objects.create(
+                sender=request.POST['sender'],receiver=request.POST['receiver'],raport=raport)
 
 

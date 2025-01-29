@@ -7,6 +7,7 @@ from django.utils.timezone import now
 
 from django.db import models
 
+import users.models
 from users.models import User, CuratorsGroup, Statuses
 
 
@@ -84,6 +85,8 @@ class Raport(models.Model):
 
     sources_of_funding = models.ManyToManyField(SourcesOfFunding, verbose_name='Источники финансирования', blank=True)
     sign = models.TextField(verbose_name='ЭЦП', blank=True)
+    waiting = models.BooleanField(default=False, verbose_name='Ожидание')
+
 
     def __str__(self):
         return f'Рапорт №{self.pk} от {self.creator}'
@@ -98,6 +101,7 @@ class Raport(models.Model):
         ordering = ['-id']
 
 
+
 @receiver(pre_delete, sender=Raport)
 def delete_related_jobs(sender, instance, **kwargs):
     for history in instance.history_set.all():
@@ -108,3 +112,10 @@ def delete_related_jobs(sender, instance, **kwargs):
         # No remaining projects
         if not file.projects.exclude(id=instance.id).count():
             file.delete()
+
+
+class WaitingStatusForUser(models.Model):
+    sender = models.ForeignKey(User, verbose_name='Отправитель')
+    receiver = models.ForeignKey(User, verbose_name='Получатель')
+    raport = models.ForeignKey(Raport, verbose_name='Рапорт')
+    date_of_creation = models.DateField(auto_now_add=True, verbose_name='Дата создания')
