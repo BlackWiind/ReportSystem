@@ -82,7 +82,7 @@ function changeCuratorsGroup(pk){
 }
 
 function changeStatus(pk, data){
-    let url = '/home/update_raport/' + parseInt(pk) + '/'
+    let url = '/home/update_report/' + parseInt(pk) + '/'
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     data.csrfmiddlewaretoken = csrftoken;
     $.ajax({

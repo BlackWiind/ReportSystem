@@ -55,7 +55,7 @@ function Verify(sSignedMessage) {
 
 const sign = async () => {
   document.getElementById('createSign').addEventListener('click', async () => {
-      form = document.getElementById('createRaportForm');
+      form = document.getElementById('createReportForm');
       data = document.getElementById('id_text').value;
       const thumbprint = document.getElementById('certList').value;
       value = await window.cryptoPro.createSignature(thumbprint, btoa(unescape(encodeURIComponent(data))));

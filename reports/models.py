@@ -11,12 +11,12 @@ import users.models
 from users.models import User, CuratorsGroup, Statuses
 
 
-def raport_directory_path(instance, filename):
-    return 'print_forms/raport_{0}/{1}'.format(instance.id, filename)
+def report_directory_path(instance, filename):
+    return 'print_forms/report_{0}/{1}'.format(instance.id, filename)
 
 
 def file_directory_path(instance, filename):
-    return 'raport_{0}/{1}'.format(instance.pk, filename)
+    return 'report_{0}/{1}'.format(instance.pk, filename)
 
 
 class Tag(models.Model):
@@ -61,7 +61,7 @@ class SourcesOfFunding(models.Model):
         verbose_name_plural = 'Источники финансирования'
 
 
-class Raport(models.Model):
+class Report(models.Model):
     creator = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Создатель рапорта')
     text = models.TextField(verbose_name='Текст')
     justification = models.TextField(verbose_name='Основание')
@@ -74,7 +74,7 @@ class Raport(models.Model):
     history = models.ManyToManyField(History, verbose_name='История', blank=True)
     files = models.ManyToManyField(Files, verbose_name='Прикреплённые файлы', blank=True)
     date_create = models.DateField(auto_now_add=True, verbose_name='Дата создания')
-    print_form = models.FileField(upload_to=raport_directory_path, blank=True)
+    print_form = models.FileField(upload_to=report_directory_path, blank=True)
 
     curators_group = models.ForeignKey(CuratorsGroup, on_delete=models.CASCADE, null=True,
                                        verbose_name='Курируемая группа')
@@ -92,7 +92,7 @@ class Raport(models.Model):
         return f'Рапорт №{self.pk} от {self.creator}'
 
     def get_absolute_url(self):
-        return reverse('raports:details', kwargs={'pk': self.pk})
+        return reverse('reports:details', kwargs={'pk': self.pk})
 
     class Meta:
         verbose_name = 'Рапорт'
@@ -102,7 +102,7 @@ class Raport(models.Model):
 
 
 
-@receiver(pre_delete, sender=Raport)
+@receiver(pre_delete, sender=Report)
 def delete_related_jobs(sender, instance, **kwargs):
     for history in instance.history_set.all():
         # No remaining projects
@@ -117,5 +117,5 @@ def delete_related_jobs(sender, instance, **kwargs):
 class WaitingStatusForUser(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Отправитель', related_name='sender')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Получатель')
-    raport = models.ForeignKey(Raport, on_delete=models.CASCADE, verbose_name='Рапорт')
+    report = models.ForeignKey(Report, on_delete=models.CASCADE, verbose_name='Рапорт')
     date_of_creation = models.DateField(auto_now_add=True, verbose_name='Дата создания')

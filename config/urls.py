@@ -9,5 +9,5 @@ urlpatterns = [
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     path('admin/', admin.site.urls),
     path('', include('users.urls')),
-    path('home/', include('raports.urls')),
+    path('home/', include('reports.urls')),
 ]

@@ -5,7 +5,7 @@ from django.http import FileResponse
 from .utils import word_to_genitive
 
 from reportlab.lib.styles import ParagraphStyle
-from raports.models import Raport
+from reports.models import Report
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
@@ -14,14 +14,14 @@ from reportlab.platypus import Paragraph
 
 
 def create_pdf_unloading(pk):
-    data = Raport.objects.get(pk=pk)
+    data = Report.objects.get(pk=pk)
 
     buffer = io.BytesIO()
     width, height = A4
 
     my_canvas = canvas.Canvas(buffer, pagesize=A4)
     pdfmetrics.registerFont(
-        TTFont('Arial', 'raports/static/raports/fonts/arial.ttf',
+        TTFont('Arial', 'reports/static/reports/fonts/arial.ttf',
                'UTF-8'))
 
     main_stile = ParagraphStyle('Arial Style', fontName='Arial', fontSize=14)

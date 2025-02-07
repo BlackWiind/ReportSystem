@@ -19,7 +19,7 @@
         <div class="col-8">
             <div class="card" xmlns="http://www.w3.org/1999/html">
                 <div class="card-body">
-                    <h1>Рапорт №{{ object.pk }}</h1>  <a href="{% url 'raports:download_pdf' object.pk %}" target="_blank" rel="noopener noreferrer">печатная форма</a><br>
+                    <h1>Рапорт №{{ object.pk }}</h1>  <a href="{% url 'reports:download_pdf' object.pk %}" target="_blank" rel="noopener noreferrer">печатная форма</a><br>
                     <b>{{ object|verbose_name:'creator'}}: </b>
                     <small>{{ object.creator }}</small><p/>
                     <b>{{ object|verbose_name:'tags'}}: </b>
@@ -99,7 +99,7 @@
     </div>
 </div>
 
-<script type="text/javascript" src={% static 'raports/js/details.js' %}></script>
+<script type="text/javascript" src={% static 'reports/js/details.js' %}></script>
 <script>
     let my_pk = {{object.pk}}
 </script>

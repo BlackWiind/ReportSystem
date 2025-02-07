@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "name": "Создать",
-      "link": "raports:create_raport"
+      "link": "reports:create_report"
     }
   },
   {
@@ -12,7 +12,7 @@
     "pk": 2,
     "fields": {
       "name": "Список",
-      "link": "raports:list"
+      "link": "reports:list"
     }
   },
   {
@@ -20,7 +20,7 @@
     "pk": 3,
     "fields": {
       "name": "Архив",
-      "link": "raports:archive"
+      "link": "reports:archive"
     }
   },
   {

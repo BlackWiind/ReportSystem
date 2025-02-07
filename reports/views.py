@@ -9,54 +9,54 @@ from django_filters.views import FilterView
 
 from users.models import User, CuratorsGroup
 from .mail import send_email
-from .models import Raport, Tag, Files, WaitingStatusForUser
-from raports.utils.form_utils import create_new_raport
-from .forms import CreateRaportForm, AddFilesAndNewPriceForm, AddSourcesOfFundingForm
-from .filters import RaportFilter
-from raports.utils.utils import get_queryset_dependent_group, update_status
-from raports.utils.unloads import create_pdf_unloading
+from .models import Report, Tag, Files, WaitingStatusForUser
+from reports.utils.form_utils import create_new_report
+from .forms import CreateReportForm, AddFilesAndNewPriceForm, AddSourcesOfFundingForm
+from .filters import ReportFilter
+from reports.utils.utils import get_queryset_dependent_group, update_status
+from reports.utils.unloads import create_pdf_unloading
 
 
-class RaportCreateView(CreateView):
-    form_class = CreateRaportForm
-    template_name = 'raports/create_raport.html'
-    success_url = reverse_lazy('raports:list')
+class ReportCreateView(CreateView):
+    form_class = CreateReportForm
+    template_name = 'reports/create_report.html'
+    success_url = reverse_lazy('reports:list')
 
     def form_valid(self, form):
         try:
-            create_new_raport(self.request, form)
+            create_new_report(self.request, form)
         except Exception as e:
-            raise Exception(f"Create new raport error: {e.args} {e.__traceback__.tb_lineno}")
+            raise Exception(f"Create new report error: {e.args} {e.__traceback__.tb_lineno}")
         else:
             return HttpResponseRedirect(self.success_url)
 
     def form_invalid(self, form):
-        return super(RaportCreateView, self).form_invalid(form)
+        return super(ReportCreateView, self).form_invalid(form)
 
 
-class RaportListView(FilterView):
-    model = Raport
-    template_name = 'raports/list.html'
+class ReportListView(FilterView):
+    model = Report
+    template_name = 'reports/list.html'
     paginate_by = 5
-    filterset_class = RaportFilter
+    filterset_class = ReportFilter
 
     def get_queryset(self):
         return get_queryset_dependent_group(self.request.user)
 
 
 class ArchiveListView(FilterView):
-    model = Raport
-    template_name = 'raports/list.html'
+    model = Report
+    template_name = 'reports/list.html'
     paginate_by = 5
-    filterset_class = RaportFilter
+    filterset_class = ReportFilter
 
     def get_queryset(self):
-        return Raport.objects.filter(status__status__in=['rejected', 'done'])
+        return Report.objects.filter(status__status__in=['rejected', 'done'])
 
 
-class RaportDetailView(DetailView):
-    model = Raport
-    template_name = 'raports/details.html'
+class ReportDetailView(DetailView):
+    model = Report
+    template_name = 'reports/details.html'
 
 
 def get_curator_groups(request):
@@ -71,7 +71,7 @@ def download_pdf_report(request, pk):
 
 def change_curators_group(request, pk):
     if request.method == 'POST':
-        _ = Raport.objects.filter(pk=pk).update(curators_group=request.POST['new_group'])
+        _ = Report.objects.filter(pk=pk).update(curators_group=request.POST['new_group'])
         return JsonResponse(data={'message': 'Рапорт успешно обновлён'})
 
 
@@ -81,9 +81,9 @@ def get_purchasing_specialist(request):
         return render(request, 'additional_pages/modal_of_purchasing_specialists.html', context)
 
 
-class UpdateRaportStatusView(UpdateView):
-    model = Raport
-    template_name = 'raports/details.html'
+class UpdateReportStatusView(UpdateView):
+    model = Report
+    template_name = 'reports/details.html'
     fields = ['status']
 
     def post(self, request, *args, **kwargs):
@@ -94,8 +94,8 @@ class UpdateRaportStatusView(UpdateView):
             return JsonResponse(data={'message': 'Произошла ошибка!'}, status=400)
 
 
-class AddFilesToExistedRaport(UpdateView):
-    model = Raport
+class AddFilesToExistedReport(UpdateView):
+    model = Report
     form_class = AddFilesAndNewPriceForm
     template_name = 'additional_pages/add_files_form.html'
 
@@ -115,7 +115,7 @@ class AddFilesToExistedRaport(UpdateView):
 
 
 class AddSourcesOfFundingView(UpdateView):
-    model = Raport
+    model = Report
     form_class = AddSourcesOfFundingForm
     template_name = 'additional_pages/sources_of_funding_form.html'
 
@@ -147,13 +147,13 @@ class Feedback(View):
 
 class ChangeWaitingStatus(View):
     def post(self, request, *args, **kwargs):
-        raport = Raport.objects.get(pk=self.request.pk)
-        if raport.waiting:
-            raport.waiting = False
+        report = Report.objects.get(pk=self.request.pk)
+        if report.waiting:
+            report.waiting = False
 
         else:
-            raport.waiting = True
+            report.waiting = True
             _ = WaitingStatusForUser.objects.create(
-                sender=request.POST['sender'],receiver=request.POST['receiver'],raport=raport)
+                sender=request.POST['sender'],receiver=request.POST['receiver'],report=report)
 
 

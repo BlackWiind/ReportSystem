@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
 from users.models import Department
-from .models import Raport, Tag, SourcesOfFunding
+from .models import Report, Tag, SourcesOfFunding
 
 
 class MultipleFileInput(forms.ClearableFileInput):
@@ -39,10 +39,10 @@ class CuratorToDepartmentForm(forms.ModelForm):
         fields = ['name']
 
 
-class CreateRaportForm(forms.ModelForm):
+class CreateReportForm(forms.ModelForm):
 
     class Meta:
-        model = Raport
+        model = Report
         fields = [
             'text',
             'justification',
@@ -74,7 +74,7 @@ class CreateRaportForm(forms.ModelForm):
 
 class AddFilesAndNewPriceForm(forms.ModelForm):
     class Meta:
-        model = Raport
+        model = Report
         fields = ['files', 'price', ]
 
     files = MultipleFileField(required=False, label='Прикреплённые файлы')
@@ -82,7 +82,7 @@ class AddFilesAndNewPriceForm(forms.ModelForm):
 
 class AddSourcesOfFundingForm(forms.ModelForm):
     class Meta:
-        model = Raport
+        model = Report
         fields = ['sources_of_funding', ]
 
         sources_of_funding = forms.ModelMultipleChoiceField(

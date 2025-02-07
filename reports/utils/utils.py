@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.http import JsonResponse
 
-from raports.models import Raport
+from reports.models import Report
 import pymorphy2
 
 from users.models import VocationsSchedule, User, CustomGroups
@@ -14,9 +14,9 @@ def get_queryset_dependent_group(user):
     if 'curator' in user.groups.values_list('name', flat=True):
         parameters['curators_group'] = user.curators_group
     if user.is_superuser:
-        set_for_return = Raport.objects.all()
+        set_for_return = Report.objects.all()
     else:
-        set_for_return = Raport.objects.filter(Q(**parameters) | Q(creator=user) | Q(assigned_purchasing_specialist=user))
+        set_for_return = Report.objects.filter(Q(**parameters) | Q(creator=user) | Q(assigned_purchasing_specialist=user))
     return set_for_return.exclude(status__status__in=['rejected', 'done'])
 
 
@@ -37,9 +37,9 @@ def ajax_decoder(request_data) -> dict:
 
 
 def update_status(pk, request):
-    raport = Raport.objects.filter(pk=pk)
-    raport.update(**ajax_decoder(request))
-    for q in raport:
+    report = Report.objects.filter(pk=pk)
+    report.update(**ajax_decoder(request))
+    for q in report:
         q.history.create(user=request.user, action=q.status)
     return True
 

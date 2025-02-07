@@ -9,11 +9,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['10.40.11.38', ]
+ALLOWED_HOSTS = ['10.40.11.38', '127.0.0.1',]
 
-CSRF_TRUSTED_ORIGINS = ['https://10.40.11.38', ]
+CSRF_TRUSTED_ORIGINS = ['https://10.40.11.38',]
 
 
 INSTALLED_APPS = [
@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'django_filters',
 
     'users',
-    'raports',
+    'reports',
 ]
 
 MIDDLEWARE = [
@@ -116,7 +116,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = 'static'
-STATICFILES_DIR = ['/RaportSystem/static', ]
+STATICFILES_DIR = ['/ReportSystem/static', ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'

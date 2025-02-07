@@ -5,7 +5,7 @@ from django.views import View
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
 
-from raports.utils.utils import new_vocation
+from reports.utils.utils import new_vocation
 from .models import User
 
 from .forms import RegisterUserForm
@@ -29,7 +29,7 @@ class UserLoginView(LoginView):
     template_name = 'users/login.html'
 
     def get_success_url(self):
-        return reverse_lazy('raports:list')
+        return reverse_lazy('reports:list')
 
     def form_invalid(self, form):
         messages.error(self.request, 'Неверный логин или пароль')

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Tag, Raport, History, Files, SourcesOfFunding
+from .models import Tag, Report, History, Files, SourcesOfFunding
 
 
 class TagAdmin(admin.ModelAdmin):
@@ -14,7 +14,7 @@ class TagAdmin(admin.ModelAdmin):
     )
 
 
-class RaportAdmin(admin.ModelAdmin):
+class ReportAdmin(admin.ModelAdmin):
     list_of_fields = ('id', 'creator', 'price', 'one_time',)
     list_display = list_of_fields
     list_display_links = list_of_fields
@@ -47,7 +47,7 @@ class SourcesOfFundingAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Tag, TagAdmin)
-admin.site.register(Raport, RaportAdmin)
+admin.site.register(Report, ReportAdmin)
 admin.site.register(Files, FilesAdmin)
 admin.site.register(History, HistoryAdmin)
 admin.site.register(SourcesOfFunding, SourcesOfFundingAdmin)
