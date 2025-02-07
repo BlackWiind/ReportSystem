@@ -115,7 +115,7 @@ def delete_related_jobs(sender, instance, **kwargs):
 
 
 class WaitingStatusForUser(models.Model):
-    sender = models.ForeignKey(User, verbose_name='Отправитель')
-    receiver = models.ForeignKey(User, verbose_name='Получатель')
-    raport = models.ForeignKey(Raport, verbose_name='Рапорт')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Отправитель', related_name='sender')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Получатель')
+    raport = models.ForeignKey(Raport, on_delete=models.CASCADE, verbose_name='Рапорт')
     date_of_creation = models.DateField(auto_now_add=True, verbose_name='Дата создания')

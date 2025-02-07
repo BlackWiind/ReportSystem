@@ -50,21 +50,21 @@ services:
     depends_on:
       - pg_db
 
-#  nginx:
-#    build:
-#      dockerfile: ./Dockerfile
-#      context: ./Docker/nginx/
-#    ports:
-#      - "${NGINX_EXTERNAL_PORT}:80"
-#      - "${NGINX_EXTERNAL_SSL_PORT}:443"
-#    volumes:
-#      - ./Docker/nginx/certs:/etc/nginx/certs
-#      - static_volume:/static/
-#      - media_volume:/media/
-#    depends_on:
-#      - report_web
-#    restart:
-#        always
+  nginx:
+    build:
+      dockerfile: ./Dockerfile
+      context: ./Docker/nginx/
+    ports:
+      - "${NGINX_EXTERNAL_PORT}:80"
+      - "${NGINX_EXTERNAL_SSL_PORT}:443"
+    volumes:
+      - ./Docker/nginx/certs:/etc/nginx/certs
+      - static_volume:/static/
+      - media_volume:/media/
+    depends_on:
+      - report_web
+    restart:
+        always
 
   redis:
     image: redis:7.0.5-alpine
