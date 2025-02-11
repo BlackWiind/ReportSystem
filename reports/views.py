@@ -6,15 +6,20 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DetailView, UpdateView
 from django_filters.views import FilterView
+from rest_framework import status, permissions, generics
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from users.models import User, CuratorsGroup
 from .mail import send_email
-from .models import Report, Tag, Files, WaitingStatusForUser
+from .models import Report, Tag, Files, WaitingStatusForUser, Draft
 from reports.utils.form_utils import create_new_report
 from .forms import CreateReportForm, AddFilesAndNewPriceForm, AddSourcesOfFundingForm
 from .filters import ReportFilter
 from reports.utils.utils import get_queryset_dependent_group, update_status
 from reports.utils.unloads import create_pdf_unloading
+from .permissions import IsOwnerOrReadOnly
+from .serializers import DraftCreateSerializer, DraftGetSerializer, DraftListSerializer
 
 
 class ReportCreateView(CreateView):
@@ -155,5 +160,35 @@ class ChangeWaitingStatus(View):
             report.waiting = True
             _ = WaitingStatusForUser.objects.create(
                 sender=request.POST['sender'],receiver=request.POST['receiver'],report=report)
+
+
+class DraftCreate(APIView):
+    """Создание нового черновика"""
+
+    def post(self, request):
+        draft = DraftCreateSerializer(data=request.data)
+        if draft.is_valid():
+            draft.save(creator=request.user)
+            return Response(draft.data, status=status.HTTP_201_CREATED)
+        return Response(draft.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DraftDetail(APIView):
+    """Детали черновика"""
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly]
+
+
+    def get(self, request, pk):
+        draft = Draft.objects.get(id=pk)
+        serializer = DraftGetSerializer(draft)
+        return Response(serializer.data)
+
+
+class DraftListView(APIView):
+
+    def get(self,request):
+        queryset = Draft.custom_query.not_closed(user=request.user)
+        serializer = DraftListSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 

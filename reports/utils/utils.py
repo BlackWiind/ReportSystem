@@ -4,20 +4,21 @@ from django.http import JsonResponse
 from reports.models import Report
 import pymorphy2
 
-from users.models import VocationsSchedule, User, CustomGroups
+from users.models import VocationsSchedule, User, CustomPermissions
 
 
 def get_queryset_dependent_group(user):
-    available_statuses = list(user.groups.values_list('customgroups__statuses', flat=True))
-    set_for_return = None
-    parameters = {'status__in': available_statuses}
-    if 'curator' in user.groups.values_list('name', flat=True):
-        parameters['curators_group'] = user.curators_group
-    if user.is_superuser:
-        set_for_return = Report.objects.all()
-    else:
-        set_for_return = Report.objects.filter(Q(**parameters) | Q(creator=user) | Q(assigned_purchasing_specialist=user))
-    return set_for_return.exclude(status__status__in=['rejected', 'done'])
+    # available_statuses = list(user.groups.values_list('customgroups__statuses', flat=True))
+    # set_for_return = None
+    # parameters = {'status__in': available_statuses}
+    # if 'curator' in user.groups.values_list('name', flat=True):
+    #     parameters['curators_group'] = user.curators_group
+    # if user.is_superuser:
+    #     set_for_return = Report.objects.all()
+    # else:
+    #     set_for_return = Report.objects.filter(Q(**parameters) | Q(creator=user) | Q(assigned_purchasing_specialist=user))
+    # return set_for_return.exclude(status__status__in=['rejected', 'done'])
+    return Report.objects.all()
 
 
 def word_to_genitive(word: str) -> str:
@@ -53,7 +54,7 @@ def new_vocation(vocation_user, deputy, vocation_start, vocation_end):
         group = vocation_user.groups.all()[0].name
         VocationsSchedule.objects.create(vocation_start=vocation_start, vocation_end=vocation_end,
                                         vocation_user=vocation_user, deputy=deputy,
-                                        group=CustomGroups.objects.get(name=group))
+                                        group=CustomPermissions.objects.get(name=group))
         return JsonResponse(data={'message': 'Успешно'}, status=200)
     except:
         return JsonResponse(data={'message': 'Не получилось создать запись об отпуске'}, status=403)

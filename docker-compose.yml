@@ -1,33 +1,33 @@
 #version: '3.7'
 
 services:
-  pg_db:
-    container_name: postgres_container
-    image: postgres:15
-    restart: always
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - .env
-
-
-  pg_admin:
-    container_name: pg_admin_container
-    image: dpage/pgadmin4
-    env_file:
-      - .env
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-    ports:
-      - "5050:80"
-    restart: always
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 1G
+#  pg_db:
+#    container_name: postgres_container
+#    image: postgres:15
+#    restart: always
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data/
+#    env_file:
+#      - .env
+#
+#
+#  pg_admin:
+#    container_name: pg_admin_container
+#    image: dpage/pgadmin4
+#    env_file:
+#      - .env
+#    volumes:
+#      - pgadmin-data:/var/lib/pgadmin
+#    ports:
+#      - "5050:80"
+#    restart: always
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.5'
+#          memory: 1G
 
   report_web:
     container_name: report_web
@@ -45,10 +45,10 @@ services:
     env_file:
       - .env
     ports:
-      - 8000:8000
+      - 7777:8000
     restart: always
-    depends_on:
-      - pg_db
+#    depends_on:
+#      - pg_db
 
 #  nginx:
 #    build:
@@ -66,36 +66,36 @@ services:
 #    restart:
 #        always
 
-  redis:
-    image: redis:7.0.5-alpine
-    hostname: redis
-    restart: always
-
-  worker:
-    build: .
-    hostname: worker
-    entrypoint: celery
-    command: -A config worker --loglevel=info
-    restart: always
-    volumes:
-      - .:/report_web
-    links:
-      - redis
-    depends_on:
-      - redis
-
-  celery-beat:
-    build: .
-    hostname: celery-beat
-    entrypoint: celery
-    command: -A config beat --loglevel=info
-    restart: always
-    volumes:
-      - .:/report_web
-    links:
-      - redis
-    depends_on:
-      - redis
+#  redis:
+#    image: redis:7.0.5-alpine
+#    hostname: redis
+#    restart: always
+#
+#  worker:
+#    build: .
+#    hostname: worker
+#    entrypoint: celery
+#    command: -A config worker --loglevel=info
+#    restart: always
+#    volumes:
+#      - .:/report_web
+#    links:
+#      - redis
+#    depends_on:
+#      - redis
+#
+#  celery-beat:
+#    build: .
+#    hostname: celery-beat
+#    entrypoint: celery
+#    command: -A config beat --loglevel=info
+#    restart: always
+#    volumes:
+#      - .:/report_web
+#    links:
+#      - redis
+#    depends_on:
+#      - redis
 
 
 #  flower:
@@ -115,7 +115,7 @@ services:
 
 
 volumes:
-  static_volume:
-  media_volume:
-  postgres_data:
-  pgadmin-data:
+  test/static_volume:
+  test/media_volume:
+#  postgres_data:
+#  pgadmin-data:

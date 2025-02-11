@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import User, Department, CuratorsGroup, Statuses, CustomGroups, PossibleActions, Links
+from .models import User, Department, CuratorsGroup, Statuses, CustomPermissions, PossibleActions, Links
 
 
 class CustomUserAdmin(UserAdmin):
@@ -19,6 +19,7 @@ class CustomUserAdmin(UserAdmin):
         'department',
         'curators_group',
         'job_title',
+        'custom_permissions',
     )
     list_display = list_of_fields
 
@@ -32,8 +33,9 @@ class CustomUserAdmin(UserAdmin):
         'surname',
         'department__name',
         'job_title',
+        'custom_permissions__description',
     )
-    list_filter = ['department__name', ]
+    list_filter = ['department__name', 'custom_permissions__description',]
 
     fieldsets = (
         *UserAdmin.fieldsets,
@@ -45,6 +47,7 @@ class CustomUserAdmin(UserAdmin):
                     'department',
                     'curators_group',
                     'job_title',
+                    'custom_permissions',
                 )
             }
         )
@@ -70,7 +73,7 @@ class StatusesAdmin(admin.ModelAdmin):
 
 
 class PossibleActionsAdmin(admin.ModelAdmin):
-    list_of_fields = ('id', 'name', 'required_status', )
+    list_of_fields = ('id', 'name', 'visible_name', )
     list_display = list_of_fields
     list_display_links = list_of_fields
 
@@ -94,5 +97,5 @@ admin.site.register(Department, DepartmentAdmin)
 admin.site.register(CuratorsGroup, CuratorsGroupAdmin)
 admin.site.register(Statuses, StatusesAdmin)
 admin.site.register(PossibleActions, PossibleActionsAdmin)
-admin.site.register(CustomGroups, CustomGroupAdmin)
+admin.site.register(CustomPermissions, CustomGroupAdmin)
 admin.site.register(Links, LinksAdmin)

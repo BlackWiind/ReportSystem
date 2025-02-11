@@ -7,9 +7,26 @@ from django.utils.timezone import now
 
 from django.db import models
 
-import users.models
 from users.models import User, CuratorsGroup, Statuses
 
+class DraftQuerySet(models.QuerySet):
+    def not_closed(self):
+        return self.filter(closed=False)
+
+    def closed(self):
+        return self.filter(closed=True)
+
+class DraftManager(models.Manager):
+    def get_queryset(self):
+        return DraftQuerySet(self.model)
+
+    def not_closed(self, user):
+        if user.custom_permissions.name == 'head_of_department':
+            return self.get_queryset().not_closed().filter(creator__department=user.department)
+        return self.get_queryset().not_closed().filter(creator=user)
+
+    def closed(self):
+        return self.get_queryset().closed()
 
 def report_directory_path(instance, filename):
     return 'print_forms/report_{0}/{1}'.format(instance.id, filename)
@@ -60,20 +77,33 @@ class SourcesOfFunding(models.Model):
         verbose_name = 'Источник финансирования'
         verbose_name_plural = 'Источники финансирования'
 
-
-class Report(models.Model):
-    creator = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Создатель рапорта')
+class GeneralData(models.Model):
+    creator = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Автор',
+                                related_name='%(app_label)s_%(class)s_creator')
     text = models.TextField(verbose_name='Текст')
     justification = models.TextField(verbose_name='Основание')
+    price = models.FloatField(default=0.00, verbose_name='Цена')
+    one_time = models.BooleanField(default=True, verbose_name='Единовременная закупка')
+    tags = models.ManyToManyField(Tag, verbose_name='Теги', related_name='%(app_label)s_%(class)s_tags')
+    date_create = models.DateField(auto_now_add=True, verbose_name='Дата создания')
+
+    class Meta:
+        abstract = True
+
+
+class Draft(GeneralData):
+    closed = models.BooleanField(default=False, verbose_name='Закрыта')
+    close_reason = models.TextField(null=True, blank=True, verbose_name='Причина закрытия')
+
+    objects = models.Manager()
+    custom_query = DraftManager()
+
+class Report(GeneralData):
     union = models.BooleanField(default=False, verbose_name='Объеденённый рапорт')
     status = models.ForeignKey(Statuses, null=True, on_delete=models.PROTECT, default=1, verbose_name='Статус')
     rejection_reason = models.TextField(null=True, blank=True)
-    tags = models.ManyToManyField(Tag, verbose_name='Теги')
-    price = models.FloatField(default=0.00, verbose_name='Цена')
-    one_time = models.BooleanField(default=True, verbose_name='Единовременная закупка')
-    history = models.ManyToManyField(History, verbose_name='История', blank=True)
+    history = models.ManyToManyField(History, verbose_name='История', blank=True, related_name='history')
     files = models.ManyToManyField(Files, verbose_name='Прикреплённые файлы', blank=True)
-    date_create = models.DateField(auto_now_add=True, verbose_name='Дата создания')
     print_form = models.FileField(upload_to=report_directory_path, blank=True)
 
     curators_group = models.ForeignKey(CuratorsGroup, on_delete=models.CASCADE, null=True,
@@ -83,9 +113,11 @@ class Report(models.Model):
                                                        verbose_name='Специалист отдела закупок',
                                                        related_name='assigned_purchasing_specialist')
 
-    sources_of_funding = models.ManyToManyField(SourcesOfFunding, verbose_name='Источники финансирования', blank=True)
+    sources_of_funding = models.ManyToManyField(SourcesOfFunding, verbose_name='Источники финансирования',
+                                                blank=True, related_name='%(app_label)s_%(class)s_sources')
     sign = models.TextField(verbose_name='ЭЦП', blank=True)
     waiting = models.BooleanField(default=False, verbose_name='Ожидание')
+    parents = models.ManyToManyField(Draft, blank=True, related_name='%(app_label)s_%(class)s_sources')
 
 
     def __str__(self):
