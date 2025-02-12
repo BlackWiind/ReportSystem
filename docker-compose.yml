@@ -45,7 +45,7 @@ services:
     env_file:
       - .env
     ports:
-      - 7777:8000
+      - 8000:8000
     restart: always
 #    depends_on:
 #      - pg_db
@@ -115,7 +115,7 @@ services:
 
 
 volumes:
-  test/static_volume:
-  test/media_volume:
-#  postgres_data:
-#  pgadmin-data:
+  static_volume:
+  media_volume:
+  postgres_data:
+  pgadmin-data:

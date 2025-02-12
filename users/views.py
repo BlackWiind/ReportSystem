@@ -4,11 +4,14 @@ from django.contrib import messages
 from django.views import View
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
+from rest_framework import generics
 
+from reports.permissions import IsSuperuserOrReadOnly
 from reports.utils.utils import new_vocation
 from .models import User
 
 from .forms import RegisterUserForm
+from .serializers import UserSerializer
 from .utils.search_in_db import SearchUsers
 
 
@@ -61,3 +64,14 @@ class NewVocation(View):
                             request.POST['vocation_end'])
         # except Exception as e:
         #     return JsonResponse(data={'message': f'Произошла неизвестная ошибка: {type(e).__name__}'}, status=500)
+
+class GetUsers(generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsSuperuserOrReadOnly]
+
+class GetUsersFromMyDepartment(generics.ListAPIView):
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        return User.objects.filter(department=self.request.user.department)

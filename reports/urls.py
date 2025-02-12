@@ -17,7 +17,9 @@ urlpatterns = [
     path('add_files_form/<int:pk>/', views.AddFilesToExistedReport.as_view(), name='add_files_form'),
     path('add_new_tag/', views.AddNewTag.as_view(), name='add_new_tag'),
     path('feedback/', views.Feedback.as_view(), name='feedback'),
-    path('new_draft/', views.DraftCreate.as_view(), name='new_draft'),
-    path('details_draft/<int:pk>/', views.DraftDetail.as_view()),
-    path('draft-list/', views.DraftListView.as_view(), name='draft_list'),
+
+    path('api/new_draft/', views.DraftCreate.as_view(), name='new_draft'),
+    path('api/details_draft/<int:pk>/', views.DraftDetail.as_view()),
+    path('api/draft-list/', views.DraftListView.as_view(), name='draft_list'),
+    path('api/tags-list', views.TagsListAndCreate.as_view(), name='tags_list'),
 ]

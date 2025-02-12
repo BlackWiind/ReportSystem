@@ -7,6 +7,7 @@ from django.views import View
 from django.views.generic import CreateView, DetailView, UpdateView
 from django_filters.views import FilterView
 from rest_framework import status, permissions, generics
+from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -18,8 +19,8 @@ from .forms import CreateReportForm, AddFilesAndNewPriceForm, AddSourcesOfFundin
 from .filters import ReportFilter
 from reports.utils.utils import get_queryset_dependent_group, update_status
 from reports.utils.unloads import create_pdf_unloading
-from .permissions import IsOwnerOrReadOnly
-from .serializers import DraftCreateSerializer, DraftGetSerializer, DraftListSerializer
+from .permissions import IsOwnerOrReadOnly, IsSuperuserOrReadOnly
+from .serializers import DraftCreateSerializer, DraftGetSerializer, DraftListSerializer, TagsListSerializer
 
 
 class ReportCreateView(CreateView):
@@ -192,3 +193,7 @@ class DraftListView(APIView):
         return Response(serializer.data)
 
 
+class TagsListAndCreate(UpdateModelMixin, generics.ListCreateAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = TagsListSerializer
+    permission_classes = [IsSuperuserOrReadOnly]

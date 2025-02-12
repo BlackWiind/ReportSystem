@@ -112,6 +112,9 @@ class Report(GeneralData):
     assigned_purchasing_specialist = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True,
                                                        verbose_name='Специалист отдела закупок',
                                                        related_name='assigned_purchasing_specialist')
+    responsible = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True,
+                                    verbose_name='Ответственный специалист',
+                                    related_name='responsible')
 
     sources_of_funding = models.ManyToManyField(SourcesOfFunding, verbose_name='Источники финансирования',
                                                 blank=True, related_name='%(app_label)s_%(class)s_sources')
