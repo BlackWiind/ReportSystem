@@ -21,5 +21,6 @@ urlpatterns = [
     path('api/new_draft/', views.DraftCreate.as_view(), name='new_draft'),
     path('api/details_draft/<int:pk>/', views.DraftDetail.as_view()),
     path('api/draft-list/', views.DraftListView.as_view(), name='draft_list'),
-    path('api/tags-list', views.TagsListAndCreate.as_view(), name='tags_list'),
+    path('api/tags/list-or-create', views.TagListAndCreate.as_view(), name='tags_list_or_create'),
+    path('api/tags/<int:pk>', views.TagRUD.as_view(), name='tag'),
 ]

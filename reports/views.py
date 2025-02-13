@@ -6,7 +6,8 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DetailView, UpdateView
 from django_filters.views import FilterView
-from rest_framework import status, permissions, generics
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import status, permissions, generics, mixins
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -165,7 +166,7 @@ class ChangeWaitingStatus(View):
 
 class DraftCreate(APIView):
     """Создание нового черновика"""
-
+    @swagger_auto_schema(request_body=DraftCreateSerializer)
     def post(self, request):
         draft = DraftCreateSerializer(data=request.data)
         if draft.is_valid():
@@ -177,7 +178,6 @@ class DraftDetail(APIView):
     """Детали черновика"""
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly]
-
 
     def get(self, request, pk):
         draft = Draft.objects.get(id=pk)
@@ -192,8 +192,14 @@ class DraftListView(APIView):
         serializer = DraftListSerializer(queryset, many=True)
         return Response(serializer.data)
 
-
-class TagsListAndCreate(UpdateModelMixin, generics.ListCreateAPIView):
+class TagRUD(generics.RetrieveUpdateDestroyAPIView):
+    """ Получение, обновление и удаление тега"""
     queryset = Tag.objects.all()
     serializer_class = TagsListSerializer
-    permission_classes = [IsSuperuserOrReadOnly]
+    # permission_classes = [IsSuperuserOrReadOnly]
+
+class TagListAndCreate(generics.ListCreateAPIView):
+    """ Получение списка тегов и создание нового тега"""
+    queryset = Tag.objects.all()
+    serializer_class = TagsListSerializer
+    # permission_classes = [IsSuperuserOrReadOnly]
