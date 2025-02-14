@@ -5,7 +5,7 @@ app_name = 'reports'
 
 urlpatterns = [
     path('create_report/', views.ReportCreateView.as_view(), name='create_report'),
-    path('list/', views.ReportListView.as_view(), name='list'),
+    path('list/', views.HomePage.as_view(), name='list'),
     path('details/<int:pk>/', views.ReportDetailView.as_view(), name='details'),
     path('update_report/<int:pk>/', views.UpdateReportStatusView.as_view(), name='update_report'),
     path('curators_modal/', views.get_curator_groups, name='curators_modal'),
@@ -18,9 +18,10 @@ urlpatterns = [
     path('add_new_tag/', views.AddNewTag.as_view(), name='add_new_tag'),
     path('feedback/', views.Feedback.as_view(), name='feedback'),
 
-    path('api/new_draft/', views.DraftCreate.as_view(), name='new_draft'),
-    path('api/details_draft/<int:pk>/', views.DraftDetail.as_view()),
-    path('api/draft-list/', views.DraftListView.as_view(), name='draft_list'),
+    path('api/draft/create', views.DraftCreate.as_view(), name='new_draft'),
+    path('api/draft/list', views.DraftList.as_view(), name='draft_list'),
     path('api/tags/list-or-create', views.TagListAndCreate.as_view(), name='tags_list_or_create'),
     path('api/tags/<int:pk>', views.TagRUD.as_view(), name='tag'),
+    path('api/reports/list', views.ReportList.as_view(), name='reports_list'),
+    path('api/reports/create', views.Report2Create.as_view(), name='report'),
 ]

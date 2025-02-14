@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Draft, Report, Tag
+from .models import Report, Tag
 
 class TagsListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,33 +8,57 @@ class TagsListSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class DraftCreateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Report
+        fields = ('text', 'justification', 'price', 'tags',)
+
+
 class DraftListSerializer(serializers.ModelSerializer):
     tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
 
     class Meta:
-        model = Draft
-        fields = ('text', 'price', 'tags', 'date_create',)
+        model = Report
+        fields = ('text', 'justification', 'price', 'tags',)
 
-
-class DraftCreateSerializer(serializers.ModelSerializer):
-    """Создание черновика"""
-
-    class Meta:
-        model = Draft
-        fields = ('text', 'justification', 'price', 'one_time', 'tags',)
-
-class DraftGetSerializer(serializers.ModelSerializer):
-    """Детали одного черновика"""
-
-    tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
-
-    class Meta:
-        model = Draft
-        fields = ('creator', 'text', 'justification', 'price', 'one_time', 'tags', 'date_create',)
 
 class ReportCreateSerializer(serializers.ModelSerializer):
     """ Создание нового рапорта"""
 
-    class Mete:
+    # tags = TagsListSerializer(many=True)
+
+    class Meta:
         model = Report
         fields = ('text', 'justification', 'price', 'one_time', 'tags', 'responsible', 'parents',)
+
+
+class ReportRetrieveUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Report
+        # fields = (
+        #     'creator',
+        #     'text',
+        #     'justification',
+        #     'price',
+        #     'one_time',
+        #     'tags',
+        #     'date_create',
+        #     'status',
+        #     'responsible',
+        #     'files',
+        #     'print_form',
+        #     'parents',)
+        exclude =('sign', 'draft', 'curators_group')
+
+class ReportListSerializer(serializers.ModelSerializer):
+    """ Список рапортов"""
+
+    responsible = serializers.SlugRelatedField(slug_field='last_name', read_only=True)
+    tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
+    history = serializers.SlugRelatedField(slug_field='action__verbose_name', read_only=True, many=True)
+
+    class Meta:
+        model = Report
+        fields = ('responsible', 'text', 'price', 'tags', 'assigned_purchasing_specialist', 'status', 'history', )

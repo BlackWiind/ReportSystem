@@ -1,4 +1,24 @@
 $(document).ready( function(){
+
+    $('#Список_id').on('click', function(e){
+    console.log($('#Список_id').val())
+    $.ajax({
+    url: $('#Список_id').val(),
+    type: 'GET',
+    processData: false,
+    contentType: false,
+    data: {},
+    success: function(response) {
+        console.log(response)
+        $('#content_block').innerHTML = response
+    },
+    error: function(data) {
+        $("#AlertText").html(data.responseJSON.message);
+        $(".alert").hide().show('medium');
+    }
+    })
+    })
+
     $('#addTagForm').on('submit', function(e){
         e.preventDefault();
         addNewTag();

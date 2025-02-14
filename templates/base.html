@@ -35,7 +35,7 @@
                     {% get_links request.user as links %}
                     {% for name,link in links.items %}
                         <li class="nav-item">
-                            <a class="btn btn-dark" href="{% url link %}">{{name}}</a>
+                            <button class="btn btn-dark" id="{{name}}_id" value="{% url link %}">{{name}}</button>
                         </li>>
                     {% endfor %}
                     <li class="nav-item">
@@ -67,6 +67,9 @@
 </head>
 
 <body>
+<div id="content_block">
+
+</div>
     <div class="alert alert-danger align-items-center alert-dismissible fade show" role="alert">
     <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
     <div id="AlertText">

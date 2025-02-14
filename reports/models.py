@@ -7,26 +7,10 @@ from django.utils.timezone import now
 
 from django.db import models
 
+from reports.managers import ReportManager
 from users.models import User, CuratorsGroup, Statuses
 
-class DraftQuerySet(models.QuerySet):
-    def not_closed(self):
-        return self.filter(closed=False)
 
-    def closed(self):
-        return self.filter(closed=True)
-
-class DraftManager(models.Manager):
-    def get_queryset(self):
-        return DraftQuerySet(self.model)
-
-    def not_closed(self, user):
-        if user.custom_permissions.name == 'head_of_department':
-            return self.get_queryset().not_closed().filter(creator__department=user.department)
-        return self.get_queryset().not_closed().filter(creator=user)
-
-    def closed(self):
-        return self.get_queryset().closed()
 
 def report_directory_path(instance, filename):
     return 'print_forms/report_{0}/{1}'.format(instance.id, filename)
@@ -48,8 +32,8 @@ class Tag(models.Model):
 
 
 class History(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Пользователь')
-    action = models.ForeignKey(Statuses, null=True, on_delete=models.PROTECT, verbose_name='Статус')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
+    action = models.ForeignKey(Statuses, null=True, on_delete=models.CASCADE, verbose_name='Статус')
     action_date = models.DateField(default=now, verbose_name='Дата')
 
     class Meta:
@@ -77,7 +61,28 @@ class SourcesOfFunding(models.Model):
         verbose_name = 'Источник финансирования'
         verbose_name_plural = 'Источники финансирования'
 
-class GeneralData(models.Model):
+# class GeneralData(models.Model):
+#     creator = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Автор',
+#                                 related_name='%(app_label)s_%(class)s_creator')
+#     text = models.TextField(verbose_name='Текст')
+#     justification = models.TextField(verbose_name='Основание')
+#     price = models.FloatField(default=0.00, verbose_name='Цена')
+#     one_time = models.BooleanField(default=True, verbose_name='Единовременная закупка')
+#     tags = models.ManyToManyField(Tag, verbose_name='Теги', related_name='%(app_label)s_%(class)s_tags')
+#     date_create = models.DateField(auto_now_add=True, verbose_name='Дата создания')
+#
+#     class Meta:
+#         abstract = True
+
+
+# class Draft(GeneralData):
+#     closed = models.BooleanField(default=False, verbose_name='Закрыта')
+#     close_reason = models.TextField(null=True, blank=True, verbose_name='Причина закрытия')
+#
+#     objects = models.Manager()
+#     custom_query = DraftManager()
+
+class Report(models.Model):
     creator = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Автор',
                                 related_name='%(app_label)s_%(class)s_creator')
     text = models.TextField(verbose_name='Текст')
@@ -86,23 +91,12 @@ class GeneralData(models.Model):
     one_time = models.BooleanField(default=True, verbose_name='Единовременная закупка')
     tags = models.ManyToManyField(Tag, verbose_name='Теги', related_name='%(app_label)s_%(class)s_tags')
     date_create = models.DateField(auto_now_add=True, verbose_name='Дата создания')
-
-    class Meta:
-        abstract = True
-
-
-class Draft(GeneralData):
-    closed = models.BooleanField(default=False, verbose_name='Закрыта')
-    close_reason = models.TextField(null=True, blank=True, verbose_name='Причина закрытия')
-
-    objects = models.Manager()
-    custom_query = DraftManager()
-
-class Report(GeneralData):
     union = models.BooleanField(default=False, verbose_name='Объеденённый рапорт')
     status = models.ForeignKey(Statuses, null=True, on_delete=models.PROTECT, default=1, verbose_name='Статус')
-    rejection_reason = models.TextField(null=True, blank=True)
-    history = models.ManyToManyField(History, verbose_name='История', blank=True, related_name='history')
+    closed = models.BooleanField(default=False, verbose_name='Закрыта')
+    close_reason = models.TextField(null=True, blank=True)
+    history = models.ManyToManyField(History, verbose_name='История', blank=True,
+                                     related_name='%(app_label)s_%(class)s_sources')
     files = models.ManyToManyField(Files, verbose_name='Прикреплённые файлы', blank=True)
     print_form = models.FileField(upload_to=report_directory_path, blank=True)
 
@@ -120,7 +114,13 @@ class Report(GeneralData):
                                                 blank=True, related_name='%(app_label)s_%(class)s_sources')
     sign = models.TextField(verbose_name='ЭЦП', blank=True)
     waiting = models.BooleanField(default=False, verbose_name='Ожидание')
-    parents = models.ManyToManyField(Draft, blank=True, related_name='%(app_label)s_%(class)s_sources')
+    draft = models.BooleanField(default=False, verbose_name='Черновик')
+    parents = models.ManyToManyField(
+        'self', blank=True, verbose_name='Родитель', related_name='%(app_label)s_%(class)s_sources'
+    )
+
+    objects = models.Manager()
+    custom_query = ReportManager()
 
 
     def __str__(self):
@@ -139,14 +139,14 @@ class Report(GeneralData):
 
 @receiver(pre_delete, sender=Report)
 def delete_related_jobs(sender, instance, **kwargs):
-    for history in instance.history_set.all():
-        # No remaining projects
-        if not history.projects.exclude(id=instance.id).count():
-            history.delete()
-    for file in instance.files_set.all():
-        # No remaining projects
-        if not file.projects.exclude(id=instance.id).count():
-            file.delete()
+    for story in instance.history.all():
+        # # No remaining projects
+        # if not story.projects.exclude(id=instance.id).count():
+        story.delete()
+    for file in instance.files.all():
+        # # No remaining projects
+        # if not file.projects.exclude(id=instance.id).count():
+        file.delete()
 
 
 class WaitingStatusForUser(models.Model):
