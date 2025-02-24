@@ -5,13 +5,14 @@ from django.views import View
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
 from reports.permissions import IsSuperuserOrReadOnly
 from reports.utils.utils import new_vocation
-from .models import User
+from .models import User, CuratorsGroup
 
 from .forms import RegisterUserForm
-from .serializers import UserSerializer
+from .serializers import UserSerializer, CuratorsGroupSerializer
 from .utils.search_in_db import SearchUsers
 
 
@@ -75,3 +76,13 @@ class GetUsersFromMyDepartment(generics.ListAPIView):
 
     def get_queryset(self):
         return User.objects.filter(department=self.request.user.department)
+
+class ListCuratorsGroup(generics.ListAPIView):
+    """Создание и список курируемых групп"""
+    queryset = CuratorsGroup.objects.all()
+    serializer_class = CuratorsGroupSerializer
+
+class GetOneUser(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
