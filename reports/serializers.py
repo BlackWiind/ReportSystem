@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import Report, Tag
+from users.serializers import StatusesSerializer
 
 class TagsListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,30 +27,20 @@ class DraftListSerializer(serializers.ModelSerializer):
 class ReportCreateSerializer(serializers.ModelSerializer):
     """ Создание нового рапорта"""
 
-    # tags = TagsListSerializer(many=True)
-
     class Meta:
         model = Report
         fields = ('text', 'justification', 'price', 'one_time', 'tags', 'responsible', 'parents',)
 
 
 class ReportRetrieveUpdateSerializer(serializers.ModelSerializer):
+    tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
+    status = StatusesSerializer(read_only=True)
+    history = serializers.SlugRelatedField(slug_field='action__verbose_name', read_only=True, many=True)
+    responsible = serializers.SlugRelatedField(slug_field='last_name', read_only=True)
+    parents = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='reports-retrieve')
 
     class Meta:
         model = Report
-        # fields = (
-        #     'creator',
-        #     'text',
-        #     'justification',
-        #     'price',
-        #     'one_time',
-        #     'tags',
-        #     'date_create',
-        #     'status',
-        #     'responsible',
-        #     'files',
-        #     'print_form',
-        #     'parents',)
         exclude =('sign', 'draft', 'curators_group')
 
 class ReportListSerializer(serializers.ModelSerializer):
@@ -57,8 +48,8 @@ class ReportListSerializer(serializers.ModelSerializer):
 
     responsible = serializers.SlugRelatedField(slug_field='last_name', read_only=True)
     tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
-    history = serializers.SlugRelatedField(slug_field='action__verbose_name', read_only=True, many=True)
+    # history = serializers.SlugRelatedField(slug_field='action__verbose_name', read_only=True, many=True)
 
     class Meta:
         model = Report
-        fields = ('responsible', 'text', 'price', 'tags', 'assigned_purchasing_specialist', 'status', 'history', )
+        fields = ('id', 'responsible', 'text', 'price', 'tags', 'assigned_purchasing_specialist', 'status',)

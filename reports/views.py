@@ -4,11 +4,13 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, DetailView, UpdateView
 from django_filters.views import FilterView
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, permissions, generics, mixins
 from rest_framework.mixins import UpdateModelMixin
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -22,7 +24,9 @@ from reports.utils.utils import get_queryset_dependent_group, update_status
 from reports.utils.unloads import create_pdf_unloading
 from .permissions import IsOwnerOrReadOnly, IsSuperuserOrReadOnly
 from .serializers import TagsListSerializer, \
-    ReportListSerializer, ReportCreateSerializer, DraftCreateSerializer, DraftListSerializer
+    ReportListSerializer, ReportCreateSerializer, DraftCreateSerializer, DraftListSerializer, \
+    ReportRetrieveUpdateSerializer
+
 
 class HomePage(View):
     def get(self, request):
@@ -186,6 +190,7 @@ class TagListAndCreate(generics.ListCreateAPIView):
 
 class DraftCreate(APIView):
     """Создание нового черновика"""
+    @csrf_exempt
     @swagger_auto_schema(request_body=DraftCreateSerializer)
     def post(self, request):
         draft = DraftCreateSerializer(data=request.data)
@@ -219,10 +224,25 @@ class Report2Create(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user, draft=False, curators_group=self.request.user.department.curators_group)
 
-class ReportList(APIView):
-    """Список рапортов"""
+# class ReportList(APIView):
+#     """Список рапортов"""
+#
+#     def get(self, request):
+#         queryset = Report.custom_query.not_closed_reports(user=request.user)
+#         serializer = ReportListSerializer(queryset, many=True)
+#         return Response(serializer.data)
 
-    def get(self, request):
-        queryset = Report.custom_query.not_closed_reports(user=request.user)
-        serializer = ReportListSerializer(queryset, many=True)
-        return Response(serializer.data)
+class ReportList(generics.ListAPIView):
+    """Список рапортов"""
+    serializer_class = ReportListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Report.custom_query.not_closed_reports(user=self.request.user)
+
+class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
+    serializer_class = ReportRetrieveUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Report.objects.all()
