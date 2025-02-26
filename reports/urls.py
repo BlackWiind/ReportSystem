@@ -26,5 +26,5 @@ urlpatterns = [
 
     path('reports/list', views.ReportList.as_view(), name='reports_list'),
     path('reports/create', views.Report2Create.as_view(), name='report'),
-    path('reports/retrieve-update/<int:pk>', views.ReportRetrieveUpdate.as_view(), name='reports-retrieve')
+    path('reports/retrieve-update/<int:pk>', views.ReportRetrieveUpdate.as_view(), name='report-detail')
 ]

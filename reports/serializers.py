@@ -37,7 +37,7 @@ class ReportRetrieveUpdateSerializer(serializers.ModelSerializer):
     status = StatusesSerializer(read_only=True)
     history = serializers.SlugRelatedField(slug_field='action__verbose_name', read_only=True, many=True)
     responsible = serializers.SlugRelatedField(slug_field='last_name', read_only=True)
-    parents = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='reports-retrieve')
+    parents = serializers.HyperlinkedRelatedField(lookup_field='pk', many=True, read_only=True, view_name='reports:report-detail')
 
     class Meta:
         model = Report
