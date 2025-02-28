@@ -4,7 +4,6 @@ from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from reports.filters import ReportFilter
 from reports.models import Report, Tag, History
@@ -12,7 +11,6 @@ from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
     ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer
 from reports.utils.utils import LargeResultsSetPagination
-from users.models import User
 
 
 class TagRUD(generics.RetrieveUpdateDestroyAPIView):
@@ -114,7 +112,9 @@ class ReportApproveClose(viewsets.ViewSet):
     def new_history(self, text):
         return History.objects.create(user=self.request.user,text=text)
 
+
     @action(detail=True)
+    @swagger_auto_schema(request_body=HistoryUpdateSerializer)
     def report_approve(self, request, pk=None):
         instance = get_object_or_404(self.queryset,pk=pk)
         if instance.status.id < 9:
@@ -125,7 +125,9 @@ class ReportApproveClose(viewsets.ViewSet):
             instance.history.add(self.new_history("Закупка состоялась."))
         return Response(status=status.HTTP_200_OK)
 
+
     @action(detail=True)
+    @swagger_auto_schema(request_body=HistoryUpdateSerializer)
     def report_close(self, request, pk=None):
         instance = get_object_or_404(self.queryset,pk=pk)
         instance.closed = True
@@ -134,10 +136,15 @@ class ReportApproveClose(viewsets.ViewSet):
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True)
+    @swagger_auto_schema(request_body=HistoryUpdateSerializer)
     def report_freeze(self, request, pk=None):
         instance = get_object_or_404(self.queryset, pk=pk)
-        instance.waiting = True
-        instance.history.add(self.new_history("Ожидание отменено."))
+        if instance.waiting:
+            instance.waiting = False
+            instance.history.add('Блокировка снята')
+        else:
+            instance.waiting = True
+            instance.history.add(text=request.data['text'])
         instance.save()
         return Response(status=status.HTTP_200_OK)
 
