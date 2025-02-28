@@ -1,5 +1,6 @@
 from django.db.models import Q
 from django.http import JsonResponse
+from rest_framework.pagination import PageNumberPagination
 
 from reports.models import Report
 import pymorphy2
@@ -58,3 +59,8 @@ def new_vocation(vocation_user, deputy, vocation_start, vocation_end):
         return JsonResponse(data={'message': 'Успешно'}, status=200)
     except:
         return JsonResponse(data={'message': 'Не получилось создать запись об отпуске'}, status=403)
+
+
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 100
+    max_page_size = 1000

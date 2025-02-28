@@ -22,6 +22,7 @@ def file_directory_path(instance, filename):
 
 class Tag(models.Model):
     name = models.CharField(max_length=255, verbose_name='Тэг')
+    group = models.ForeignKey(CuratorsGroup, on_delete=models.CASCADE, verbose_name='Группа', null=True)
 
     def __str__(self):
         return self.name
@@ -33,8 +34,8 @@ class Tag(models.Model):
 
 class History(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
-    action = models.ForeignKey(Statuses, null=True, on_delete=models.CASCADE, verbose_name='Статус')
     action_date = models.DateField(default=now, verbose_name='Дата')
+    text = models.TextField(blank=True, verbose_name='Text')
 
     class Meta:
         ordering = ['-id']
@@ -91,10 +92,9 @@ class Report(models.Model):
     one_time = models.BooleanField(default=True, verbose_name='Единовременная закупка')
     tags = models.ManyToManyField(Tag, verbose_name='Теги', related_name='%(app_label)s_%(class)s_tags')
     date_create = models.DateField(auto_now_add=True, verbose_name='Дата создания')
-    union = models.BooleanField(default=False, verbose_name='Объеденённый рапорт')
+    union = models.BooleanField(default=False, verbose_name='Объединённый рапорт')
     status = models.ForeignKey(Statuses, null=True, on_delete=models.PROTECT, default=1, verbose_name='Статус')
     closed = models.BooleanField(default=False, verbose_name='Закрыта')
-    close_reason = models.TextField(null=True, blank=True)
     history = models.ManyToManyField(History, verbose_name='История', blank=True,
                                      related_name='%(app_label)s_%(class)s_sources')
     files = models.ManyToManyField(Files, verbose_name='Прикреплённые файлы', blank=True)

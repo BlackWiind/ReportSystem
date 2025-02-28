@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models import Q
+
 
 # class DraftQuerySet(models.QuerySet):
 #     def not_closed(self):
@@ -41,10 +43,16 @@ class ReportManager(models.Manager):
         my_set = self.get_queryset().get_reports().not_closed()
         if user.custom_permissions.name == 'head_of_department':
             return my_set.filter(creator__department=user.department)
-        return my_set.filter(creator=user)
+        elif user.custom_permissions.name == 'curator':
+            return my_set.filter(curators_group=user.curators_group)
+        else:
+            statuses = user.custom_permissions.statuses.all().values_list('status', flat=True)
+            return my_set.filter(Q(creator=user) | Q(responsible=user) | Q(status__status__in=statuses))
 
     def not_closed_draft(self, user):
         my_set = self.get_queryset().get_drafts().not_closed()
+        if user.is_anonymous:
+            return my_set
         if user.custom_permissions.name == 'head_of_department':
             return my_set.filter(creator__department=user.department)
         return my_set.filter(creator=user)

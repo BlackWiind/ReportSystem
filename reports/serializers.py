@@ -1,27 +1,28 @@
 from rest_framework import serializers
 
-from .models import Report, Tag
-from users.serializers import StatusesSerializer
+from .models import Report, Tag, History
+from users.serializers import StatusesSerializer, CuratorsGroupSerializer
 
-class TagsListSerializer(serializers.ModelSerializer):
+class TagsSerializer(serializers.ModelSerializer):
+    group = CuratorsGroupSerializer
     class Meta:
         model = Tag
         fields = '__all__'
 
 
-class DraftCreateSerializer(serializers.ModelSerializer):
+class DraftSerializer(serializers.ModelSerializer):
+    tags = TagsSerializer
 
     class Meta:
         model = Report
-        fields = ('text', 'justification', 'price', 'tags',)
+        fields = ('text', 'justification', 'price', 'tags', 'creator',)
 
-
-class DraftListSerializer(serializers.ModelSerializer):
-    tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
+class HistorySerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
 
     class Meta:
-        model = Report
-        fields = ('text', 'justification', 'price', 'tags',)
+        model = History
+        fields = '__all__'
 
 
 class ReportCreateSerializer(serializers.ModelSerializer):
@@ -35,7 +36,7 @@ class ReportCreateSerializer(serializers.ModelSerializer):
 class ReportRetrieveUpdateSerializer(serializers.ModelSerializer):
     tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
     status = StatusesSerializer(read_only=True)
-    history = serializers.SlugRelatedField(slug_field='action__verbose_name', read_only=True, many=True)
+    history = HistorySerializer(read_only=True, many=True)
     responsible = serializers.SlugRelatedField(slug_field='last_name', read_only=True)
     parents = serializers.HyperlinkedRelatedField(lookup_field='pk', many=True, read_only=True, view_name='reports:report-detail')
 
@@ -48,8 +49,14 @@ class ReportListSerializer(serializers.ModelSerializer):
 
     responsible = serializers.SlugRelatedField(slug_field='last_name', read_only=True)
     tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
-    # history = serializers.SlugRelatedField(slug_field='action__verbose_name', read_only=True, many=True)
 
     class Meta:
         model = Report
         fields = ('id', 'responsible', 'text', 'price', 'tags', 'assigned_purchasing_specialist', 'status',)
+
+
+class HistoryUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = History
+        fields = ('text', )

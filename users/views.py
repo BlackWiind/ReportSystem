@@ -86,3 +86,13 @@ class GetOneUser(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+
+class GetUsersForReport(generics.ListAPIView):
+    """Возвращает список юзеров, которых можно назначить ответственными"""
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        if self.request.user.custom_permissions.name == 'curator':
+            User.objects.filter(curators_group=self.request.user.curators_group)
+        return User.objects.filter(department=self.request.user.department)

@@ -4,28 +4,19 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, DetailView, UpdateView
 from django_filters.views import FilterView
-from drf_yasg.utils import swagger_auto_schema
-from rest_framework import status, permissions, generics, mixins
-from rest_framework.mixins import UpdateModelMixin
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
+
 
 from users.models import User, CuratorsGroup
 from .mail import send_email
-from .models import Report, Tag, Files, WaitingStatusForUser
+from .models import Report, Tag, Files, WaitingStatusForUser, History
 from reports.utils.form_utils import create_new_report
 from .forms import CreateReportForm, AddFilesAndNewPriceForm, AddSourcesOfFundingForm
 from .filters import ReportFilter
 from reports.utils.utils import get_queryset_dependent_group, update_status
 from reports.utils.unloads import create_pdf_unloading
-from .permissions import IsOwnerOrReadOnly, IsSuperuserOrReadOnly
-from .serializers import TagsListSerializer, \
-    ReportListSerializer, ReportCreateSerializer, DraftCreateSerializer, DraftListSerializer, \
-    ReportRetrieveUpdateSerializer
+
 
 
 class HomePage(View):
@@ -174,75 +165,3 @@ class ChangeWaitingStatus(View):
 
 
 
-class TagRUD(generics.RetrieveUpdateDestroyAPIView):
-    """ Получение, обновление и удаление тега"""
-    queryset = Tag.objects.all()
-    serializer_class = TagsListSerializer
-    # permission_classes = [IsSuperuserOrReadOnly]
-
-class TagListAndCreate(generics.ListCreateAPIView):
-    """ Получение списка тегов и создание нового тега"""
-    queryset = Tag.objects.all()
-    serializer_class = TagsListSerializer
-    # permission_classes = [IsSuperuserOrReadOnly]
-
-
-
-class DraftCreate(APIView):
-    """Создание нового черновика"""
-    @csrf_exempt
-    @swagger_auto_schema(request_body=DraftCreateSerializer)
-    def post(self, request):
-        draft = DraftCreateSerializer(data=request.data)
-        if draft.is_valid():
-            draft.save(creator=request.user, draft=True)
-            return Response(draft.data, status=status.HTTP_201_CREATED)
-        return Response(draft.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class DraftList(APIView):
-    """Список черновиков"""
-
-    def get(self, request):
-        queryset = Report.custom_query.not_closed_draft(user=request.user)
-        serializer = DraftListSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-
-class ReportCreate(APIView):
-    """Создание нового рапорта"""
-    @swagger_auto_schema(request_body=ReportCreateSerializer)
-    def post(self, request):
-        report = ReportCreateSerializer(data=request.data)
-        if report.is_valid():
-            report.save(creator=request.user, draft=False, curators_group=request.user.curators_group)
-            return Response(report.data, status=status.HTTP_201_CREATED)
-        return Response(report.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class Report2Create(generics.CreateAPIView):
-    serializer_class = ReportCreateSerializer
-
-    def perform_create(self, serializer):
-        serializer.save(creator=self.request.user, draft=False, curators_group=self.request.user.department.curators_group)
-
-# class ReportList(APIView):
-#     """Список рапортов"""
-#
-#     def get(self, request):
-#         queryset = Report.custom_query.not_closed_reports(user=request.user)
-#         serializer = ReportListSerializer(queryset, many=True)
-#         return Response(serializer.data)
-
-class ReportList(generics.ListAPIView):
-    """Список рапортов"""
-    serializer_class = ReportListSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Report.custom_query.not_closed_reports(user=self.request.user)
-
-class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
-    serializer_class = ReportRetrieveUpdateSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        return Report.objects.all()

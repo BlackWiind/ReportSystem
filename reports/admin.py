@@ -13,18 +13,6 @@ class TagAdmin(admin.ModelAdmin):
         'name',
     )
 
-# class DraftAdmin(admin.ModelAdmin):
-#     list_of_fields = ('id', 'creator', 'price',)
-#     list_display = list_of_fields
-#     list_display_links = list_of_fields
-#
-#     search_fields = (
-#         'id',
-#         'creator',
-#         'price',
-#     )
-
-
 class ReportAdmin(admin.ModelAdmin):
     list_of_fields = ('id', 'creator', 'price', 'one_time',)
     list_display = list_of_fields
@@ -46,7 +34,7 @@ class FilesAdmin(admin.ModelAdmin):
 
 
 class HistoryAdmin(admin.ModelAdmin):
-    list_of_fields = ('id', 'action', 'user',)
+    list_of_fields = ('id', 'user',)
     list_display = list_of_fields
     list_display_links = list_of_fields
 
