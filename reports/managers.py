@@ -41,6 +41,8 @@ class ReportManager(models.Manager):
 
     def not_closed_reports(self, user):
         my_set = self.get_queryset().get_reports().not_closed()
+        if user.is_superuser:
+            return my_set
         if user.custom_permissions.name == 'head_of_department':
             return my_set.filter(creator__department=user.department)
         elif user.custom_permissions.name == 'curator':
@@ -51,7 +53,7 @@ class ReportManager(models.Manager):
 
     def not_closed_draft(self, user):
         my_set = self.get_queryset().get_drafts().not_closed()
-        if user.is_anonymous:
+        if user.is_superuser:
             return my_set
         if user.custom_permissions.name == 'head_of_department':
             return my_set.filter(creator__department=user.department)
@@ -59,12 +61,12 @@ class ReportManager(models.Manager):
 
     def closed_reports(self, user):
         my_set = self.get_queryset().get_reports().closed()
-        if user.custom_permissions.name == 'head_of_department':
-            return my_set.filter(creator__department=user.department)
-        return my_set.filter(creator=user)
+        return my_set
 
     def closed_drafts(self, user):
         my_set = self.get_queryset().get_drafts().closed()
+        if user.is_superuser:
+            return my_set
         if user.custom_permissions.name == 'head_of_department':
             return my_set.filter(creator__department=user.department)
         return my_set.filter(creator=user)
