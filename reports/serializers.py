@@ -5,7 +5,7 @@ from users.serializers import StatusesSerializer, CuratorsGroupSerializer, UserS
 
 
 class TagsSerializer(serializers.ModelSerializer):
-    group = CuratorsGroupSerializer
+    group = CuratorsGroupSerializer(read_only=True)
     class Meta:
         model = Tag
         fields = '__all__'
