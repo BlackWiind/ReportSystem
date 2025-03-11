@@ -10,21 +10,24 @@ class TagsSerializer(serializers.ModelSerializer):
         model = Tag
         fields = '__all__'
 
-
-class DraftSerializer(serializers.ModelSerializer):
-    creator = UserSerializer(read_only=True)
-    tags = TagsSerializer
-
-    class Meta:
-        model = Report
-        fields = ('text', 'justification', 'price', 'tags', 'creator',)
-
 class HistorySerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = History
         fields = '__all__'
+
+
+
+class DraftSerializer(serializers.ModelSerializer):
+    creator = UserSerializer(read_only=True)
+    tags = TagsSerializer
+    history = HistorySerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Report
+        fields = ('text', 'justification', 'price', 'tags', 'creator', 'history',)
+
 
 
 class ReportCreateSerializer(serializers.ModelSerializer):
@@ -51,10 +54,11 @@ class ReportListSerializer(serializers.ModelSerializer):
 
     responsible = serializers.SlugRelatedField(slug_field='last_name', read_only=True)
     tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
+    history = HistorySerializer(read_only=True, many=True)
 
     class Meta:
         model = Report
-        fields = ('id', 'responsible', 'text', 'price', 'tags', 'assigned_purchasing_specialist', 'status',)
+        fields = ('id', 'responsible', 'text', 'price', 'tags', 'assigned_purchasing_specialist', 'status','history',)
 
 
 class HistoryUpdateSerializer(serializers.ModelSerializer):
