@@ -52,13 +52,14 @@ class ReportRetrieveUpdateSerializer(serializers.ModelSerializer):
 class ReportListSerializer(serializers.ModelSerializer):
     """ Список рапортов"""
 
-    responsible = serializers.SlugRelatedField(slug_field='last_name', read_only=True)
+    responsible = UserSerializer(read_only=True)
     tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
     history = HistorySerializer(read_only=True, many=True)
+    creator = UserSerializer(read_only=True)
 
     class Meta:
         model = Report
-        fields = ('id', 'responsible', 'text', 'price', 'tags', 'assigned_purchasing_specialist', 'status','history',)
+        fields = ('id', 'creator', 'responsible', 'text', 'price', 'tags', 'assigned_purchasing_specialist', 'status','history',)
 
 
 class HistoryUpdateSerializer(serializers.ModelSerializer):
