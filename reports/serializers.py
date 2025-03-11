@@ -1,7 +1,8 @@
 from rest_framework import serializers
 
 from .models import Report, Tag, History
-from users.serializers import StatusesSerializer, CuratorsGroupSerializer
+from users.serializers import StatusesSerializer, CuratorsGroupSerializer, UserSerializer
+
 
 class TagsSerializer(serializers.ModelSerializer):
     group = CuratorsGroupSerializer
@@ -11,6 +12,7 @@ class TagsSerializer(serializers.ModelSerializer):
 
 
 class DraftSerializer(serializers.ModelSerializer):
+    creator = UserSerializer(read_only=True)
     tags = TagsSerializer
 
     class Meta:

@@ -35,7 +35,11 @@ class DraftListAndCreate(generics.ListCreateAPIView):
         return Report.custom_query.not_closed_draft(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(draft=True)
+        user = self.request.user
+        instance = serializer.save(creator=user, draft=True, curators_group=user.department.curators_group,
+                                   )
+        instance.history.create(user=user,
+                                text="Рапорт создан.")
 
 
 class ReportCreate(generics.CreateAPIView):
@@ -46,7 +50,7 @@ class ReportCreate(generics.CreateAPIView):
         instance = serializer.save(creator=user, draft=False, curators_group=user.department.curators_group,
                         )
         instance.history.create(user=user,
-            text="Черновик создан.")
+            text="Рапорт создан.")
 
 
 class ReportList(generics.ListAPIView):
