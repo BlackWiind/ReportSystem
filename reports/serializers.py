@@ -26,7 +26,7 @@ class DraftSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Report
-        fields = ('text', 'justification', 'price', 'tags', 'creator', 'history',)
+        fields = ('text', 'justification', 'price', 'tags', 'creator', 'history','date_create',)
 
 
 
@@ -54,12 +54,16 @@ class ReportListSerializer(serializers.ModelSerializer):
 
     responsible = UserSerializer(read_only=True)
     tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
+    status = serializers.SlugRelatedField(slug_field='verbose_name', read_only=True)
     history = HistorySerializer(read_only=True, many=True)
     creator = UserSerializer(read_only=True)
+    assigned_purchasing_specialist = UserSerializer(read_only=True)
 
     class Meta:
         model = Report
-        fields = ('id', 'creator', 'responsible', 'text', 'price', 'tags', 'assigned_purchasing_specialist', 'status','history',)
+        fields = ('id', 'creator', 'responsible', 'text',
+                  'price', 'tags', 'assigned_purchasing_specialist',
+                  'status','history', 'date_create', 'one_time')
 
 
 class HistoryUpdateSerializer(serializers.ModelSerializer):

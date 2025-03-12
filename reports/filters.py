@@ -22,6 +22,7 @@ class ReportFilter(django_filters.FilterSet):
     class Meta:
         model = Report
         fields = {'creator': ['exact'],
+                  'responsible': ['exact'],
                   'creator__department': ['exact'],
                   'tags': ['exact'],
                   'date_create': ['exact'],
