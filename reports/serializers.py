@@ -26,7 +26,7 @@ class DraftSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Report
-        fields = ('text', 'justification', 'price', 'tags', 'creator', 'history','date_create',)
+        fields = ('id', 'text', 'justification', 'price', 'tags', 'creator', 'history','date_create',)
 
 
 
