@@ -11,6 +11,7 @@ from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
     ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer
 from reports.utils.utils import LargeResultsSetPagination
+from users.models import Statuses
 
 
 class TagRUD(generics.RetrieveUpdateDestroyAPIView):
@@ -122,11 +123,12 @@ class ReportApproveClose(viewsets.ViewSet):
     def report_approve(self, request, pk=None):
         instance = get_object_or_404(self.queryset,pk=pk)
         if instance.status.id < 9:
-            instance.status.id += 1
+            instance.status = Statuses.objects.get(id=instance.status.id+1)
             instance.history.add(self.new_history("Рапорт одобрен."))
         else:
             instance.closed = True
             instance.history.add(self.new_history("Закупка состоялась."))
+        instance.save()
         return Response(status=status.HTTP_200_OK)
 
 
@@ -135,7 +137,7 @@ class ReportApproveClose(viewsets.ViewSet):
     def report_close(self, request, pk=None):
         instance = get_object_or_404(self.queryset,pk=pk)
         instance.closed = True
-        instance.history.add(text=request.data['text'])
+        instance.history.add(self.new_history(request.data['text']))
         instance.save()
         return Response(status=status.HTTP_200_OK)
 
@@ -145,10 +147,10 @@ class ReportApproveClose(viewsets.ViewSet):
         instance = get_object_or_404(self.queryset, pk=pk)
         if instance.waiting:
             instance.waiting = False
-            instance.history.add('Блокировка снята')
+            instance.history.add(self.new_history('Блокировка снята'))
         else:
             instance.waiting = True
-            instance.history.add(text=request.data['text'])
+            instance.history.add(self.new_history(request.data['text']))
         instance.save()
         return Response(status=status.HTTP_200_OK)
 
