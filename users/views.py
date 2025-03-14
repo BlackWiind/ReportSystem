@@ -4,15 +4,17 @@ from django.contrib import messages
 from django.views import View
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from reports.permissions import IsSuperuserOrReadOnly
 from reports.utils.utils import new_vocation
 from .models import User, CuratorsGroup
 
 from .forms import RegisterUserForm
-from .serializers import UserSerializer, CuratorsGroupSerializer
+from .serializers import UserSerializer, CuratorsGroupSerializer, UserShortDataSerializer
 from .utils.search_in_db import SearchUsers
 
 
@@ -87,12 +89,31 @@ class GetOneUser(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
-class GetUsersForReport(generics.ListAPIView):
-    """Возвращает список юзеров, которых можно назначить ответственными"""
+class GetUserMyUserData(generics.RetrieveAPIView):
+    queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
+
+    def get_object(self):
+        obj = get_object_or_404(self.filter_queryset(self.get_queryset()), pk=self.request.user.pk)
+        self.check_object_permissions(self.request, obj)
+
+        return obj
+
+class GetUsersForReport(generics.ListAPIView):
+    """Возвращает список юзеров, которых можно назначить ответственными"""
+    serializer_class = UserShortDataSerializer
+    permission_classes = [IsAuthenticated]
+
     def get_queryset(self):
-        if self.request.user.custom_permissions.name == 'curator':
-            User.objects.filter(curators_group=self.request.user.curators_group)
-        return User.objects.filter(department=self.request.user.department)
+        try:
+            if self.request.user.custom_permissions.name == 'curator':
+                User.objects.filter(curators_group=self.request.user.curators_group)
+            return User.objects.filter(department=self.request.user.department)
+        except AttributeError:
+            return Response({'message': 'Не установлены права пользователя'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({'message': f'Неизвестная ошибка {type(e)}'},
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)

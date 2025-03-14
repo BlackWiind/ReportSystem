@@ -62,3 +62,11 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         exclude = ['password', 'last_login', 'is_superuser',
                    'email', 'is_staff', 'is_active', 'date_joined', 'user_permissions']
+
+class UserShortDataSerializer(serializers.ModelSerializer):
+    """Сериалайзер для краткой информации о пользователях"""
+
+    class Meta:
+        model = User
+        fields = ['id','first_name', 'last_name', 'surname',
+                   'department', 'job_title',]

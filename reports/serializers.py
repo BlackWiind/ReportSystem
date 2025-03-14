@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import Report, Tag, History
-from users.serializers import StatusesSerializer, CuratorsGroupSerializer, UserSerializer
+from users.serializers import StatusesSerializer, CuratorsGroupSerializer, UserSerializer, UserShortDataSerializer
 
 
 class TagsSerializer(serializers.ModelSerializer):
@@ -18,7 +18,6 @@ class HistorySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class DraftSerializer(serializers.ModelSerializer):
     creator = UserSerializer(read_only=True)
     tags = TagsSerializer
@@ -27,7 +26,6 @@ class DraftSerializer(serializers.ModelSerializer):
     class Meta:
         model = Report
         fields = ('id', 'text', 'justification', 'price', 'tags', 'creator', 'history','date_create',)
-
 
 
 class ReportCreateSerializer(serializers.ModelSerializer):
@@ -39,10 +37,12 @@ class ReportCreateSerializer(serializers.ModelSerializer):
 
 
 class ReportRetrieveUpdateSerializer(serializers.ModelSerializer):
+    creator = UserShortDataSerializer(read_only=True)
+    assigned_purchasing_specialist = UserShortDataSerializer(read_only=True)
+    responsible = UserShortDataSerializer(read_only=True)
     tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
     status = StatusesSerializer(read_only=True)
     history = HistorySerializer(read_only=True, many=True)
-    responsible = serializers.SlugRelatedField(slug_field='last_name', read_only=True)
     parents = serializers.HyperlinkedRelatedField(lookup_field='pk', many=True, read_only=True, view_name='reports:report-detail')
 
     class Meta:
@@ -52,12 +52,12 @@ class ReportRetrieveUpdateSerializer(serializers.ModelSerializer):
 class ReportListSerializer(serializers.ModelSerializer):
     """ Список рапортов"""
 
-    responsible = UserSerializer(read_only=True)
+    responsible = UserShortDataSerializer(read_only=True)
     tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
     status = serializers.SlugRelatedField(slug_field='verbose_name', read_only=True)
     history = HistorySerializer(read_only=True, many=True)
-    creator = UserSerializer(read_only=True)
-    assigned_purchasing_specialist = UserSerializer(read_only=True)
+    creator = UserShortDataSerializer(read_only=True)
+    assigned_purchasing_specialist = UserShortDataSerializer(read_only=True)
 
     class Meta:
         model = Report
