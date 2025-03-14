@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from packaging.utils import _
 
 from .models import User, Department, CuratorsGroup, Statuses, CustomPermissions, PossibleActions, Links
 
@@ -51,6 +52,25 @@ class CustomUserAdmin(UserAdmin):
                 )
             }
         )
+    )
+    add_fieldsets = (
+        (
+            None,
+            {
+                "classes": ("wide",),
+                "fields": ("username",
+                           "password1",
+                           "password2",
+                           'last_name',
+                           'first_name',
+                           'surname',
+                            'department',
+                            'curators_group',
+                            'job_title',
+                            'custom_permissions',
+                           ),
+            },
+        ),
     )
 
 
