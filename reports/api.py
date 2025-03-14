@@ -1,11 +1,16 @@
+import threading
+
+from django.http import JsonResponse
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from reports.filters import ReportFilter
+from reports.mail import send_email
 from reports.models import Report, Tag, History
 from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
@@ -79,34 +84,14 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
             text=f"Изменеия в следующих полях: {' '.join(my_list)}"
         )
 
-# class ReportApprove(generics.UpdateAPIView):
-#     queryset = Report.objects.all()
-#     serializer_class = HistoryUpdateSerializer
-#     permission_classes = [IsAuthenticated]
-#
-#     def perform_update(self, serializer):
-#         instance = Report.objects.get(pk=self.kwargs['pk'])
-#         if instance.status.id < 9:
-#             instance.status.id += 1
-#             instance.history.create(user=self.request.user,
-#                 text="Рапорт одобрен.")
-#         else:
-#             instance.closed = True
-#             instance.history.create(user=self.request.user,
-#                                     text="Закупка состоялась.")
-#
-# class ReportClose(generics.UpdateAPIView):
-#     queryset = Report.objects.all()
-#     serializer_class = HistoryUpdateSerializer
-#     permission_classes = [IsAuthenticated]
-#     http_method_names = ['patch',]
-#
-#     def perform_update(self, serializer):
-#         instance = self.get_object()
-#         instance.closed = True
-#         instance.history.create(user=self.request.user,
-#                                     text=serializer.data['text'])
-#         instance.save()
+class Feedback(APIView):
+    def post(self, request, *args, **kwargs):
+        try:
+            thread = threading.Thread(target=send_email, args=(request.POST['message'], request.POST['user']))
+            thread.start()
+            return JsonResponse(data={'message': f'Сообщение отправлено'}, status=200)
+        except Exception as e:
+            return JsonResponse(data={'message': f'Произошла ошибка: {type(e).__name__}, {e}'}, status=400)
 
 class ReportApproveClose(viewsets.ViewSet):
     queryset = Report.objects.all()
