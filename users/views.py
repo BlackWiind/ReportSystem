@@ -112,8 +112,4 @@ class GetUsersForReport(generics.ListAPIView):
                 User.objects.filter(curators_group=self.request.user.curators_group)
             return User.objects.filter(department=self.request.user.department)
         except AttributeError:
-            return Response({'message': 'Не установлены права пользователя'},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        except Exception as e:
-            return Response({'message': f'Неизвестная ошибка {type(e)}'},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            raise AttributeError('Не установлены права пользователя')

@@ -67,6 +67,8 @@ class UserShortDataSerializer(serializers.ModelSerializer):
     """Сериалайзер для краткой информации о пользователях"""
 
     class Meta:
+        department = DepartmentSerializer(read_only=True)
+
         model = User
         fields = ['id','first_name', 'last_name', 'surname',
                    'department', 'job_title',]
