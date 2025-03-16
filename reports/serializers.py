@@ -63,7 +63,7 @@ class ReportListSerializer(serializers.ModelSerializer):
         model = Report
         fields = ('id', 'creator', 'responsible', 'text',
                   'price', 'tags', 'assigned_purchasing_specialist',
-                  'status','history', 'date_create', 'one_time')
+                  'status','history', 'date_create', 'one_time', 'waiting')
 
 
 class HistoryUpdateSerializer(serializers.ModelSerializer):
