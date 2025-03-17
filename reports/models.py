@@ -154,3 +154,7 @@ class WaitingStatusForUser(models.Model):
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Получатель')
     report = models.ForeignKey(Report, on_delete=models.CASCADE, verbose_name='Рапорт')
     date_of_creation = models.DateField(auto_now_add=True, verbose_name='Дата создания')
+
+    class Meta:
+        verbose_name = 'Статус ожидания'
+        verbose_name_plural = 'Статусы ожидания'

@@ -142,12 +142,13 @@ class ReportApproveClose(viewsets.ViewSet):
     @swagger_auto_schema(request_body=HistoryUpdateSerializer)
     def report_freeze(self, request, pk=None):
         instance = get_object_or_404(self.queryset, pk=pk)
-        if instance.waiting:
-            instance.waiting = False
-            instance.history.add(self.new_history('Блокировка снята'))
-        else:
-            instance.waiting = True
-            instance.history.add(self.new_history(request.data['text']))
+        additional_data(instance, self.request)
+        # if instance.waiting:
+        #     instance.waiting = False
+        #     instance.history.add(self.new_history('Блокировка снята'))
+        # else:
+        #     instance.waiting = True
+        #     instance.history.add(self.new_history(request.data['text']))
         instance.save()
         return Response(status=status.HTTP_200_OK)
 
