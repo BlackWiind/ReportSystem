@@ -19,4 +19,5 @@ urlpatterns = [
     path('waiting/<int:pk>', api.ReportApproveClose.as_view({'patch': 'report_freeze'})),
 
     path('feedback/', api.Feedback.as_view()),
+    path('canishutdownwaiting/', api.CanIShutDownWaiting.as_view())
 ]

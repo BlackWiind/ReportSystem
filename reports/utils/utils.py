@@ -1,24 +1,14 @@
-from django.db.models import Q
+from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.http import JsonResponse
 from rest_framework.pagination import PageNumberPagination
 
-from reports.models import Report
+from reports.models import Report, WaitingStatusForUser
 import pymorphy2
 
 from users.models import VocationsSchedule, User, CustomPermissions
 
 
 def get_queryset_dependent_group(user):
-    # available_statuses = list(user.groups.values_list('customgroups__statuses', flat=True))
-    # set_for_return = None
-    # parameters = {'status__in': available_statuses}
-    # if 'curator' in user.groups.values_list('name', flat=True):
-    #     parameters['curators_group'] = user.curators_group
-    # if user.is_superuser:
-    #     set_for_return = Report.objects.all()
-    # else:
-    #     set_for_return = Report.objects.filter(Q(**parameters) | Q(creator=user) | Q(assigned_purchasing_specialist=user))
-    # return set_for_return.exclude(status__status__in=['rejected', 'done'])
     return Report.objects.all()
 
 
@@ -59,6 +49,40 @@ def new_vocation(vocation_user, deputy, vocation_start, vocation_end):
         return JsonResponse(data={'message': 'Успешно'}, status=200)
     except:
         return JsonResponse(data={'message': 'Не получилось создать запись об отпуске'}, status=403)
+
+def history_add(instance, request, text=None):
+    if text is None:
+        my_list = [instance._meta.get_field(x).verbose_name for x in list(request.data.keys())]
+        text = f"Изменеия в следующих полях: {' '.join(my_list)}"
+    instance.history.create(
+        user=request.user,
+        text=text
+    )
+
+def change_waiting_status(instance, request) -> str:
+    receiver = instance.responsible if instance.responsible else instance.creator
+    text = None
+    if instance.waiting:
+        _ = WaitingStatusForUser.objects.create(
+            sender=request.user, receiver=receiver, report=instance)
+        text = f'Установлен статус "Ожидание": {request.data["text"]}'
+    else:
+        try:
+            _ = WaitingStatusForUser.objects.filter(
+                sender=request.user, receiver=receiver, report=instance).delete()
+        except ObjectDoesNotExist:
+            pass
+        text = 'Статус "Ожидание" снят'
+    return text
+
+def additional_data(instance, request):
+    text = None
+    if 'waiting' in request.data:
+        text = change_waiting_status(instance, request)
+    history_add(instance, request, text)
+
+
+
 
 
 class LargeResultsSetPagination(PageNumberPagination):

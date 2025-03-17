@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Report, Tag, History
+from .models import Report, Tag, History, WaitingStatusForUser
 from users.serializers import StatusesSerializer, CuratorsGroupSerializer, UserSerializer, UserShortDataSerializer
 
 
@@ -71,3 +71,11 @@ class HistoryUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = History
         fields = ('text', )
+
+
+class WaitingStatusForUserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = WaitingStatusForUser
+        fields = ('report',)
+

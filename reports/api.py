@@ -1,5 +1,6 @@
 import threading
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, status, viewsets
@@ -11,11 +12,12 @@ from rest_framework.views import APIView
 
 from reports.filters import ReportFilter
 from reports.mail import send_email
-from reports.models import Report, Tag, History
+from reports.models import Report, Tag, History, WaitingStatusForUser
 from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
-    ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer
-from reports.utils.utils import LargeResultsSetPagination
+    ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer, \
+    WaitingStatusForUserSerializer
+from reports.utils.utils import LargeResultsSetPagination, additional_data
 from users.models import Statuses
 
 
@@ -78,11 +80,21 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         instance = serializer.save()
-        my_list = [instance._meta.get_field(x).verbose_name for x in list(self.request.data.keys())]
-        instance.history.create(
-            user=self.request.user,
-            text=f"Изменеия в следующих полях: {' '.join(my_list)}"
-        )
+        additional_data(instance, self.request)
+
+class CanIShutDownWaiting(APIView):
+    @swagger_auto_schema(
+        query_serializer=WaitingStatusForUserSerializer,
+        operation_description="Create a post object"
+    )
+    def get(self, request):
+        try:
+            _ = WaitingStatusForUser.objects.get(sender=request.user, report=request.GET.get('report'))
+            return JsonResponse(data={'message': True}, status=200)
+        except ObjectDoesNotExist:
+            return JsonResponse(data={'message': False}, status=200)
+        except Exception as e:
+            return JsonResponse(data={'message': f'Произошла ошибка: {type(e).__name__}, {e}'}, status=400)
 
 class Feedback(APIView):
     def post(self, request, *args, **kwargs):

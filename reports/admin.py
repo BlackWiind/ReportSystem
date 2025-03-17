@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Tag, Report, History, Files, SourcesOfFunding
+from .models import Tag, Report, History, Files, SourcesOfFunding, WaitingStatusForUser
 
 
 class TagAdmin(admin.ModelAdmin):
@@ -44,10 +44,15 @@ class SourcesOfFundingAdmin(admin.ModelAdmin):
     list_display = list_of_fields
     list_display_links = list_of_fields
 
+class WaitingStatusForUserAdmin(admin.ModelAdmin):
+    list_of_fields = ('sender','receiver','report','date_of_creation',)
+    list_display = list_of_fields
+    list_display_links = list_of_fields
+
 
 admin.site.register(Tag, TagAdmin)
-# admin.site.register(Draft, DraftAdmin)
 admin.site.register(Report, ReportAdmin)
 admin.site.register(Files, FilesAdmin)
 admin.site.register(History, HistoryAdmin)
 admin.site.register(SourcesOfFunding, SourcesOfFundingAdmin)
+admin.site.register(WaitingStatusForUser, WaitingStatusForUserAdmin)
