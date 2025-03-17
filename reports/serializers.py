@@ -67,10 +67,10 @@ class ReportListSerializer(serializers.ModelSerializer):
 
 
 class HistoryUpdateSerializer(serializers.ModelSerializer):
-
+    waiting = serializers.BooleanField(required=False)
     class Meta:
         model = History
-        fields = ('text', )
+        fields = ('text', 'waiting',)
 
 
 class WaitingStatusForUserSerializer(serializers.ModelSerializer):

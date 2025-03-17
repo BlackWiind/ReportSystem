@@ -78,6 +78,7 @@ def change_waiting_status(instance, request) -> str:
 def additional_data(instance, request):
     text = None
     if 'waiting' in request.data:
+        instance.waiting=request.data['waiting']
         text = change_waiting_status(instance, request)
     history_add(instance, request, text)
 

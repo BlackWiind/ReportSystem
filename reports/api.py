@@ -1,5 +1,6 @@
 import threading
 
+from click import Parameter
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from drf_yasg.utils import swagger_auto_schema
@@ -143,12 +144,6 @@ class ReportApproveClose(viewsets.ViewSet):
     def report_freeze(self, request, pk=None):
         instance = get_object_or_404(self.queryset, pk=pk)
         additional_data(instance, self.request)
-        # if instance.waiting:
-        #     instance.waiting = False
-        #     instance.history.add(self.new_history('Блокировка снята'))
-        # else:
-        #     instance.waiting = True
-        #     instance.history.add(self.new_history(request.data['text']))
         instance.save()
         return Response(status=status.HTTP_200_OK)
 
