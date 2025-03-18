@@ -28,8 +28,9 @@ def create_pdf_unloading(pk):
     title_style = ParagraphStyle('Title Arial Style', fontName='Arial', fontSize=18)
     new_style = ParagraphStyle('Title Arial Style', fontName='Arial', fontSize=12)
 
-    paragraph = Paragraph(f"От {' '.join(map(word_to_genitive,data.creator.job_title.split(' ')))}<br></br>"
-                          f"{' '.join(map(word_to_genitive,data.creator.__str__().split(' ')))}<br></br>"
+    paragraph = Paragraph(f"От "
+                          f"{' '.join(map(word_to_genitive,data.creator.job_title.strip().split(' ')))}<br></br>"
+                          f"{' '.join(map(word_to_genitive,data.creator.__str__().strip().split(' ')))}<br></br>"
                           f"Главному врачу<br></br>"
                           f"Субботину Андрею Юрьевичу", new_style)
     paragraph.wrapOn(my_canvas, 200, 20)
@@ -53,7 +54,8 @@ def create_pdf_unloading(pk):
     my_canvas.save()
 
     buffer.seek(0)
-    return FileResponse(buffer, as_attachment=True, filename=f"Рапорт{data.pk}.pdf")
+    # return FileResponse(buffer, as_attachment=True, filename=f"Рапорт{data.pk}.pdf")
+    return f"Рапорт{data.pk}.pdf", buffer
 
 
 def create_file_from_buffer(data) -> ContentFile:

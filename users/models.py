@@ -113,6 +113,7 @@ class User(AbstractUser):
         super(User, self).__init__(*args, **kwargs)
 
     class Meta:
+        ordering = ['-last_name']
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 

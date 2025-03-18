@@ -3,6 +3,7 @@ import threading
 from click import Parameter
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, status, viewsets
 from rest_framework.decorators import action
@@ -18,6 +19,7 @@ from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
     ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer, \
     WaitingStatusForUserSerializer
+from reports.utils.unloads import create_pdf_unloading
 from reports.utils.utils import LargeResultsSetPagination, additional_data
 from users.models import Statuses
 
@@ -56,8 +58,10 @@ class ReportCreate(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         user = self.request.user
-        instance = serializer.save(creator=user, draft=False, curators_group=user.department.curators_group,
-                        )
+        instance = serializer.save(creator=user, draft=False,
+                                   curators_group=user.department.curators_group)
+        instance.print_form.save(*create_pdf_unloading(instance.pk))
+        instance.parents.all().update(closed=True)
         instance.history.create(user=user,
             text="Рапорт создан.")
 
@@ -98,9 +102,36 @@ class CanIShutDownWaiting(APIView):
             return JsonResponse(data={'message': f'Произошла ошибка: {type(e).__name__}, {e}'}, status=400)
 
 class Feedback(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            required=['message'],
+            properties={
+                'message': openapi.Schema(type=openapi.TYPE_STRING)
+            }
+        ),
+        responses={
+            200: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'message': openapi.Schema(type=openapi.TYPE_STRING,
+                                        max_length=255)
+                }
+            ),
+            400: openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'message': openapi.Schema(type=openapi.TYPE_STRING,
+                                              max_length=255)
+                }
+            )
+        }
+    )
     def post(self, request, *args, **kwargs):
         try:
-            thread = threading.Thread(target=send_email, args=(request.POST['message'], request.POST['user']))
+            thread = threading.Thread(target=send_email, args=(self.request.data['message'], request.user))
             thread.start()
             return JsonResponse(data={'message': f'Сообщение отправлено'}, status=200)
         except Exception as e:

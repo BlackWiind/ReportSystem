@@ -15,6 +15,8 @@ def get_queryset_dependent_group(user):
 def word_to_genitive(word: str) -> str:
     morph = pymorphy2.MorphAnalyzer()
     parsed_word = morph.parse(word)[0]
+    if parsed_word is None:
+        return word
     word = parsed_word.inflect({'gent'}).word
     return word.capitalize()
 

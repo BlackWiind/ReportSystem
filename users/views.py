@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from reports.permissions import IsSuperuserOrReadOnly
-from reports.utils.utils import new_vocation
+from reports.utils.utils import new_vocation, LargeResultsSetPagination
 from .models import User, CuratorsGroup
 
 from .forms import RegisterUserForm
@@ -105,11 +105,13 @@ class GetUsersForReport(generics.ListAPIView):
     """Возвращает список юзеров, которых можно назначить ответственными"""
     serializer_class = UserShortDataSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = LargeResultsSetPagination
 
     def get_queryset(self):
         try:
             if self.request.user.custom_permissions.name == 'curator':
-                User.objects.filter(curators_group=self.request.user.curators_group)
+                print(True)
+                User.objects.filter(department__curators_group=self.request.user.curators_group)
             return User.objects.filter(department=self.request.user.department)
         except AttributeError:
             raise AttributeError('Не установлены права пользователя')
