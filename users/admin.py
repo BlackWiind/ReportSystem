@@ -109,7 +109,7 @@ class CustomGroupAdmin(admin.ModelAdmin):
     list_display = list_of_fields
     list_display_links = list_of_fields
 
-    filter_horizontal = ('statuses', 'possible_actions', 'links',)
+    filter_horizontal = ('statuses', 'possible_actions', 'user_can_view', 'links',)
 
 
 admin.site.register(User, CustomUserAdmin)

@@ -55,7 +55,10 @@ class Links(models.Model):
 class CustomPermissions(models.Model):
     name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Название группы доступа')
     description = models.CharField(max_length=255, null=True, blank=True, verbose_name='Русское название')
-    statuses = models.ManyToManyField(Statuses, blank=True, verbose_name='Доступные статусы')
+    statuses = models.ManyToManyField(
+        Statuses, blank=True, verbose_name='Изменяемые статусы', related_name='changed_statuses')
+    user_can_view = models.ManyToManyField(
+        Statuses, blank=True, verbose_name='Просматриваемые статусы', related_name='view_statuses')
     possible_actions = models.ManyToManyField(PossibleActions, verbose_name='Возможные действия')
     links = models.ManyToManyField(Links, verbose_name='Доступные страницы')
 
