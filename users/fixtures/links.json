@@ -1,34 +1,50 @@
 [
-  {
+{
     "model": "users.links",
     "pk": 1,
     "fields": {
-      "name": "Создать",
-      "link": "reports:create_report"
+        "name": "Создать",
+        "link": "reports:create_report"
     }
-  },
-  {
+},
+{
     "model": "users.links",
     "pk": 2,
     "fields": {
-      "name": "Список",
-      "link": "reports:list"
+        "name": "Список",
+        "link": "reports:reports_list"
     }
-  },
-  {
+},
+{
     "model": "users.links",
     "pk": 3,
     "fields": {
-      "name": "Архив",
-      "link": "reports:archive"
+        "name": "Архив",
+        "link": "reports:archive"
     }
-  },
-  {
+},
+{
     "model": "users.links",
     "pk": 4,
     "fields": {
-      "name": "Новый пользователь",
-      "link": "users:register"
+        "name": "Новый пользователь",
+        "link": "users:register"
     }
-  }
+},
+{
+    "model": "users.links",
+    "pk": 5,
+    "fields": {
+        "name": "Создать черновик",
+        "link": "reports:new_draft"
+    }
+},
+{
+    "model": "users.links",
+    "pk": 6,
+    "fields": {
+        "name": "Список черновиков",
+        "link": "reports:draft_list"
+    }
+}
 ]

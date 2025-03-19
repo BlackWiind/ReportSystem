@@ -1,0 +1,42 @@
+[
+{
+    "model": "reports.tag",
+    "pk": 1,
+    "fields": {
+        "name": "ПК",
+        "group": 1
+    }
+},
+{
+    "model": "reports.tag",
+    "pk": 2,
+    "fields": {
+        "name": "Принтера",
+        "group": 1
+    }
+},
+{
+    "model": "reports.tag",
+    "pk": 3,
+    "fields": {
+        "name": "МФУ",
+        "group": 1
+    }
+},
+{
+    "model": "reports.tag",
+    "pk": 4,
+    "fields": {
+        "name": "Тэг бухгалтерии",
+        "group": 7
+    }
+},
+{
+    "model": "reports.tag",
+    "pk": 5,
+    "fields": {
+        "name": "Тэг администрации",
+        "group": 5
+    }
+}
+]

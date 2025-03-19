@@ -1,50 +1,50 @@
 [
-  {
+{
     "model": "users.department",
     "pk": 1,
     "fields": {
-      "name": "Отдел информации",
-      "curators_group": 1
+        "name": "Отдел информации",
+        "curators_group": 1
     }
-  },
-  {
+},
+{
     "model": "users.department",
     "pk": 2,
     "fields": {
-      "name": "Администрация",
-      "curators_group": 5
+        "name": "Администрация",
+        "curators_group": 5
     }
-  },
-  {
+},
+{
     "model": "users.department",
     "pk": 3,
     "fields": {
-      "name": "ОМО",
-      "curators_group": 1
+        "name": "ОМО",
+        "curators_group": 1
     }
-  },
-  {
+},
+{
     "model": "users.department",
     "pk": 4,
     "fields": {
-      "name": "Отдел закупок",
-      "curators_group": 6
+        "name": "Отдел закупок",
+        "curators_group": 6
     }
-  },
-  {
+},
+{
     "model": "users.department",
     "pk": 5,
     "fields": {
-      "name": "Бухгалтерия",
-      "curators_group": 7
+        "name": "Бухгалтерия",
+        "curators_group": 7
     }
-  },
-  {
+},
+{
     "model": "users.department",
     "pk": 6,
     "fields": {
-      "name": "ПЭО",
-      "curators_group": 7
+        "name": "ПЭО",
+        "curators_group": 7
     }
-  }
+}
 ]

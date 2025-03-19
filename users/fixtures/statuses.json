@@ -1,74 +1,74 @@
 [
-  {
+{
     "model": "users.statuses",
     "pk": 1,
     "fields": {
-      "status": "created",
-      "verbose_name": "Создан"
+        "status": "created",
+        "verbose_name": "Создан"
     }
-  },
-  {
+},
+{
     "model": "users.statuses",
     "pk": 2,
     "fields": {
-      "status": "approved_by_curator",
-      "verbose_name": "Одобрен куратором"
+        "status": "approved_by_curator",
+        "verbose_name": "Одобрен куратором"
     }
-  },
-  {
+},
+{
     "model": "users.statuses",
     "pk": 3,
     "fields": {
-      "status": "approved_by_director",
-      "verbose_name": "Одобрен главным врачём"
+        "status": "approved_by_director",
+        "verbose_name": "Одобрен главным врачём"
     }
-  },
-  {
+},
+{
     "model": "users.statuses",
     "pk": 4,
     "fields": {
-      "status": "in_purchasing_department_1",
-      "verbose_name": "Передан специалисту отдела закупок"
+        "status": "in_purchasing_department_1",
+        "verbose_name": "Передан специалисту отдела закупок"
     }
-  },
-  {
+},
+{
     "model": "users.statuses",
     "pk": 5,
     "fields": {
-      "status": "at_economist_1",
-      "verbose_name": "Передан в ПЭО"
+        "status": "at_economist_1",
+        "verbose_name": "Передан в ПЭО"
     }
-  },
-  {
+},
+{
     "model": "users.statuses",
     "pk": 6,
     "fields": {
-      "status": "at_economist_chief",
-      "verbose_name": "Передан заместителю ГВ по экономике"
+        "status": "at_economist_chief",
+        "verbose_name": "Передан заместителю ГВ по экономике"
     }
-  },
-  {
+},
+{
     "model": "users.statuses",
     "pk": 7,
     "fields": {
-      "status": "at_economist_2",
-      "verbose_name": "В ПЭО"
+        "status": "at_economist_2",
+        "verbose_name": "В ПЭО"
     }
-  },
-  {
+},
+{
     "model": "users.statuses",
     "pk": 8,
     "fields": {
-      "status": "at_chief_accountant",
-      "verbose_name": "Передан главному бухгалтеру"
+        "status": "at_chief_accountant",
+        "verbose_name": "Передан главному бухгалтеру"
     }
-  },
-  {
+},
+{
     "model": "users.statuses",
     "pk": 9,
     "fields": {
-      "status": "in_purchasing_department_2",
-      "verbose_name": "В отделе закупок"
+        "status": "in_purchasing_department_2",
+        "verbose_name": "В отделе закупок"
     }
-  }
+}
 ]

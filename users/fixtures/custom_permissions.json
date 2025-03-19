@@ -1,0 +1,217 @@
+[
+{
+    "model": "users.custompermissions",
+    "pk": 1,
+    "fields": {
+        "name": "admin",
+        "description": "Админ",
+        "statuses": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
+        ],
+        "possible_actions": [
+            2
+        ],
+        "links": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        ]
+    }
+},
+{
+    "model": "users.custompermissions",
+    "pk": 2,
+    "fields": {
+        "name": "user_drafter",
+        "description": "Юзер",
+        "statuses": [],
+        "possible_actions": [
+            1
+        ],
+        "links": [
+            3,
+            5,
+            6
+        ]
+    }
+},
+{
+    "model": "users.custompermissions",
+    "pk": 3,
+    "fields": {
+        "name": "head_of_department",
+        "description": "Начальник отдела",
+        "statuses": [],
+        "possible_actions": [
+            1
+        ],
+        "links": [
+            1,
+            2,
+            3
+        ]
+    }
+},
+{
+    "model": "users.custompermissions",
+    "pk": 4,
+    "fields": {
+        "name": "curator",
+        "description": "Куратор",
+        "statuses": [
+            1
+        ],
+        "possible_actions": [
+            1,
+            2,
+            3
+        ],
+        "links": [
+            2,
+            3
+        ]
+    }
+},
+{
+    "model": "users.custompermissions",
+    "pk": 5,
+    "fields": {
+        "name": "chief_doctor",
+        "description": "Главный врач",
+        "statuses": [
+            2
+        ],
+        "possible_actions": [
+            1,
+            2,
+            3
+        ],
+        "links": [
+            2,
+            3
+        ]
+    }
+},
+{
+    "model": "users.custompermissions",
+    "pk": 6,
+    "fields": {
+        "name": "head_of_purchasing_department",
+        "description": "Начальник отдела закупок",
+        "statuses": [
+            3,
+            4,
+            9
+        ],
+        "possible_actions": [
+            1,
+            3
+        ],
+        "links": [
+            2,
+            3
+        ]
+    }
+},
+{
+    "model": "users.custompermissions",
+    "pk": 7,
+    "fields": {
+        "name": "purchasing_department_specialist",
+        "description": "Специалист отдела закупок",
+        "statuses": [],
+        "possible_actions": [
+            1
+        ],
+        "links": [
+            2,
+            3
+        ]
+    }
+},
+{
+    "model": "users.custompermissions",
+    "pk": 8,
+    "fields": {
+        "name": "economist_1",
+        "description": "Экономист_1",
+        "statuses": [
+            5
+        ],
+        "possible_actions": [
+            1
+        ],
+        "links": [
+            2,
+            3
+        ]
+    }
+},
+{
+    "model": "users.custompermissions",
+    "pk": 9,
+    "fields": {
+        "name": "deputy_for_economics",
+        "description": "Заместитель ГВ по экономике",
+        "statuses": [
+            6
+        ],
+        "possible_actions": [
+            1,
+            3
+        ],
+        "links": [
+            2,
+            3
+        ]
+    }
+},
+{
+    "model": "users.custompermissions",
+    "pk": 10,
+    "fields": {
+        "name": "chief_accountant",
+        "description": "Главный бухгалтер",
+        "statuses": [
+            8
+        ],
+        "possible_actions": [
+            1,
+            3
+        ],
+        "links": [
+            2,
+            3
+        ]
+    }
+},
+{
+    "model": "users.custompermissions",
+    "pk": 11,
+    "fields": {
+        "name": "economist_2",
+        "description": "Экономист_2",
+        "statuses": [
+            7
+        ],
+        "possible_actions": [
+            1
+        ],
+        "links": [
+            2,
+            3
+        ]
+    }
+}
+]
