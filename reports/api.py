@@ -179,3 +179,14 @@ class ReportApproveClose(viewsets.ViewSet):
         instance.save()
         return Response(status=status.HTTP_200_OK)
 
+
+class Archive(generics.ListAPIView):
+    """Архив"""
+    serializer_class = ReportListSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ReportFilter
+
+    def get_queryset(self):
+        return Report.objects.filter(closed=True)
+
