@@ -38,7 +38,7 @@ class History(models.Model):
     text = models.TextField(blank=True, verbose_name='Text')
 
     class Meta:
-        ordering = ['-action_date']
+        ordering = ['-action_date', '-id']
 
 
 class Files(models.Model):
