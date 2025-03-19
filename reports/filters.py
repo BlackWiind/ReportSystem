@@ -1,15 +1,14 @@
 import django_filters
+from django_filters import rest_framework as filters
 from django_filters import DateFromToRangeFilter
 from django_filters.widgets import DateRangeWidget
 
-from users.models import CuratorsGroup
-from .models import Report, Tag
+from .models import Report
 
 
-class ReportFilter(django_filters.FilterSet):
+class ReportFilter(filters.FilterSet):
 
-    def get_tags_queryset(self):
-        pass
+
     date_create = DateFromToRangeFilter(
         lookup_expr=('icontains'),
         widget=django_filters.widgets.RangeWidget(
@@ -17,7 +16,6 @@ class ReportFilter(django_filters.FilterSet):
         )
     )
 
-    # tags = django_filters.ChoiceFilter(queryset=get_tags_queryset)
 
     class Meta:
         model = Report
@@ -28,3 +26,12 @@ class ReportFilter(django_filters.FilterSet):
                   'date_create': ['exact'],
                   'one_time': ['exact'],
                   }
+
+    @property
+    def qs(self):
+        parent = super().qs
+        statuses = self.request.user.custom_permissions.statuses.all().values_list('status', flat=True)
+        my_reports = self.request.GET.get('my_reports', None)
+        if my_reports:
+            return parent.filter(status__status__in=statuses)
+        return parent

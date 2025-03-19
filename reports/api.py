@@ -1,6 +1,6 @@
 import threading
 
-from click import Parameter
+from django_filters import rest_framework as filters
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from drf_yasg import openapi
@@ -70,6 +70,7 @@ class ReportList(generics.ListAPIView):
     """Список рапортов"""
     serializer_class = ReportListSerializer
     permission_classes = [IsAuthenticated]
+    filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = ReportFilter
 
     def get_queryset(self):
