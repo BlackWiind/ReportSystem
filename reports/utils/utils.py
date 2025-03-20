@@ -1,4 +1,4 @@
-from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from rest_framework.pagination import PageNumberPagination
 
@@ -15,10 +15,11 @@ def get_queryset_dependent_group(user):
 def word_to_genitive(word: str) -> str:
     morph = pymorphy2.MorphAnalyzer()
     parsed_word = morph.parse(word)[0]
-    if parsed_word is None:
+    try:
+        word = parsed_word.inflect({'gent'}).word
+        return word.capitalize()
+    except:
         return word
-    word = parsed_word.inflect({'gent'}).word
-    return word.capitalize()
 
 
 def ajax_decoder(request_data) -> dict:
