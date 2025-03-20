@@ -29,20 +29,22 @@ def create_pdf_unloading(pk):
     new_style = ParagraphStyle('Title Arial Style', fontName='Arial', fontSize=12)
 
     paragraph = Paragraph(f"Главному врачу<br></br>"
+                          f"КГБУЗ ККБ Им. проф. С.И.Сергеева<br></br>"
                           f"Субботину Андрею Юрьевичу<br></br>"
                           f"От {' '.join(map(word_to_genitive,data.creator.job_title.strip().split(' ')))}<br></br>"
                           f"{' '.join(map(word_to_genitive,data.creator.__str__().strip().split(' ')))}<br></br>"
                           , new_style)
     paragraph.wrapOn(my_canvas, 200, 20)
-    paragraph.drawOn(my_canvas, width - 250, height - 80)
+    paragraph.drawOn(my_canvas, width - 250, height - 100)
 
-    paragraph = Paragraph(f"<b>Рапорт {data.pk}</b>", title_style)
+    paragraph = Paragraph(f"<b>Рапорт.</b>", title_style)
     paragraph.wrapOn(my_canvas, 500, 20)
     paragraph.drawOn(my_canvas, width - 400, height - 200)
 
     paragraph = Paragraph(f"{data.text}<br></br><br></br>"
                           f"{data.justification}<br></br><br></br>"
-                          f"Ориентировочная стоимость: {data.price}рублей.", main_stile)
+                          f"Ориентировочная стоимость:"
+                          f" {'{:0,.2f}'.format(data.price).replace(',', ' ')}р.", main_stile)
     paragraph.wrapOn(my_canvas, 500, 20)
     paragraph.drawOn(my_canvas, width - 550, height - 300)
 
