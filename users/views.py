@@ -110,8 +110,7 @@ class GetUsersForReport(generics.ListAPIView):
     def get_queryset(self):
         try:
             if self.request.user.custom_permissions.name == 'curator':
-                print(True)
-                User.objects.filter(department__curators_group=self.request.user.curators_group)
+                return User.objects.filter(department__curators_group=self.request.user.curators_group)
             return User.objects.filter(department=self.request.user.department)
         except AttributeError:
             raise AttributeError('Не установлены права пользователя')
