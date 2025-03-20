@@ -44,9 +44,10 @@ class ReportManager(models.Manager):
         if user.is_superuser:
             return my_set
         if user.custom_permissions.name == 'head_of_department':
-            return my_set.filter(creator__department=user.department)
+            return my_set.filter(Q(creator__department=user.department) | Q(responsible__department=user.department))
         elif user.custom_permissions.name == 'curator':
-            return my_set.filter(curators_group=user.curators_group)
+            return my_set.filter(Q(curators_group=user.curators_group) |
+                                 Q(responsible__department__curators_group=user.curators_group))
         else:
             statuses = user.custom_permissions.statuses.all().values_list('user_can_view', flat=True)
             return my_set.filter(Q(creator=user) |
