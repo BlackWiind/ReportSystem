@@ -49,7 +49,7 @@ class ReportManager(models.Manager):
             return my_set.filter(Q(curators_group=user.curators_group) |
                                  Q(responsible__department__curators_group=user.curators_group))
         else:
-            statuses = user.custom_permissions.statuses.all().values_list('user_can_view', flat=True)
+            statuses = user.custom_permissions.user_can_view.all().values_list('status', flat=True)
             return my_set.filter(Q(creator=user) |
                                  Q(responsible=user) |
                                  Q(assigned_purchasing_specialist=user) |
