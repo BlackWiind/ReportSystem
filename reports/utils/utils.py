@@ -66,7 +66,7 @@ def change_waiting_status(instance, request) -> str:
     receiver = instance.responsible if instance.responsible else instance.creator
     text = None
     if instance.waiting:
-        _ = WaitingStatusForUser.objects.create(
+        _ = WaitingStatusForUser.objects.get_or_create(
             sender=request.user, receiver=receiver, report=instance)
         text = f'Установлен статус "Ожидание": {request.data["text"]}'
     else:
