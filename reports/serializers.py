@@ -47,7 +47,7 @@ class ReportRetrieveUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Report
-        exclude =('sign', 'draft', 'curators_group')
+        exclude =('sign', 'curators_group')
 
 class ReportListSerializer(serializers.ModelSerializer):
     """ Список рапортов"""
@@ -63,7 +63,7 @@ class ReportListSerializer(serializers.ModelSerializer):
         model = Report
         fields = ('id', 'creator', 'responsible', 'text',
                   'price', 'tags', 'assigned_purchasing_specialist',
-                  'status','history', 'date_create', 'one_time', 'waiting', 'closed')
+                  'status','history', 'date_create', 'one_time', 'waiting', 'closed', 'draft',)
 
 
 class HistoryUpdateSerializer(serializers.ModelSerializer):
