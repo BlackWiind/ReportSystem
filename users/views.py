@@ -11,10 +11,10 @@ from rest_framework.response import Response
 
 from reports.permissions import IsSuperuserOrReadOnly
 from reports.utils.utils import new_vocation, LargeResultsSetPagination
-from .models import User, CuratorsGroup
+from .models import User, CuratorsGroup, Department
 
 from .forms import RegisterUserForm
-from .serializers import UserSerializer, CuratorsGroupSerializer, UserShortDataSerializer
+from .serializers import UserSerializer, CuratorsGroupSerializer, UserShortDataSerializer, DepartmentSerializer
 from .utils.search_in_db import SearchUsers
 
 
@@ -114,3 +114,11 @@ class GetUsersForReport(generics.ListAPIView):
             return User.objects.filter(department=self.request.user.department)
         except AttributeError:
             raise AttributeError('Не установлены права пользователя')
+
+
+class GetAllDepartment(generics.ListAPIView):
+    """Список всех департаментов"""
+    serializer_class = DepartmentSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = LargeResultsSetPagination
+    queryset = Department.objects.all()

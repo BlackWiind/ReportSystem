@@ -90,6 +90,7 @@ class Department(models.Model):
         return self.name
 
     class Meta:
+        ordering = ['name']
         verbose_name = 'Название отдела'
         verbose_name_plural = 'Названия отделов'
 

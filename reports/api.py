@@ -60,7 +60,6 @@ class ReportCreate(generics.CreateAPIView):
         user = self.request.user
         instance = serializer.save(creator=user, draft=False,
                                    curators_group=user.department.curators_group)
-        instance.print_form.save(*create_pdf_unloading(instance.pk))
         instance.parents.all().update(closed=True)
         instance.history.create(user=user,
             text="Рапорт создан.")
@@ -153,6 +152,8 @@ class ReportApproveClose(viewsets.ViewSet):
     def report_approve(self, request, pk=None):
         instance = get_object_or_404(self.queryset,pk=pk)
         if instance.status.id < 9:
+            if request.user.custom_permissions.name == 'curator':
+                instance.print_form.save(*create_pdf_unloading(instance.pk, request.user))
             instance.status = Statuses.objects.get(id=instance.status.id+1)
             instance.history.add(self.new_history("Рапорт одобрен."))
         else:

@@ -13,7 +13,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.platypus import Paragraph
 
 
-def create_pdf_unloading(pk):
+def create_pdf_unloading(pk, user=None):
     data = Report.objects.get(pk=pk)
 
     buffer = io.BytesIO()
@@ -42,11 +42,19 @@ def create_pdf_unloading(pk):
     paragraph.drawOn(my_canvas, width - 400, height - 200)
 
     paragraph = Paragraph(f"{data.text}<br></br><br></br>"
-                          f"{data.justification}<br></br><br></br>"
+                          f"Обоснование: {data.justification}<br></br><br></br>"
                           f"Ориентировочная стоимость:"
                           f" {'{:0,.2f}'.format(data.price).replace(',', ' ')}р.", main_stile)
     paragraph.wrapOn(my_canvas, 500, 20)
     paragraph.drawOn(my_canvas, width - 550, height - 300)
+
+    paragraph = Paragraph(f"Одобренно:", main_stile)
+    paragraph.wrapOn(my_canvas, 500, 20)
+    paragraph.drawOn(my_canvas, width - 500, height - 450)
+
+    paragraph = Paragraph(f"{user}", main_stile)
+    paragraph.wrapOn(my_canvas, 500, 20)
+    paragraph.drawOn(my_canvas, width - 250, height - 450)
 
 
     paragraph = Paragraph(f"{data.date_create.strftime('%d.%m.%Y')}", main_stile)

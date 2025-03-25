@@ -17,4 +17,5 @@ urlpatterns = [
     path('api/user_data/<int:pk>/', views.GetOneUser.as_view(), name='user_data'),
     path('api/my_user_data/', views.GetUserMyUserData.as_view(), name='user_data'),
     path('api/users_for_report', views.GetUsersForReport.as_view()),
+    path('api/get_departments/', views.GetAllDepartment.as_view())
 ]

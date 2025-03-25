@@ -1,6 +1,6 @@
 import django_filters
 from django_filters import rest_framework as filters
-from django_filters import DateFromToRangeFilter
+from django_filters import DateFromToRangeFilter, BooleanFilter
 from django_filters.widgets import DateRangeWidget
 
 from .models import Report
@@ -15,6 +15,7 @@ class ReportFilter(filters.FilterSet):
             attrs={'type':'date'}
         )
     )
+    my_reports = BooleanFilter(label='Требующие внимания')
 
 
     class Meta:
@@ -25,6 +26,7 @@ class ReportFilter(filters.FilterSet):
                   'tags': ['exact'],
                   'date_create': ['exact'],
                   'one_time': ['exact'],
+                  'draft': ['exact'],
                   }
 
     @property

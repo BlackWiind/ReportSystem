@@ -39,7 +39,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Department
-        fields = ('name', 'curators_group',)
+        fields = ('id', 'name', 'curators_group',)
 
 class CustomPermissionsSerializer(serializers.ModelSerializer):
     """Сериалайзер для групп доступа"""
@@ -72,3 +72,4 @@ class UserShortDataSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id','first_name', 'last_name', 'surname',
                    'department', 'job_title',]
+
