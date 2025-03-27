@@ -49,6 +49,11 @@ class ReportRetrieveUpdateSerializer(serializers.ModelSerializer):
         model = Report
         exclude =('sign', 'curators_group')
 
+class ReportPatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Report
+        exclude =('parents', 'sign', 'curators_group')
+
 class ReportListSerializer(serializers.ModelSerializer):
     """ Список рапортов"""
 

@@ -18,7 +18,7 @@ from reports.models import Report, Tag, History, WaitingStatusForUser
 from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
     ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer, \
-    WaitingStatusForUserSerializer
+    WaitingStatusForUserSerializer, ReportPatchSerializer
 from reports.utils.unloads import create_pdf_unloading
 from reports.utils.utils import LargeResultsSetPagination, additional_data
 from users.models import Statuses
@@ -79,6 +79,11 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = ReportRetrieveUpdateSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ['patch', 'get',]
+
+    def get_serializer_class(self):
+        if self.request.method == "PATCH":
+            return ReportPatchSerializer
+        return super(ReportRetrieveUpdate, self).get_serializer_class()
 
     def get_queryset(self):
         return Report.objects.all()
