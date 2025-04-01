@@ -87,7 +87,7 @@ class Report(models.Model):
     creator = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Автор',
                                 related_name='%(app_label)s_%(class)s_creator')
     text = models.TextField(verbose_name='Текст')
-    justification = models.TextField(verbose_name='Основание')
+    justification = models.TextField(verbose_name='Основание', null=True, blank=True)
     price = models.FloatField(default=0.00, verbose_name='Цена')
     one_time = models.BooleanField(default=True, verbose_name='Единовременная закупка')
     tags = models.ManyToManyField(Tag, verbose_name='Теги', related_name='%(app_label)s_%(class)s_tags')
