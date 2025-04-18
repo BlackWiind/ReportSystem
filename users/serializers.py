@@ -71,5 +71,5 @@ class UserShortDataSerializer(serializers.ModelSerializer):
 
         model = User
         fields = ['id','first_name', 'last_name', 'surname',
-                   'department', 'job_title',]
+                   'department', 'job_title', 'is_stuff', 'is_superuser',]
 
