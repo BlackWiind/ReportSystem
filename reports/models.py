@@ -62,26 +62,6 @@ class SourcesOfFunding(models.Model):
         verbose_name = 'Источник финансирования'
         verbose_name_plural = 'Источники финансирования'
 
-# class GeneralData(models.Model):
-#     creator = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Автор',
-#                                 related_name='%(app_label)s_%(class)s_creator')
-#     text = models.TextField(verbose_name='Текст')
-#     justification = models.TextField(verbose_name='Основание')
-#     price = models.FloatField(default=0.00, verbose_name='Цена')
-#     one_time = models.BooleanField(default=True, verbose_name='Единовременная закупка')
-#     tags = models.ManyToManyField(Tag, verbose_name='Теги', related_name='%(app_label)s_%(class)s_tags')
-#     date_create = models.DateField(auto_now_add=True, verbose_name='Дата создания')
-#
-#     class Meta:
-#         abstract = True
-
-
-# class Draft(GeneralData):
-#     closed = models.BooleanField(default=False, verbose_name='Закрыта')
-#     close_reason = models.TextField(null=True, blank=True, verbose_name='Причина закрытия')
-#
-#     objects = models.Manager()
-#     custom_query = DraftManager()
 
 class Report(models.Model):
     creator = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name='Автор',

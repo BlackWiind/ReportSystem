@@ -1,5 +1,4 @@
 import threading
-from cgi import print_form
 
 from django_filters import rest_framework as filters
 from django.core.exceptions import ObjectDoesNotExist
@@ -20,7 +19,8 @@ from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
     ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer, \
     WaitingStatusForUserSerializer, ReportPatchSerializer
-from reports.utils.unloads import create_pdf_unloading, edit_pdf, PdfReports
+from reports.utils.api_connections import create_new_notification
+from reports.utils.unloads import PdfReports
 from reports.utils.utils import LargeResultsSetPagination, additional_data
 from users.models import Statuses
 
@@ -92,6 +92,7 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         instance = serializer.save()
+        create_new_notification(instance.pk)
         additional_data(instance, self.request)
 
 class CanIShutDownWaiting(APIView):
