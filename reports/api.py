@@ -61,7 +61,7 @@ class ReportCreate(generics.CreateAPIView):
         user = self.request.user
         instance = serializer.save(creator=user, draft=False,
                                    curators_group=user.department.curators_group)
-        instance.print_form.save(*PdfReports(instance.pk).create_new_file())
+        # instance.print_form.save(*PdfReports(instance.pk).create_new_file())
         instance.parents.all().update(closed=True)
         instance.history.create(user=user,
             text="Рапорт создан.")
@@ -161,13 +161,15 @@ class ReportApproveClose(viewsets.ViewSet):
         instance = get_object_or_404(self.queryset,pk=pk)
         if instance.status.id < 9:
             if request.user.custom_permissions.name == 'curator':
-                file = instance.print_form
-                instance.print_form.save(*PdfReports(instance.pk).add_curator(request.user, file))
+                instance.print_form.save(*PdfReports(instance.pk).create_new_file())
+            #     file = instance.print_form
+            #     instance.print_form.save(*PdfReports(instance.pk).add_curator(request.user, file))
             instance.status = Statuses.objects.get(id=instance.status.id+1)
             instance.history.add(self.new_history("Рапорт одобрен."))
         else:
             instance.closed = True
             instance.history.add(self.new_history("Закупка состоялась."))
+        create_new_notification(instance.pk)
         instance.save()
         return Response(status=status.HTTP_200_OK)
 
@@ -186,6 +188,7 @@ class ReportApproveClose(viewsets.ViewSet):
     def report_freeze(self, request, pk=None):
         instance = get_object_or_404(self.queryset, pk=pk)
         additional_data(instance, self.request)
+        create_new_notification(instance.pk)
         instance.save()
         return Response(status=status.HTTP_200_OK)
 

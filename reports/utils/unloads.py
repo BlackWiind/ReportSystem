@@ -5,6 +5,7 @@ from django.http import FileResponse
 from reportlab.lib.colors import black
 from reportlab.lib.fonts import addMapping
 
+from users.models import User
 from .utils import word_to_genitive
 
 from reportlab.lib.styles import ParagraphStyle
@@ -178,8 +179,16 @@ class PdfReports:
         text = f"{self.obj.creator}"
         self.draw_text(text, 200, 20, 400, 200)
 
-        self.add_sign({'fio': self.obj.creator, 'start': self.obj.date_create, 'end': self.obj.date_create},
-                      70, 760)
+        # Временная заглушка
+        curator = User.objects.get(custom_permissions__name='curator', curators_group=self.obj.curators_group)
+        text = f"Одобрил:"
+        self.draw_text(text, 200, 20, 20, 160)
+
+        text = f"{curator}"
+        self.draw_text(text, 200, 20, 400, 160)
+
+        # self.add_sign({'fio': self.obj.creator, 'start': self.obj.date_create, 'end': self.obj.date_create},
+        #               70, 760)
 
         return self.return_file()
 
