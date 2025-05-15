@@ -59,7 +59,7 @@ class ReportListSerializer(serializers.ModelSerializer):
 
     responsible = UserShortDataSerializer(read_only=True)
     tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
-    status = serializers.SlugRelatedField(slug_field='verbose_name', read_only=True)
+    status = serializers.SlugRelatedField(slug_field='visible_name', read_only=True)
     history = HistorySerializer(read_only=True, many=True)
     creator = UserShortDataSerializer(read_only=True)
     assigned_purchasing_specialist = UserShortDataSerializer(read_only=True)
