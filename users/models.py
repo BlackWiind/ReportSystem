@@ -1,15 +1,20 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 
 
 class MyUserManager(BaseUserManager):
     def create_superuser(self, username, password, department_id, email='', *args, **kwargs):
-        if email:
-            user = self.model(
-                username=username, email=email, department=Department.objects.get(pk=department_id))
-        else:
-            user = self.model(
-                username=username, department=Department.objects.get(pk=department_id))
+        try:
+            department = Department.objects.get(pk=department_id)
+        except models.Model.DoesNotExist:  # Универсальный подход
+            raise ValueError(f"Department with id={department_id} does not exist.")
+
+        user = self.model(
+            username=username,
+            email=email if email else "",  # Защита от None
+            department=department
+        )
         user.set_password(password)
         user.is_staff = True
         user.is_superuser = True
@@ -17,20 +22,43 @@ class MyUserManager(BaseUserManager):
         return user
 
 class Statuses(models.Model):
-    status = models.CharField(max_length=255, null=True, blank=True, verbose_name='Статус')
-    verbose_name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Видимое имя')
+    name = models.CharField(max_length=255, verbose_name='Статус')
+    visible_name = models.CharField(max_length=255, verbose_name='Видимое имя')
+    next_status = models.ForeignKey(
+        'self',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='previous_statuses',
+        verbose_name='Следующий статус'
+    )
+    is_final = models.BooleanField(default=False, verbose_name='Финальный статус')
 
     class Meta:
         verbose_name = 'Статус'
         verbose_name_plural = 'Статусы'
 
     def __str__(self):
-        return self.status
+        return f"{self.status} (→ {self.next_status.status if self.next_status else 'КОНЕЦ'})"
+
+    def validate_no_loops(self):
+        """Проверка, что статусы не зациклены."""
+        visited = set()
+        current = self
+        while current:
+            if current.id in visited:
+                raise ValidationError("Нарушено правило: *зацикленные статусы*!")
+            visited.add(current.id)
+            current = current.next_status
+
+    def clean(self):
+        super().clean()
+        self.validate_no_loops()
 
 
 class PossibleActions(models.Model):
-    name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Действие')
-    visible_name = models.CharField(max_length=255, null=True, blank=True, verbose_name='Видимое имя')
+    name = models.CharField(max_length=255, verbose_name='Действие')
+    visible_name = models.CharField(max_length=255, verbose_name='Видимое имя')
 
     def __str__(self):
         return self.name
@@ -97,10 +125,10 @@ class Department(models.Model):
 
 class User(AbstractUser):
     surname = models.CharField(max_length=255, verbose_name='Отчество')
-    department = models.ForeignKey(Department, on_delete=models.PROTECT, verbose_name='Отдел')
-    job_title = models.CharField(max_length=255, verbose_name='Должность', default='Не указанна')
+    department = models.ForeignKey(Department, on_delete=models.PROTECT, verbose_name='Отдел', related_name='users')
+    job_title = models.CharField(max_length=255, verbose_name='Должность', default='Не указана')
     curators_group = models.ForeignKey(CuratorsGroup, on_delete=models.PROTECT, null=True,
-                                       blank=True, verbose_name='Курируемая группа')
+                                       blank=True, verbose_name='Курируемая группа', related_name='curators')
     custom_permissions = models.ForeignKey(CustomPermissions, on_delete=models.PROTECT, null=True, blank=True)
 
     custom_objects = MyUserManager()
@@ -126,6 +154,14 @@ class CuratorToDepartment(models.Model):
     curator = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Куратор')
     department = models.ForeignKey(Department, on_delete=models.CASCADE, verbose_name='Курируемый отдел')
 
+    class Meta:
+        verbose_name = 'Назначение куратора'
+        verbose_name_plural = 'Назначения кураторов'
+        # unique_together = ('curator', 'department')
+
+    def __str__(self):
+        return f"{self.curator} -> {self.department}"
+
 
 class VocationsSchedule(models.Model):
     vocation_start = models.DateField(verbose_name='Начало отпуска')
@@ -133,3 +169,7 @@ class VocationsSchedule(models.Model):
     vocation_user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь в отпуске')
     deputy = models.ForeignKey(User, verbose_name='Заместитель', on_delete=models.CASCADE, related_name='deputy_user')
     group = models.ForeignKey(CustomPermissions,on_delete=models.CASCADE, verbose_name='группа заместителя')
+
+    def clean(self):
+        if self.vocation_end <= self.vocation_start:
+            raise ValidationError("Дата окончания отпуска должна быть позже даты начала")

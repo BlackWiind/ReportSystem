@@ -87,7 +87,7 @@ class CuratorsGroupAdmin(admin.ModelAdmin):
 
 
 class StatusesAdmin(admin.ModelAdmin):
-    list_of_fields = ('id', 'status','verbose_name',)
+    list_of_fields = ('id', 'name','visible_name', 'next_status', 'is_final',)
     list_display = list_of_fields
     list_display_links = list_of_fields
 
