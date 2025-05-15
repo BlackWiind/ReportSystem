@@ -32,7 +32,7 @@ class ReportFilter(filters.FilterSet):
     @property
     def qs(self):
         parent = super().qs
-        statuses = self.request.user.custom_permissions.statuses.all().values_list('status', flat=True)
+        statuses = self.request.user.custom_permissions.statuses.all().values_list('name', flat=True)
         my_reports = self.request.GET.get('my_reports', None)
         if my_reports:
             return parent.filter(status__status__in=statuses)
