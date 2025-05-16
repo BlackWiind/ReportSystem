@@ -39,7 +39,7 @@ class Statuses(models.Model):
         verbose_name_plural = 'Статусы'
 
     def __str__(self):
-        return f"{self.status} (→ {self.next_status.status if self.next_status else 'КОНЕЦ'})"
+        return f"{self.visible_name} (→ {self.next_status.visible_name if self.next_status else 'КОНЕЦ'})"
 
     def validate_no_loops(self):
         """Проверка, что статусы не зациклены."""
