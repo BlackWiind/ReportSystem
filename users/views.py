@@ -68,10 +68,15 @@ class NewVocation(View):
         # except Exception as e:
         #     return JsonResponse(data={'message': f'Произошла неизвестная ошибка: {type(e).__name__}'}, status=500)
 
-class GetUsers(generics.ListCreateAPIView):
+class AllUsersListView(generics.ListCreateAPIView):
+    """
+    Возвращает список всех пользователей,
+     для редактирования доступно только суперюзеру.
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsSuperuserOrReadOnly]
+    pagination_class = LargeResultsSetPagination
 
 class GetUsersFromMyDepartment(generics.ListAPIView):
     serializer_class = UserSerializer

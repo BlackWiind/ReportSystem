@@ -61,7 +61,6 @@ class ReportCreate(generics.CreateAPIView):
         user = self.request.user
         instance = serializer.save(creator=user, draft=False,
                                    curators_group=user.department.curators_group)
-        # instance.print_form.save(*PdfReports(instance.pk).create_new_file())
         instance.parents.all().update(closed=True)
         instance.history.create(user=user,
             text="Рапорт создан.")
@@ -159,16 +158,20 @@ class ReportApproveClose(viewsets.ViewSet):
     @swagger_auto_schema(request_body=HistoryUpdateSerializer)
     def report_approve(self, request, pk=None):
         instance = get_object_or_404(self.queryset,pk=pk)
-        if instance.status.id < 9:
+        if instance.status.is_final:
+            instance.close_report(self.request.user, "Закупка состоялась.")
+        else:
             if request.user.custom_permissions.name == 'curator':
                 instance.print_form.save(*PdfReports(instance.pk).create_new_file())
-            #     file = instance.print_form
-            #     instance.print_form.save(*PdfReports(instance.pk).add_curator(request.user, file))
-            instance.status = Statuses.objects.get(id=instance.status.id+1)
-            instance.history.add(self.new_history("Рапорт одобрен."))
-        else:
-            instance.closed = True
-            instance.history.add(self.new_history("Закупка состоялась."))
+            instance.next_status(self.request.user, "Рапорт одобрен.")
+        # if instance.status.id < 9:
+        #     if request.user.custom_permissions.name == 'curator':
+        #         instance.print_form.save(*PdfReports(instance.pk).create_new_file())
+        #     instance.status = Statuses.objects.get(id=instance.status.id+1)
+        #     instance.history.add(self.new_history("Рапорт одобрен."))
+        # else:
+        #     instance.closed = True
+        #     instance.history.add(self.new_history("Закупка состоялась."))
         create_new_notification(instance.pk)
         instance.save()
         return Response(status=status.HTTP_200_OK)
@@ -178,18 +181,21 @@ class ReportApproveClose(viewsets.ViewSet):
     @swagger_auto_schema(request_body=HistoryUpdateSerializer)
     def report_close(self, request, pk=None):
         instance = get_object_or_404(self.queryset,pk=pk)
-        instance.closed = True
-        instance.history.add(self.new_history(request.data['text']))
-        instance.save()
+        instance.close_report(self.request.user, request.data['text'])
+        # instance.closed = True
+        # instance.history.add(self.new_history(request.data['text']))
+        # instance.save()
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True)
     @swagger_auto_schema(request_body=HistoryUpdateSerializer)
     def report_freeze(self, request, pk=None):
+        # Требуется переименовать после проверки работоспособности
         instance = get_object_or_404(self.queryset, pk=pk)
-        additional_data(instance, self.request)
-        create_new_notification(instance.pk)
-        instance.save()
+        instance.prev_status(self.request.user, request.data['text'])
+        # additional_data(instance, self.request)
+        # create_new_notification(instance.pk)
+        # instance.save()
         return Response(status=status.HTTP_200_OK)
 
 

@@ -199,6 +199,12 @@ class Report(models.Model):
         self._add_history_entry(user, history_text if history_text else default_text)
         return self.status
 
+    def close_report(self, user, reason_text=None):
+        self.closed =True
+        self.save()
+        default_text = f'Рапорт был закрыт пользователем {user}'
+        self._add_history_entry(user, reason_text if reason_text else default_text)
+
     def _add_history_entry(self, user, text):
         history_entry = History.objects.create(
             user=user,
