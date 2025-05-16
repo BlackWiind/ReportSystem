@@ -22,8 +22,8 @@ class MyUserManager(BaseUserManager):
         return user
 
 class Statuses(models.Model):
-    name = models.CharField(max_length=255, verbose_name='Статус')
-    visible_name = models.CharField(max_length=255, verbose_name='Видимое имя')
+    name = models.CharField(max_length=255, verbose_name='Статус', default='null status')
+    visible_name = models.CharField(max_length=255, verbose_name='Видимое имя', default='null status')
     next_status = models.ForeignKey(
         'self',
         on_delete=models.SET_NULL,
@@ -57,8 +57,8 @@ class Statuses(models.Model):
 
 
 class PossibleActions(models.Model):
-    name = models.CharField(max_length=255, verbose_name='Действие')
-    visible_name = models.CharField(max_length=255, verbose_name='Видимое имя')
+    name = models.CharField(max_length=255, verbose_name='Действие', default='null action')
+    visible_name = models.CharField(max_length=255, verbose_name='Видимое имя', default='null action')
 
     def __str__(self):
         return self.name
