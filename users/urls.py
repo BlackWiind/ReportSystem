@@ -12,7 +12,7 @@ urlpatterns = [
     path('new_vocation/', views.NewVocation.as_view(), name='new_vocation'),
 
     path('api/list_curator_group/', views.ListCuratorsGroup.as_view(), name='list_curator_group'),
-    path('api/list_users/', views.GetUsers.as_view(), name='list_users'),
+    path('api/list_users/', views.AllUsersListView.as_view(), name='list_users'),
     path('api/my_department_list_users/', views.GetUsersFromMyDepartment.as_view(), name='my_department_list_users'),
     path('api/user_data/<int:pk>/', views.GetOneUser.as_view(), name='user_data'),
     path('api/my_user_data/', views.GetUserMyUserData.as_view(), name='user_data'),
