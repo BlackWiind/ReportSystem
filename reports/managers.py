@@ -49,11 +49,11 @@ class ReportManager(models.Manager):
             return my_set.filter(Q(curators_group=user.curators_group) |
                                  Q(responsible__department__curators_group=user.curators_group))
         else:
-            statuses = user.custom_permissions.user_can_view.all().values_list('status', flat=True)
+            statuses = user.custom_permissions.user_can_view.all().values_list('name', flat=True)
             return my_set.filter(Q(creator=user) |
                                  Q(responsible=user) |
                                  Q(assigned_purchasing_specialist=user) |
-                                 Q(status__status__in=statuses))
+                                 Q(status__name__in=statuses))
 
     def not_closed_draft(self, user):
         my_set = self.get_queryset().get_drafts().not_closed()
