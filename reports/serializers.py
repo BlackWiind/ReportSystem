@@ -55,7 +55,7 @@ class FileSerializer(serializers.ModelSerializer):
         fields = ('id', 'file')
 
 class ReportPatchSerializer(serializers.ModelSerializer):
-    uploaded_files = serializers.ListField(
+    files = serializers.ListField(
         child=serializers.FileField(max_length=100000, allow_empty_file=True, use_url=False),
         write_only=True,
         required=False
@@ -66,13 +66,13 @@ class ReportPatchSerializer(serializers.ModelSerializer):
         exclude =('parents', 'sign', 'curators_group')
 
     def update(self, instance, validated_data):
-        uploaded_files = validated_data.pop('uploaded_files', [])
+        files = validated_data.pop('files', [])
 
         # Обновляем остальные поля
         instance = super().update(instance, validated_data)
 
         # Добавляем новые файлы
-        for file in uploaded_files:
+        for file in files:
             new_file = Files.objects.create(file=file)
             instance.files.add(new_file)
 

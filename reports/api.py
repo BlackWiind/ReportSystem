@@ -8,6 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -80,6 +81,7 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = ReportRetrieveUpdateSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ['patch', 'get',]
+    parser_classes = [MultiPartParser, FormParser]
 
     def get_serializer_class(self):
         if self.request.method == "PATCH":
@@ -92,7 +94,6 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         instance = serializer.save()
         create_new_notification(instance.pk)
-        additional_data(instance, self.request)
 
 class CanIShutDownWaiting(APIView):
     @swagger_auto_schema(
