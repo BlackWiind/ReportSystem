@@ -56,34 +56,34 @@ def new_vocation(vocation_user, deputy, vocation_start, vocation_end):
 def history_add(instance, request, text=None):
     if text is None:
         my_list = [instance._meta.get_field(x).verbose_name for x in list(request.data.keys())]
-        text = f"Изменеия в следующих полях: {' '.join(my_list)}"
+        text = f"Изменения в следующих полях: {' '.join(my_list)}"
     instance.history.create(
         user=request.user,
         text=text
     )
 
-def change_waiting_status(instance, request) -> str:
-    receiver = instance.responsible if instance.responsible else instance.creator
-    text = None
-    if instance.waiting:
-        _ = WaitingStatusForUser.objects.get_or_create(
-            sender=request.user, receiver=receiver, report=instance)
-        text = f'Установлен статус "Ожидание": {request.data["text"]}'
-    else:
-        try:
-            _ = WaitingStatusForUser.objects.filter(
-                sender=request.user, receiver=receiver, report=instance).delete()
-        except ObjectDoesNotExist:
-            pass
-        text = 'Статус "Ожидание" снят'
-    return text
-
-def additional_data(instance, request):
-    text = None
-    if 'waiting' in request.data:
-        instance.waiting=request.data['waiting']
-        text = change_waiting_status(instance, request)
-    history_add(instance, request, text)
+# def change_waiting_status(instance, request) -> str:
+#     receiver = instance.responsible if instance.responsible else instance.creator
+#     text = None
+#     if instance.waiting:
+#         _ = WaitingStatusForUser.objects.get_or_create(
+#             sender=request.user, receiver=receiver, report=instance)
+#         text = f'Установлен статус "Ожидание": {request.data["text"]}'
+#     else:
+#         try:
+#             _ = WaitingStatusForUser.objects.filter(
+#                 sender=request.user, receiver=receiver, report=instance).delete()
+#         except ObjectDoesNotExist:
+#             pass
+#         text = 'Статус "Ожидание" снят'
+#     return text
+#
+# def additional_data(instance, request):
+#     text = None
+#     if 'waiting' in request.data:
+#         instance.waiting=request.data['waiting']
+#         text = change_waiting_status(instance, request)
+#     history_add(instance, request, text)
 
 
 

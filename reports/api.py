@@ -8,7 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -20,10 +20,9 @@ from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
     ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer, \
     WaitingStatusForUserSerializer, ReportPatchSerializer
-from reports.utils.api_connections import create_new_notification
+from reports.tasks import async_create_new_notification
 from reports.utils.unloads import PdfReports
-from reports.utils.utils import LargeResultsSetPagination, additional_data
-from users.models import Statuses
+from reports.utils.utils import LargeResultsSetPagination
 
 
 class TagRUD(generics.RetrieveUpdateDestroyAPIView):
@@ -65,6 +64,7 @@ class ReportCreate(generics.CreateAPIView):
         instance.parents.all().update(closed=True)
         instance.history.create(user=user,
             text="Рапорт создан.")
+        async_create_new_notification.delay(instance.pk)
 
 
 class ReportList(generics.ListAPIView):
@@ -81,7 +81,7 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = ReportRetrieveUpdateSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ['patch', 'get',]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def get_serializer_class(self):
         if self.request.method == "PATCH":
@@ -93,7 +93,8 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         instance = serializer.save()
-        create_new_notification(instance.pk)
+        # create_new_notification(instance.pk)
+        async_create_new_notification.delay(instance.pk)
 
 class CanIShutDownWaiting(APIView):
     @swagger_auto_schema(
@@ -165,8 +166,9 @@ class ReportApproveClose(viewsets.ViewSet):
             if request.user.custom_permissions.name == 'curator':
                 instance.print_form.save(*PdfReports(instance.pk).create_new_file())
             instance.next_status(self.request.user, "Рапорт одобрен.")
-        create_new_notification(instance.pk)
+        # create_new_notification(instance.pk)
         instance.save()
+        async_create_new_notification.delay(instance.pk)
         return Response(status=status.HTTP_200_OK)
 
 
@@ -175,6 +177,8 @@ class ReportApproveClose(viewsets.ViewSet):
     def report_close(self, request, pk=None):
         instance = get_object_or_404(self.queryset,pk=pk)
         instance.close_report(self.request.user, request.data['text'])
+        # create_new_notification(instance.pk)
+        async_create_new_notification.delay(instance.pk)
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True)
@@ -183,6 +187,8 @@ class ReportApproveClose(viewsets.ViewSet):
         # Требуется переименовать после проверки работоспособности
         instance = get_object_or_404(self.queryset, pk=pk)
         instance.prev_status(self.request.user, request.data['text'])
+        # create_new_notification(instance.pk)
+        async_create_new_notification.delay(instance.pk)
         return Response(status=status.HTTP_200_OK)
 
 
