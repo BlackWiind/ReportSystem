@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Report, Tag, History, WaitingStatusForUser
+from .models import Report, Tag, History, WaitingStatusForUser, Files
 from users.serializers import StatusesSerializer, CuratorsGroupSerializer, UserSerializer, UserShortDataSerializer
 
 
@@ -49,10 +49,34 @@ class ReportRetrieveUpdateSerializer(serializers.ModelSerializer):
         model = Report
         exclude =('sign', 'curators_group')
 
+class FileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Files
+        fields = ('id', 'file')
+
 class ReportPatchSerializer(serializers.ModelSerializer):
+    uploaded_files = serializers.ListField(
+        child=serializers.FileField(max_length=100000, allow_empty_file=True, use_url=False),
+        write_only=True,
+        required=False
+    )
+
     class Meta:
         model = Report
         exclude =('parents', 'sign', 'curators_group')
+
+    def update(self, instance, validated_data):
+        uploaded_files = validated_data.pop('uploaded_files', [])
+
+        # Обновляем остальные поля
+        instance = super().update(instance, validated_data)
+
+        # Добавляем новые файлы
+        for file in uploaded_files:
+            new_file = Files.objects.create(file=file)
+            instance.files.add(new_file)
+
+        return instance
 
 class ReportListSerializer(serializers.ModelSerializer):
     """ Список рапортов"""

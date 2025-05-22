@@ -164,14 +164,6 @@ class ReportApproveClose(viewsets.ViewSet):
             if request.user.custom_permissions.name == 'curator':
                 instance.print_form.save(*PdfReports(instance.pk).create_new_file())
             instance.next_status(self.request.user, "Рапорт одобрен.")
-        # if instance.status.id < 9:
-        #     if request.user.custom_permissions.name == 'curator':
-        #         instance.print_form.save(*PdfReports(instance.pk).create_new_file())
-        #     instance.status = Statuses.objects.get(id=instance.status.id+1)
-        #     instance.history.add(self.new_history("Рапорт одобрен."))
-        # else:
-        #     instance.closed = True
-        #     instance.history.add(self.new_history("Закупка состоялась."))
         create_new_notification(instance.pk)
         instance.save()
         return Response(status=status.HTTP_200_OK)
@@ -182,9 +174,6 @@ class ReportApproveClose(viewsets.ViewSet):
     def report_close(self, request, pk=None):
         instance = get_object_or_404(self.queryset,pk=pk)
         instance.close_report(self.request.user, request.data['text'])
-        # instance.closed = True
-        # instance.history.add(self.new_history(request.data['text']))
-        # instance.save()
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True)
@@ -193,9 +182,6 @@ class ReportApproveClose(viewsets.ViewSet):
         # Требуется переименовать после проверки работоспособности
         instance = get_object_or_404(self.queryset, pk=pk)
         instance.prev_status(self.request.user, request.data['text'])
-        # additional_data(instance, self.request)
-        # create_new_notification(instance.pk)
-        # instance.save()
         return Response(status=status.HTTP_200_OK)
 
 
