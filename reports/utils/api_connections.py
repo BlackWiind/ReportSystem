@@ -29,7 +29,7 @@ def create_new_notification(model_id:int):
         case 'purchasing_department_2':
             list_of_users.append(report.assigned_purchasing_specialist)
         case _:
-            list_of_users.extend(User.objects.filter(custom_permissions__user_can_view=current_status).distinct())
+            list_of_users.extend(User.objects.filter(custom_permissions__statuses=current_status).distinct())
     message_text = (f'Изменение в рапорте №{report.pk}.\n'
                     f' Текщий статус {report.status.visible_name}') if not report.closed else 'Рапорт закрыт.'
     for user in set(list_of_users):
