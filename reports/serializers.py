@@ -44,7 +44,7 @@ class ReportRetrieveUpdateSerializer(serializers.ModelSerializer):
     status = StatusesSerializer(read_only=True)
     history = HistorySerializer(read_only=True, many=True)
     parents = serializers.HyperlinkedRelatedField(lookup_field='pk', many=True, read_only=True, view_name='reports:report-detail')
-    files = serializers.HyperlinkedRelatedField(lookup_field='filename', many=True, read_only=True,
+    files = serializers.HyperlinkedRelatedField(lookup_field='name', many=True, read_only=True,
                                                   view_name='reports:report-detail')
 
     class Meta:
