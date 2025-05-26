@@ -15,7 +15,6 @@ from reports.utils.form_utils import create_new_report
 from .forms import CreateReportForm, AddFilesAndNewPriceForm, AddSourcesOfFundingForm
 from .filters import ReportFilter
 from reports.utils.utils import get_queryset_dependent_group, update_status
-from reports.utils.unloads import create_pdf_unloading
 
 
 
@@ -71,9 +70,6 @@ def get_curator_groups(request):
         context = {'groups': CuratorsGroup.objects.all()}
         return render(request, 'additional_pages/modal_of_curator_groups.html', context)
 
-
-def download_pdf_report(request, pk):
-    return create_pdf_unloading(pk)
 
 
 def change_curators_group(request, pk):
