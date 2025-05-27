@@ -63,16 +63,16 @@ class PdfReports:
 
     def create_new_file(self):
         # Шапка документа
-        text = (f"Главному врачу<br/>"
-                f"КГБУЗ ККБ Им. проф. С.И.Сергеева<br/>"
-                f"Субботину Андрею Юрьевичу<br/>"
-                f"От {' '.join(map(word_to_genitive, self.obj.creator.job_title.strip().split(' ')))}<br/>"
-                f"{' '.join(map(word_to_genitive, self.obj.creator.__str__().strip().split(' ')))}<br/>")
+        text = (f"Главному врачу<br><br/>"
+                f"КГБУЗ ККБ Им. проф. С.И.Сергеева<br><br/>"
+                f"Субботину Андрею Юрьевичу<br><br/>"
+                f"От {' '.join(map(word_to_genitive, self.obj.creator.job_title.strip().split(' ')))}<br><br/>"
+                f"{' '.join(map(word_to_genitive, self.obj.creator.__str__().strip().split(' ')))}<br><br/>")
         self.draw_text(text, 200, 20, 395, 760, self.small_style)
 
         # Заголовок "Рапорт" точно по центру
         text = f"<b>Рапорт</b>"
-        self.draw_text(text, self.width, 20, 0, 650, self.title_style)  # Центрирование по всей ширине
+        self.draw_text(text, self.width, 20, 0, 600, self.title_style)  # Центрирование по всей ширине
 
         # Основной текст с отступами и динамическим позиционированием
         content_height = 500  # Стартовая позиция для контента
@@ -96,18 +96,18 @@ class PdfReports:
 
         # Дата и подписи с проверкой на длину
         date_text = f"{self.obj.date_create.strftime('%d.%m.%Y')}"
-        self.draw_text(date_text, 150, 20, 56.7, 100)
+        self.draw_text(date_text, 200, 20, 56.7, 100)
 
         creator_name = f"{self.obj.creator}"
-        self.draw_text(creator_name, 150, 20, self.width - 206.7, 100)  # 206.7 = 56.7 + 150
+        self.draw_text(creator_name, 200, 20, self.width - 256.7, 100)  # 206.7 = 56.7 + 150
 
         curator = User.objects.get(custom_permissions__name='curator', curators_group=self.obj.curators_group)
-        self.draw_text("Одобрил:", 150, 20, 56.7, 70)
-        self.draw_text(f"{curator}", 150, 20, self.width - 206.7, 70)
+        self.draw_text("Одобрил:", 200, 20, 56.7, 70)
+        self.draw_text(f"{curator}", 200, 20, self.width - 256.7, 70)
 
         # Номер в базе данных с защитой от выхода за границы
         db_text = f"номер в базе данных: {self.obj.pk}"
-        self.draw_text(db_text, 150, 20, self.width - 170, 30, self.db_style)
+        self.draw_text(db_text, 200, 20, self.width - 170, 30, self.db_style)
 
         return self.return_file()
 
