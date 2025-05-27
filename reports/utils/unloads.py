@@ -63,11 +63,11 @@ class PdfReports:
 
     def create_new_file(self):
         # Шапка документа
-        text = (f"Главному врачу<br><br/>"
-                f"КГБУЗ ККБ Им. проф. С.И.Сергеева<br><br/>"
-                f"Субботину Андрею Юрьевичу<br><br/>"
-                f"От {' '.join(map(word_to_genitive, self.obj.creator.job_title.strip().split(' ')))}<br><br/>"
-                f"{' '.join(map(word_to_genitive, self.obj.creator.__str__().strip().split(' ')))}<br><br/>")
+        text = (f"Главному врачу<br></br>"
+                f"КГБУЗ ККБ Им. проф. С.И.Сергеева<br></br>"
+                f"Субботину Андрею Юрьевичу<br></br>"
+                f"От {' '.join(map(word_to_genitive, self.obj.creator.job_title.strip().split(' ')))}<br></br>"
+                f"{' '.join(map(word_to_genitive, self.obj.creator.__str__().strip().split(' ')))}<br></br>")
         self.draw_text(text, 200, 20, 395, 760, self.small_style)
 
         # Заголовок "Рапорт" точно по центру
