@@ -108,7 +108,7 @@ class PdfReports:
 
         # Номер в базе данных с защитой от выхода за границы
         db_text = f"номер в базе данных: {self.obj.pk}"
-        self.draw_text(db_text, 200, 20, self.width - 170, 30, self.db_style)
+        self.draw_text(db_text, 200, 20, self.width - 230, 30, self.db_style)
 
         return self.return_file()
 
