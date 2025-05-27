@@ -164,7 +164,7 @@ class Report(models.Model):
             raise ValueError("Это *начальный* статус.")
 
         # Подставить правельные данные вместо some
-        if self.status.name == 'some':
+        if self.status.name == 'purchasing_chief':
             previous_statuses = Statuses.objects.filter(next_status=previous_statuses.first())
 
         if previous_statuses.count() > 1:
@@ -237,11 +237,15 @@ class Report(models.Model):
 
 @receiver(pre_delete, sender=Report)
 def delete_report_related(sender, instance, **kwargs):
-    if kwargs.get('async_mode', True):
+    try:
         instance.delete(async_mode=True)
-        raise Exception("Отмена синхронного удаления (задача в Celery)")
-    else:
+    except:
         instance._delete_related_sync()
+    # if kwargs.get('async_mode', True):
+    #     instance.delete(async_mode=True)
+    #     raise Exception("Отмена синхронного удаления (задача в Celery)")
+    # else:
+    #     instance._delete_related_sync()
 
 
 class WaitingStatusForUser(models.Model):
