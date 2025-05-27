@@ -88,8 +88,9 @@ class PdfReports:
         content_height_needed = temp_para.wrap(self.width - 113.4, self.height)[1]  # 113.4 = 2cm*2
 
         # Если контент слишком большой, уменьшаем стартовую позицию
-        if content_height_needed > 400:
-            content_height = 550 - content_height_needed
+        # if content_height_needed > 400:
+        #     content_height = 550 - content_height_needed
+        content_height = 550 - content_height_needed
 
         self.draw_text(text_content, self.width - 113.4, self.height, 56.7, content_height)
 
