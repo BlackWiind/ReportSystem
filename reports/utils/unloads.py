@@ -101,7 +101,7 @@ class PdfReports:
         creator_name = f"{self.obj.creator}"
         self.draw_text(creator_name, 200, 20, self.width - 256.7, 100)  # 206.7 = 56.7 + 150
 
-        curator = self.obj.creator if self.obj.creator.custom_permission.name == 'curator' else\
+        curator = self.obj.creator if self.obj.creator.custom_permissions.name == 'curator' else\
             User.objects.get(custom_permissions__name='curator', curators_group=self.obj.curators_group)
         self.draw_text("Одобрил:", 200, 20, 56.7, 70)
         self.draw_text(f"{curator}", 200, 20, self.width - 256.7, 70)
