@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 
 from reports.filters import ReportFilter
 from reports.mail import send_email
-from reports.models import Report, Tag, History, WaitingStatusForUser
+from reports.models import Report, Tag, History, WaitingStatusForUser, SourcesOfFunding
 from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
     ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer, \
@@ -203,4 +203,5 @@ class SourcesOfFundingListView(generics.ListAPIView):
     serializer_class = SourcesOfFundingSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = LargeResultsSetPagination
+    queryset = SourcesOfFunding.objects.all()
 
