@@ -21,6 +21,6 @@ urlpatterns = [
     path('feedback/', api.Feedback.as_view()),
     path('archive/', api.Archive.as_view()),
     path('canishutdownwaiting/', api.CanIShutDownWaiting.as_view()),
-    path('get-sources-of-funding/', api.SourcesOfFundingListView())
+    path('get-sources-of-funding/', api.SourcesOfFundingListView.as_view())
 
 ]
