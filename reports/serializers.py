@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Report, Tag, History, WaitingStatusForUser, Files
+from .models import Report, Tag, History, WaitingStatusForUser, Files, SourcesOfFunding
 from users.serializers import StatusesSerializer, CuratorsGroupSerializer, UserSerializer, UserShortDataSerializer
 
 
@@ -35,6 +35,11 @@ class ReportCreateSerializer(serializers.ModelSerializer):
         model = Report
         fields = ('text', 'justification', 'price', 'one_time', 'tags', 'responsible', 'parents',)
 
+class SourcesOfFundingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SourcesOfFunding
+        fields = ('id', 'name',)
+
 
 class ReportRetrieveUpdateSerializer(serializers.ModelSerializer):
     creator = UserShortDataSerializer(read_only=True)
@@ -45,6 +50,7 @@ class ReportRetrieveUpdateSerializer(serializers.ModelSerializer):
     history = HistorySerializer(read_only=True, many=True)
     parents = serializers.HyperlinkedRelatedField(lookup_field='pk', many=True, read_only=True, view_name='reports:report-detail')
     files = serializers.SerializerMethodField()
+    sources_of_funding = SourcesOfFundingSerializer(read_only=True, many=True)
 
     def get_files(self, obj):
         request = self.context.get('request')

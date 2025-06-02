@@ -19,7 +19,7 @@ from reports.models import Report, Tag, History, WaitingStatusForUser
 from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
     ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer, \
-    WaitingStatusForUserSerializer, ReportPatchSerializer
+    WaitingStatusForUserSerializer, ReportPatchSerializer, SourcesOfFundingSerializer
 from reports.tasks import async_create_new_notification
 from reports.utils.unloads import PdfReports
 from reports.utils.utils import LargeResultsSetPagination
@@ -93,7 +93,6 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         instance = serializer.save()
-        # create_new_notification(instance.pk)
         async_create_new_notification.delay(instance.pk)
 
 class CanIShutDownWaiting(APIView):
@@ -166,7 +165,6 @@ class ReportApproveClose(viewsets.ViewSet):
             if request.user.custom_permissions.name == 'curator':
                 instance.print_form.save(*PdfReports(instance.pk).create_new_file())
             instance.next_status(self.request.user, "Рапорт одобрен.")
-        # create_new_notification(instance.pk)
         instance.save()
         async_create_new_notification.delay(instance.pk)
         return Response(status=status.HTTP_200_OK)
@@ -177,7 +175,6 @@ class ReportApproveClose(viewsets.ViewSet):
     def report_close(self, request, pk=None):
         instance = get_object_or_404(self.queryset,pk=pk)
         instance.close_report(self.request.user, request.data['text'])
-        # create_new_notification(instance.pk)
         async_create_new_notification.delay(instance.pk)
         return Response(status=status.HTTP_200_OK)
 
@@ -187,7 +184,6 @@ class ReportApproveClose(viewsets.ViewSet):
         # Требуется переименовать после проверки работоспособности
         instance = get_object_or_404(self.queryset, pk=pk)
         instance.prev_status(self.request.user, request.data['text'])
-        # create_new_notification(instance.pk)
         async_create_new_notification.delay(instance.pk)
         return Response(status=status.HTTP_200_OK)
 
@@ -201,4 +197,10 @@ class Archive(generics.ListAPIView):
 
     def get_queryset(self):
         return Report.objects.filter(closed=True)
+
+
+class SourcesOfFundingListView(generics.ListAPIView):
+    serializer_class = SourcesOfFundingSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = LargeResultsSetPagination
 
