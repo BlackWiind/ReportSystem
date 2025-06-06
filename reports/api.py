@@ -27,19 +27,31 @@ from reports.utils.utils import LargeResultsSetPagination
 
 class TagRUD(generics.RetrieveUpdateDestroyAPIView):
     """ Получение, обновление и удаление тега"""
+
+    class Meta:
+        swagger_tags = ['Tags',]
+
     queryset = Tag.objects.all()
     serializer_class = TagsSerializer
     permission_classes = [IsSuperuserOrReadOnly]
 
 class TagListAndCreate(generics.ListCreateAPIView):
     """ Получение списка тегов и создание нового тега"""
+
+    class Meta:
+        swagger_tags = ['Tags',]
+
     queryset = Tag.objects.all()
     serializer_class = TagsSerializer
     pagination_class = LargeResultsSetPagination
     permission_classes = [IsSuperuserOrReadOnly]
 
-
 class DraftListAndCreate(generics.ListCreateAPIView):
+    """ Получение списка черновиков и создание нового черновика"""
+
+    class Meta:
+        swagger_tags = ['Drafts',]
+
     serializer_class = DraftSerializer
     permission_classes = [IsAuthenticated]
 
@@ -53,8 +65,12 @@ class DraftListAndCreate(generics.ListCreateAPIView):
         instance.history.create(user=user,
                                 text="Рапорт создан.")
 
-
 class ReportCreate(generics.CreateAPIView):
+    """ Создание нового рапорта"""
+
+    class Meta:
+        swagger_tags = ['Reports',]
+
     serializer_class = ReportCreateSerializer
 
     def perform_create(self, serializer):
@@ -65,7 +81,6 @@ class ReportCreate(generics.CreateAPIView):
         instance.history.create(user=user,
             text="Рапорт создан.")
         async_create_new_notification.delay(instance.pk)
-
 
 class ReportList(generics.ListAPIView):
     """Список рапортов"""

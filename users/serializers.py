@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
-from .models import User, CuratorsGroup, Department, CustomPermissions, Statuses, Links, PossibleActions
+from .models import User, CuratorsGroup, Department, CustomPermissions, Statuses, Links, PossibleActions, \
+    VocationsSchedule
+
 
 class StatusesSerializer(serializers.ModelSerializer):
     """Сериалайзер для доступных статусов"""
@@ -72,4 +74,22 @@ class UserShortDataSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id','first_name', 'last_name', 'surname',
                    'department', 'job_title', 'is_staff', 'is_superuser',]
+
+class VocationSerializer(serializers.ModelSerializer):
+    """Vocations serializer"""
+
+    class Meta:
+        model = VocationsSchedule
+        fields = ('vocation_start', 'vocation_end', 'deputy',)
+
+    def validate(self, data):
+        # Проверка дат
+        if data['vocation_end'] <= data['vocation_start']:
+            raise serializers.ValidationError("Дата окончания отпуска должна быть позже даты начала.")
+
+        # Проверка что пользователь не назначает себя заместителем
+        if self.context['request'].user == data['deputy']:
+            raise serializers.ValidationError("Вы не можете замещать самого себя.")
+
+        return data
 

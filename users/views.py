@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.views import View
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
-from rest_framework import generics, status
+from rest_framework import generics, status, serializers
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,7 +14,8 @@ from reports.utils.utils import new_vocation, LargeResultsSetPagination
 from .models import User, CuratorsGroup, Department
 
 from .forms import RegisterUserForm
-from .serializers import UserSerializer, CuratorsGroupSerializer, UserShortDataSerializer, DepartmentSerializer
+from .serializers import UserSerializer, CuratorsGroupSerializer, UserShortDataSerializer, DepartmentSerializer, \
+    VocationSerializer
 from .utils.search_in_db import SearchUsers
 
 
@@ -58,15 +59,32 @@ class SearchUser(View):
         return SearchUsers(request.GET['search']).search()
 
 
-class NewVocation(View):
-    def post(self, request):
-        # try:
-        return new_vocation(request.user,
-                            request.POST['deputy[]'][0],
-                            request.POST['vocation_start'],
-                            request.POST['vocation_end'])
-        # except Exception as e:
-        #     return JsonResponse(data={'message': f'Произошла неизвестная ошибка: {type(e).__name__}'}, status=500)
+# class NewVocation(View):
+#     def post(self, request):
+#         # try:
+#         return new_vocation(request.user,
+#                             request.POST['deputy[]'][0],
+#                             request.POST['vocation_start'],
+#                             request.POST['vocation_end'])
+#         # except Exception as e:
+#         #     return JsonResponse(data={'message': f'Произошла неизвестная ошибка: {type(e).__name__}'}, status=500)
+
+class NewVocationView(generics.CreateAPIView):
+    """ Создание записи об отпуске и назначение заместителя"""
+    serializer_class = VocationSerializer
+
+    def perform_create(self, serializer):
+        vocation_user = self.request.user
+        deputy = serializer.validated_data['deputy']
+
+        try:
+            serializer.save(
+                vocation_user=vocation_user,
+                group=deputy.custom_permissions
+            )
+        except Exception as e:
+            raise serializers.ValidationError("Не получилось создать запись об отпуске")
+
 
 class AllUsersListView(generics.ListCreateAPIView):
     """
