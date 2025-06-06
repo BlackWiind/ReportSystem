@@ -24,6 +24,7 @@ class UserRegisterView(CreateView):
     success_url = reverse_lazy('users:login')
     form_class = RegisterUserForm
     success_message = 'Пользователь успешно зарегестрирован.'
+    my_tags = ['Users', ]
 
     def form_valid(self, form):
         response = super(UserRegisterView, self).form_valid(form)
@@ -31,34 +32,34 @@ class UserRegisterView(CreateView):
         return response
 
 
-class UserLoginView(LoginView):
-    redirect_authenticated_user = True
-    template_name = 'users/login.html'
-
-    def get_success_url(self):
-        return reverse_lazy('reports:list')
-
-    def form_invalid(self, form):
-        messages.error(self.request, 'Неверный логин или пароль')
-        return self.render_to_response(self.get_context_data(form=form))
-
-
-class UserLogoutView(LogoutView):
-    def get_success_url(self):
-        return reverse_lazy('users:login')
-
-
-def get_all_users(request):
-    if request.method == 'GET':
-        users = User.objects.all()
-        return JsonResponse(data={'users': users})
-
-
-class SearchUser(View):
-    def get(self, request):
-        return SearchUsers(request.GET['search']).search()
-
-
+# class UserLoginView(LoginView):
+#     redirect_authenticated_user = True
+#     template_name = 'users/login.html'
+#
+#     def get_success_url(self):
+#         return reverse_lazy('reports:list')
+#
+#     def form_invalid(self, form):
+#         messages.error(self.request, 'Неверный логин или пароль')
+#         return self.render_to_response(self.get_context_data(form=form))
+#
+#
+# class UserLogoutView(LogoutView):
+#     def get_success_url(self):
+#         return reverse_lazy('users:login')
+#
+#
+# def get_all_users(request):
+#     if request.method == 'GET':
+#         users = User.objects.all()
+#         return JsonResponse(data={'users': users})
+#
+#
+# class SearchUser(View):
+#     def get(self, request):
+#         return SearchUsers(request.GET['search']).search()
+#
+#
 # class NewVocation(View):
 #     def post(self, request):
 #         # try:
@@ -72,6 +73,7 @@ class SearchUser(View):
 class NewVacationView(generics.CreateAPIView):
     """ Создание записи об отпуске и назначение заместителя"""
     serializer_class = VacationSerializer
+    my_tags = ['Other', ]
 
     def perform_create(self, serializer):
         vacation_user = self.request.user
@@ -95,9 +97,11 @@ class AllUsersListView(generics.ListCreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsSuperuserOrReadOnly]
     pagination_class = LargeResultsSetPagination
+    my_tags = ['Users', ]
 
 class GetUsersFromMyDepartment(generics.ListAPIView):
     serializer_class = UserSerializer
+    my_tags = ['Users', ]
 
     def get_queryset(self):
         return User.objects.filter(department=self.request.user.department)
@@ -106,16 +110,19 @@ class ListCuratorsGroup(generics.ListAPIView):
     """Создание и список курируемых групп"""
     queryset = CuratorsGroup.objects.all()
     serializer_class = CuratorsGroupSerializer
+    my_tags = ['Curators', ]
 
 class GetOneUser(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+    my_tags = ['Users', ]
 
 class GetUserMyUserData(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+    my_tags = ['Users', ]
 
 
     def get_object(self):
@@ -129,6 +136,7 @@ class GetUsersForReport(generics.ListAPIView):
     serializer_class = UserShortDataSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = LargeResultsSetPagination
+    my_tags = ['Users', ]
 
     def get_queryset(self):
         try:
@@ -144,4 +152,5 @@ class GetAllDepartment(generics.ListAPIView):
     serializer_class = DepartmentSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = LargeResultsSetPagination
+    my_tags = ['Departments', ]
     queryset = Department.objects.all()

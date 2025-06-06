@@ -80,6 +80,7 @@ class ReportList(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = ReportFilter
+    my_tags = ['Reports', ]
 
     def get_queryset(self):
         return Report.custom_query.not_closed_reports(user=self.request.user)
@@ -89,6 +90,7 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
     http_method_names = ['patch', 'get',]
     parser_classes = [JSONParser, MultiPartParser, FormParser]
+    my_tags = ['Reports', ]
 
     def get_serializer_class(self):
         if self.request.method == "PATCH":
@@ -103,6 +105,7 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
         async_create_new_notification.delay(instance.pk)
 
 class CanIShutDownWaiting(APIView):
+    my_tags = ['Other', ]
     @swagger_auto_schema(
         query_serializer=WaitingStatusForUserSerializer,
         operation_description="Create a post object"
@@ -118,6 +121,7 @@ class CanIShutDownWaiting(APIView):
 
 class Feedback(APIView):
     permission_classes = [IsAuthenticated]
+    my_tags = ['Other', ]
 
     @swagger_auto_schema(
         request_body=openapi.Schema(
@@ -157,6 +161,7 @@ class ReportApproveClose(viewsets.ViewSet):
     serializer_class = HistoryUpdateSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ['patch', ]
+    my_tags = ['Reports', ]
 
     def new_history(self, text):
         return History.objects.create(user=self.request.user,text=text)
@@ -201,12 +206,14 @@ class Archive(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = ReportFilter
+    my_tags = ['Archive', ]
 
     def get_queryset(self):
         return Report.objects.filter(closed=True)
 
 
 class SourcesOfFundingListView(generics.ListAPIView):
+    my_tags = ['Other', ]
     serializer_class = SourcesOfFundingSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = LargeResultsSetPagination
