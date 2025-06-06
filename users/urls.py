@@ -9,7 +9,7 @@ urlpatterns = [
     path('logout/', views.UserLogoutView.as_view(), name='logout'),
     path('get_users/', views.get_all_users, name='get_users'),
     path('usernames_loader/', views.SearchUser.as_view(), name='usernames_loader'),
-    path('new_vocation/', views.NewVocation.as_view(), name='new_vocation'),
+    # path('new_vocation/', views.NewVocation.as_view(), name='new_vocation'),
 
     path('api/list_curator_group/', views.ListCuratorsGroup.as_view(), name='list_curator_group'),
     path('api/list_users/', views.AllUsersListView.as_view(), name='list_users'),
