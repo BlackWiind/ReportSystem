@@ -75,8 +75,8 @@ class UserShortDataSerializer(serializers.ModelSerializer):
         fields = ['id','first_name', 'last_name', 'surname',
                    'department', 'job_title', 'is_staff', 'is_superuser',]
 
-class VocationSerializer(serializers.ModelSerializer):
-    """Vocations serializer"""
+class VacationSerializer(serializers.ModelSerializer):
+    """Vacations serializer"""
 
     class Meta:
         model = VocationsSchedule

@@ -18,5 +18,5 @@ urlpatterns = [
     path('api/my_user_data/', views.GetUserMyUserData.as_view(), name='user_data'),
     path('api/users_for_report', views.GetUsersForReport.as_view()),
     path('api/get_departments/', views.GetAllDepartment.as_view()),
-    path('api/vocation/', views.NewVocationView.as_view())
+    path('api/vacation/', views.NewVacationView.as_view())
 ]

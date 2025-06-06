@@ -15,7 +15,7 @@ from .models import User, CuratorsGroup, Department
 
 from .forms import RegisterUserForm
 from .serializers import UserSerializer, CuratorsGroupSerializer, UserShortDataSerializer, DepartmentSerializer, \
-    VocationSerializer
+    VacationSerializer
 from .utils.search_in_db import SearchUsers
 
 
@@ -69,17 +69,17 @@ class SearchUser(View):
 #         # except Exception as e:
 #         #     return JsonResponse(data={'message': f'Произошла неизвестная ошибка: {type(e).__name__}'}, status=500)
 
-class NewVocationView(generics.CreateAPIView):
+class NewVacationView(generics.CreateAPIView):
     """ Создание записи об отпуске и назначение заместителя"""
-    serializer_class = VocationSerializer
+    serializer_class = VacationSerializer
 
     def perform_create(self, serializer):
-        vocation_user = self.request.user
+        vacation_user = self.request.user
         deputy = serializer.validated_data['deputy']
 
         try:
             serializer.save(
-                vocation_user=vocation_user,
+                vocation_user=vacation_user,
                 group=deputy.custom_permissions
             )
         except Exception as e:

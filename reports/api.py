@@ -27,9 +27,7 @@ from reports.utils.utils import LargeResultsSetPagination
 
 class TagRUD(generics.RetrieveUpdateDestroyAPIView):
     """ Получение, обновление и удаление тега"""
-
-    class Meta:
-        swagger_tags = ['Tags',]
+    my_tags = ['Tags',]
 
     queryset = Tag.objects.all()
     serializer_class = TagsSerializer
@@ -37,9 +35,7 @@ class TagRUD(generics.RetrieveUpdateDestroyAPIView):
 
 class TagListAndCreate(generics.ListCreateAPIView):
     """ Получение списка тегов и создание нового тега"""
-
-    class Meta:
-        swagger_tags = ['Tags',]
+    my_tags = ['Tags', ]
 
     queryset = Tag.objects.all()
     serializer_class = TagsSerializer
@@ -48,9 +44,7 @@ class TagListAndCreate(generics.ListCreateAPIView):
 
 class DraftListAndCreate(generics.ListCreateAPIView):
     """ Получение списка черновиков и создание нового черновика"""
-
-    class Meta:
-        swagger_tags = ['Drafts',]
+    my_tags = ['Drafts',]
 
     serializer_class = DraftSerializer
     permission_classes = [IsAuthenticated]
@@ -67,9 +61,7 @@ class DraftListAndCreate(generics.ListCreateAPIView):
 
 class ReportCreate(generics.CreateAPIView):
     """ Создание нового рапорта"""
-
-    class Meta:
-        swagger_tags = ['Reports',]
+    my_tags = ['Reports', ]
 
     serializer_class = ReportCreateSerializer
 
