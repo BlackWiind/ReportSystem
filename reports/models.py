@@ -113,6 +113,9 @@ class Report(models.Model):
     assigned_purchasing_specialist = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True,
                                                        verbose_name='Специалист отдела закупок',
                                                        related_name='assigned_purchasing_specialist')
+    assigned_economist = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True,
+                                                       verbose_name='Экономист',
+                                                       related_name='assigned_economist')
     responsible = models.ForeignKey(User, on_delete=models.PROTECT, blank=True, null=True,
                                     verbose_name='Ответственный специалист',
                                     related_name='responsible')
