@@ -11,6 +11,7 @@ urlpatterns = [
     path('tags/<int:pk>', api.TagRUD.as_view(), name='tag'),
 
     path('reports/list', api.ReportList.as_view(), name='reports_list'),
+    path('reports/list-all', api.ReportListAll.as_view(), name='reports_list_all'),
     path('reports/create', api.ReportCreate.as_view(), name='report'),
     path('reports/retrieve-update/<int:pk>', api.ReportRetrieveUpdate.as_view(), name='report-detail'),
 

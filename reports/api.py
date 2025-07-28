@@ -219,3 +219,15 @@ class SourcesOfFundingListView(generics.ListAPIView):
     pagination_class = LargeResultsSetPagination
     queryset = SourcesOfFunding.objects.all()
 
+
+class ReportListAll(generics.ListAPIView):
+    """Список всех рапортов, независящий от роли юзера"""
+    serializer_class = ReportListSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ReportFilter
+    my_tags = ['Reports', ]
+
+    def get_queryset(self):
+        return Report.objects.filter(draft=False)
+
