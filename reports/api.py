@@ -229,5 +229,5 @@ class ReportListAll(generics.ListAPIView):
     my_tags = ['Reports', ]
 
     def get_queryset(self):
-        return Report.objects.filter(draft=False)
+        return Report.objects.filter(draft=False, closed=False)
 
