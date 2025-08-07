@@ -176,7 +176,8 @@ class ReportApproveClose(viewsets.ViewSet):
         else:
             if request.user.custom_permissions.name == 'curator':
                 instance.print_form.save(*PdfReports(instance.pk).create_new_file())
-            instance.next_status(self.request.user, "Рапорт одобрен.")
+            text = request.data.get('text', "Рапорт одобрен.")
+            instance.next_status(self.request.user, text)
         instance.save()
         async_create_new_notification.delay(instance.pk)
         return Response(status=status.HTTP_200_OK)
