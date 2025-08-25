@@ -25,12 +25,14 @@ def track_model_changes(sender, instance, **kwargs):
                 field_name = field.name
                 original_value = getattr(original, field_name)
                 new_value = getattr(instance, field_name)
+                print(field_name)
 
                 # Проверяем, изменилось ли значение
                 if original_value != new_value:
                     # Используем verbose_name или обычное имя поля
                     verbose_name = getattr(field, 'verbose_name', field_name)
                     changes[verbose_name] = new_value
+                    print(verbose_name)
             print(changes)
 
             tracked_changes.changes[instance.pk] = changes
