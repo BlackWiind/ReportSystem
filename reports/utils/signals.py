@@ -15,6 +15,7 @@ tracked_changes = TrackedChanges()
 @receiver(pre_save, sender=Report)
 def track_model_changes(sender, instance, **kwargs):
     if instance.pk:
+        print('tracker worked')
         try:
             original = sender.objects.get(pk=instance.pk)
             changes = {}
@@ -30,6 +31,7 @@ def track_model_changes(sender, instance, **kwargs):
                     # Используем verbose_name или обычное имя поля
                     verbose_name = getattr(field, 'verbose_name', field_name)
                     changes[verbose_name] = new_value
+            print(changes)
 
             tracked_changes.changes[instance.pk] = changes
 
