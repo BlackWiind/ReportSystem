@@ -31,45 +31,6 @@ class UserRegisterView(CreateView):
         self.object.groups.add(form.cleaned_data['groups'])
         return response
 
-
-# class UserLoginView(LoginView):
-#     redirect_authenticated_user = True
-#     template_name = 'users/login.html'
-#
-#     def get_success_url(self):
-#         return reverse_lazy('reports:list')
-#
-#     def form_invalid(self, form):
-#         messages.error(self.request, 'Неверный логин или пароль')
-#         return self.render_to_response(self.get_context_data(form=form))
-#
-#
-# class UserLogoutView(LogoutView):
-#     def get_success_url(self):
-#         return reverse_lazy('users:login')
-#
-#
-# def get_all_users(request):
-#     if request.method == 'GET':
-#         users = User.objects.all()
-#         return JsonResponse(data={'users': users})
-#
-#
-# class SearchUser(View):
-#     def get(self, request):
-#         return SearchUsers(request.GET['search']).search()
-#
-#
-# class NewVocation(View):
-#     def post(self, request):
-#         # try:
-#         return new_vocation(request.user,
-#                             request.POST['deputy[]'][0],
-#                             request.POST['vocation_start'],
-#                             request.POST['vocation_end'])
-#         # except Exception as e:
-#         #     return JsonResponse(data={'message': f'Произошла неизвестная ошибка: {type(e).__name__}'}, status=500)
-
 class NewVacationView(generics.CreateAPIView):
     """ Создание записи об отпуске и назначение заместителя"""
     serializer_class = VacationSerializer
@@ -86,7 +47,6 @@ class NewVacationView(generics.CreateAPIView):
             )
         except Exception as e:
             raise serializers.ValidationError("Не получилось создать запись об отпуске")
-
 
 class AllUsersListView(generics.ListCreateAPIView):
     """
@@ -145,7 +105,6 @@ class GetUsersForReport(generics.ListAPIView):
             return User.objects.filter(department=self.request.user.department)
         except AttributeError:
             raise AttributeError('Не установлены права пользователя')
-
 
 class GetAllDepartment(generics.ListAPIView):
     """Список всех департаментов"""

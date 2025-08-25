@@ -53,6 +53,7 @@ class ReportManager(models.Manager):
             return my_set.filter(Q(creator=user) |
                                  Q(responsible=user) |
                                  Q(assigned_purchasing_specialist=user) |
+                                 Q(assigned_economist=user) |
                                  Q(status__name__in=statuses))
 
     def not_closed_draft(self, user):

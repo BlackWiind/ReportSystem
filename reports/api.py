@@ -21,6 +21,7 @@ from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer,
     ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer, \
     WaitingStatusForUserSerializer, ReportPatchSerializer, SourcesOfFundingSerializer
 from reports.tasks import async_create_new_notification
+from reports.utils.signals import tracked_changes
 from reports.utils.unloads import PdfReports
 from reports.utils.utils import LargeResultsSetPagination
 
@@ -102,6 +103,11 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
 
     def perform_update(self, serializer):
         instance = serializer.save()
+        changes = tracked_changes.changes.pop(instance.pk, {})
+        if changes:
+            changes_list = [f"{key}: {value}" for key, value in changes.items()]
+            changes_text =  "Изменения в следующих полях: " + "; ".join(changes_list)
+            instance._add_history_entry(self.request.user,changes_text)
         async_create_new_notification.delay(instance.pk)
 
 class CanIShutDownWaiting(APIView):
@@ -177,7 +183,6 @@ class ReportApproveClose(viewsets.ViewSet):
             if request.user.custom_permissions.name == 'curator':
                 instance.print_form.save(*PdfReports(instance.pk).create_new_file())
             text = request.data.get('text', "Рапорт одобрен.")
-            print(text)
             instance.next_status(self.request.user, text)
         instance.save()
         async_create_new_notification.delay(instance.pk)
@@ -201,7 +206,6 @@ class ReportApproveClose(viewsets.ViewSet):
         async_create_new_notification.delay(instance.pk)
         return Response(status=status.HTTP_200_OK)
 
-
 class Archive(generics.ListAPIView):
     """Архив"""
     serializer_class = ReportListSerializer
@@ -213,14 +217,12 @@ class Archive(generics.ListAPIView):
     def get_queryset(self):
         return Report.objects.filter(closed=True)
 
-
 class SourcesOfFundingListView(generics.ListAPIView):
     my_tags = ['Other', ]
     serializer_class = SourcesOfFundingSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = LargeResultsSetPagination
     queryset = SourcesOfFunding.objects.all()
-
 
 class ReportListAll(generics.ListAPIView):
     """Список всех рапортов, независящий от роли юзера"""
