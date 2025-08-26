@@ -107,8 +107,7 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
         if changes:
             changes_list = [f"{key}: {value}" for key, value in changes.items()]
             changes_text =  "Изменения в следующих полях: " + "; ".join(changes_list)
-            print(changes_text)
-            instance.history.add(History.objects.create(self.request.user,changes_text))
+            instance._add_history_entry(self.request.user,changes_text)
         async_create_new_notification.delay(instance.pk)
 
 class CanIShutDownWaiting(APIView):
