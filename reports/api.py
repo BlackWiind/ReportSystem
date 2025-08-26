@@ -104,8 +104,10 @@ class ReportRetrieveUpdate(generics.RetrieveUpdateAPIView):
     def perform_update(self, serializer):
         instance = serializer.save()
         changes = tracked_changes.changes.pop(instance.pk, {})
-        if changes:
-            changes_list = [f"{key}: {value}" for key, value in changes.items()]
+        m2m_changes = tracked_changes.m2m_changes.pop(instance.pk, {})
+        all_changes = {**changes, **m2m_changes}
+        if all_changes:
+            changes_list = [f"{key}: {value}" for key, value in all_changes.items()]
             changes_text =  "Изменения в следующих полях: " + "; ".join(changes_list)
             instance._add_history_entry(self.request.user,changes_text)
         async_create_new_notification.delay(instance.pk)
