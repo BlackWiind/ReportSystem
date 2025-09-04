@@ -27,7 +27,12 @@ def file_directory_path(instance, filename):
 
 class Tag(models.Model):
     name = models.CharField(max_length=255, verbose_name='Тэг')
-    group = models.ForeignKey(CuratorsGroup, on_delete=models.CASCADE, verbose_name='Группа', null=True)
+    group = models.ForeignKey(CuratorsGroup, on_delete=models.CASCADE, verbose_name='Группа', null=True, blank=True)
+
+    groups = models.ManyToManyField(CuratorsGroup,
+                                    verbose_name='Группы',
+                                    related_name='tags',
+                                    blank=True)
 
     def __str__(self):
         return self.name
@@ -244,11 +249,6 @@ def delete_report_related(sender, instance, **kwargs):
         instance.delete(async_mode=True)
     except:
         instance._delete_related_sync()
-    # if kwargs.get('async_mode', True):
-    #     instance.delete(async_mode=True)
-    #     raise Exception("Отмена синхронного удаления (задача в Celery)")
-    # else:
-    #     instance._delete_related_sync()
 
 
 class WaitingStatusForUser(models.Model):
