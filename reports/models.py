@@ -155,14 +155,14 @@ class Report(models.Model):
         if not self.status.next_status:
             raise ValueError("Следующего статуса нет...")
         if (self.status.name == 'report_created' and
-                'Лекарственные средства' or 'Медицинское оборудование' in self.tags):
+                ('Лекарственные средства' or 'Медицинское оборудование' in self.tags)):
             try:
                 if 'Лекарственные средства' in self.tags:
                     self.status = Statuses.objects.get(name='reger')
                 else:
                     self.status = Statuses.objects.get(name='pestryakova')
             except Exception as e:
-                print(type(e))
+                print(f'Тип исключения: {type(e)}\n  Исключение: {e}')
         else:
             self.status = self.status.next_status
         self.save()
