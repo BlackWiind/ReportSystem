@@ -154,15 +154,21 @@ class Report(models.Model):
 
         if not self.status.next_status:
             raise ValueError("Следующего статуса нет...")
-        if (self.status.name == 'report_created' and
-                ('Лекарственные средства' or 'Медицинское оборудование' in self.tags)):
+        if (
+                self.status.name == 'report_created'
+                and self.tags.filter(name__in=['Лекарственные средства', 'Медицинское оборудование']).exists()
+        ):
+            tag_names = set(self.tags.values_list('name', flat=True))
+
+            if 'Лекарственные средства' in tag_names:
+                new_status_name = 'reger'
+            else:
+                new_status_name = 'pestryakova'
+
             try:
-                if 'Лекарственные средства' in self.tags:
-                    self.status = Statuses.objects.get(name='reger')
-                else:
-                    self.status = Statuses.objects.get(name='pestryakova')
-            except Exception as e:
-                print(f'Тип исключения: {type(e)}\n  Исключение: {e}')
+                self.status = Statuses.objects.get(name=new_status_name)
+            except Statuses.DoesNotExist:
+                print(f"Статус {new_status_name} не найден")
         else:
             self.status = self.status.next_status
         self.save()
