@@ -19,7 +19,7 @@ from reports.models import Report, Tag, History, WaitingStatusForUser, SourcesOf
 from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
     ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer, \
-    WaitingStatusForUserSerializer, ReportPatchSerializer, SourcesOfFundingSerializer, ReportCrutchPatchSerializer
+    WaitingStatusForUserSerializer, ReportPatchSerializer, SourcesOfFundingSerializer
 from reports.tasks import async_create_new_notification
 from reports.utils.signals import tracked_changes
 from reports.utils.unloads import PdfReports
