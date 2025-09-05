@@ -161,8 +161,8 @@ class Report(models.Model):
                     self.status = Statuses.objects.get(name='reger')
                 else:
                     self.status = Statuses.objects.get(name='pestryakova')
-            except:
-                pass
+            except Exception as e:
+                print(type(e))
         else:
             self.status = self.status.next_status
         self.save()
