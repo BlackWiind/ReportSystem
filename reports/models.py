@@ -154,8 +154,17 @@ class Report(models.Model):
 
         if not self.status.next_status:
             raise ValueError("Следующего статуса нет...")
-
-        self.status = self.status.next_status
+        if (self.status.name == 'report_created' and
+                'Лекарственные средства' or 'Медицинское оборудование' in self.tags):
+            try:
+                if 'Лекарственные средства' in self.tags:
+                    self.status = Statuses.objects.get(name='reger')
+                else:
+                    self.status = Statuses.objects.get(name='pestryakova')
+            except:
+                pass
+        else:
+            self.status = self.status.next_status
         self.save()
         default_text = f"Статус изменён автоматически на {self.status.name}"
         self._add_history_entry(user, history_text if history_text else default_text)
@@ -180,7 +189,7 @@ class Report(models.Model):
 
         self.status = previous_statuses.first()
         self.save()
-        default_text = f"Статус откачен на {self.status.name}"
+        default_text = f"Статус возвращён на {self.status.name}"
         self._add_history_entry(user, history_text if history_text else default_text)
         return self.status
 

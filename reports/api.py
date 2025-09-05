@@ -19,11 +19,12 @@ from reports.models import Report, Tag, History, WaitingStatusForUser, SourcesOf
 from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
     ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer, \
-    WaitingStatusForUserSerializer, ReportPatchSerializer, SourcesOfFundingSerializer
+    WaitingStatusForUserSerializer, ReportPatchSerializer, SourcesOfFundingSerializer, ReportCrutchPatchSerializer
 from reports.tasks import async_create_new_notification
 from reports.utils.signals import tracked_changes
 from reports.utils.unloads import PdfReports
 from reports.utils.utils import LargeResultsSetPagination
+from users.models import Statuses
 
 
 class TagRUD(generics.RetrieveUpdateDestroyAPIView):
@@ -236,4 +237,22 @@ class ReportListAll(generics.ListAPIView):
 
     def get_queryset(self):
         return Report.objects.filter(draft=False, closed=False)
+
+
+class ReportStatusCrutchApiView(APIView):
+    """ Костыль. Меняет статус между Регер и Пестряковой"""
+    def post(self, request, pk):
+        try:
+            report = Report.objects.get(pk=pk)
+        except Report.DoesNotExist:
+            return Response({"detail": "Report not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            if report.status.name == "reger":
+                report.set_status_manually(self.request.user, Statuses.objects.get(name='pestryakova'))
+            elif report.status.name == "pestryakova":
+                report.set_status_manually(self.request.user, Statuses.objects.get(name='reger'))
+                return Response({"detail": "Статус обновлён"})
+        except:
+            return Response({"detail": "Статус не изменён", "current_status": report.status.name})
 
