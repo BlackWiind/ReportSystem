@@ -252,7 +252,7 @@ class ReportStatusCrutchApiView(APIView):
                 report.set_status_manually(self.request.user, Statuses.objects.get(name='pestryakova'))
             elif report.status.name == "pestryakova":
                 report.set_status_manually(self.request.user, Statuses.objects.get(name='reger'))
-                return Response({"detail": "Статус обновлён"})
-        except:
-            return Response({"detail": "Статус не изменён", "current_status": report.status.name})
+            return Response({"detail": "Статус обновлён"})
+        except Exception as e:
+            return Response({"detail": f"Статус не изменён. Причина: {e}", "current_status": report.status.name})
 
