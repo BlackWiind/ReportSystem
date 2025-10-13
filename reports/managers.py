@@ -48,7 +48,7 @@ class ReportManager(models.Manager):
         elif user.custom_permissions.name == 'curator':
             return my_set.filter(Q(curators_group=user.curators_group) |
                                  Q(responsible__department__curators_group=user.curators_group))
-        elif user.custom_permissions.name == 'assigned_purchasing_specialist':
+        elif user.custom_permissions.name == 'purchasing_department_specialist':
             return my_set.filter(assigned_purchasing_specialist=user)
         else:
             statuses = user.custom_permissions.user_can_view.all().values_list('name', flat=True)
