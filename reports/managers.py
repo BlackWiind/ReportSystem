@@ -48,11 +48,12 @@ class ReportManager(models.Manager):
         elif user.custom_permissions.name == 'curator':
             return my_set.filter(Q(curators_group=user.curators_group) |
                                  Q(responsible__department__curators_group=user.curators_group))
+        elif user.custom_permissions.name == 'assigned_purchasing_specialist':
+            return my_set.filter(assigned_purchasing_specialist=user)
         else:
             statuses = user.custom_permissions.user_can_view.all().values_list('name', flat=True)
             return my_set.filter(Q(creator=user) |
                                  Q(responsible=user) |
-                                 Q(assigned_purchasing_specialist=user) |
                                  Q(assigned_economist=user) |
                                  Q(status__name__in=statuses))
 
