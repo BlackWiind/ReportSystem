@@ -27,6 +27,7 @@ class ReportFilter(filters.FilterSet):
                   'date_create': ['exact'],
                   'one_time': ['exact'],
                   'draft': ['exact'],
+                  'status': ['exact'],
                   }
 
     @property
