@@ -55,6 +55,26 @@ class Statuses(models.Model):
         super().clean()
         self.validate_no_loops()
 
+    def get_all_previous_with_current(self):
+        """
+        Возвращает все предыдущие статусы (включая все ветви) и текущий статус
+        """
+        visited = set()
+        all_statuses = []
+
+        def collect_statuses(status):
+            if status.id in visited:
+                return
+
+            visited.add(status.id)
+            all_statuses.append(status)
+
+            for prev_status in status.previous_statuses.all():
+                collect_statuses(prev_status)
+
+        collect_statuses(self)
+        return all_statuses
+
 
 class PossibleActions(models.Model):
     name = models.CharField(max_length=255, verbose_name='Действие', default='null action')

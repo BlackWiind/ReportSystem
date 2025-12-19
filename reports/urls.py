@@ -25,6 +25,7 @@ urlpatterns = [
     path('archive/', api.Archive.as_view()),
     path('canishutdownwaiting/', api.CanIShutDownWaiting.as_view()),
     path('get-sources-of-funding/', api.SourcesOfFundingListView.as_view()),
-    path('status-list/', api.StatusesListApiView.as_view())
+    path('status-list/', api.StatusesListApiView.as_view()),
+    path('previous-status-list', api.PreviousStatusesListApiView.as_view()),
 
 ]

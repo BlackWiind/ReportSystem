@@ -1,7 +1,7 @@
 import threading
 
 from django_filters import rest_framework as filters
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.http import JsonResponse
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
@@ -271,3 +271,39 @@ class StatusesListApiView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     my_tags = ['Other', ]
     queryset = Statuses.objects.all()
+
+
+class PreviousStatusesListApiView(generics.ListAPIView):
+    "Api получение списка предыдущих статусов."
+    serializer_class = StatusListSerializer
+    permission_classes = [IsAuthenticated]
+    my_tags = ['Other', ]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'status',
+                openapi.IN_QUERY,
+                description="Статус объекта (обязательный параметр)",
+                type=openapi.TYPE_STRING,
+                required=True
+            )
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        status_pk = self.request.query_params.get('status')
+
+        if not status_pk:
+            raise ValidationError({'status': 'Это поле обязательно.'})
+
+        try:
+            status = Statuses.objects.get(pk=status_pk)
+        except Statuses.DoesNotExist:
+            raise ValidationError({'status': 'Такого статуса не существует.'})
+
+        status_ids = [s.id for s in status.get_all_previous_with_current()]
+
+        return Statuses.objects.filter(id__in=status_ids).distinct()
