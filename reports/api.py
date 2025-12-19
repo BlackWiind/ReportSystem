@@ -19,7 +19,8 @@ from reports.models import Report, Tag, History, WaitingStatusForUser, SourcesOf
 from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
     ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer, \
-    WaitingStatusForUserSerializer, ReportPatchSerializer, SourcesOfFundingSerializer, ReportEditableSerializer
+    WaitingStatusForUserSerializer, ReportPatchSerializer, SourcesOfFundingSerializer, ReportEditableSerializer, \
+    StatusRetrieveSerializer
 from reports.tasks import async_create_new_notification
 from reports.utils.signals import tracked_changes
 from reports.utils.unloads import PdfReports
@@ -263,3 +264,10 @@ class ReportStatusCrutchApiView(APIView):
         except Exception as e:
             return Response({"detail": f"Статус не изменён. Причина: {e}", "current_status": report.status.name})
 
+
+class StatusesRetrieveApiView(generics.RetrieveAPIView):
+    "Api получение списка статусов."
+    serializer_class = StatusRetrieveSerializer
+    permission_classes = [IsAuthenticated]
+    my_tags = ['Other', ]
+    queryset = Statuses.objects.all()
