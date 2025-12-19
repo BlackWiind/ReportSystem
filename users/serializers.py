@@ -9,7 +9,7 @@ class StatusesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Statuses
-        fields = ('name', 'visible_name',)
+        fields = ('id', 'name', 'visible_name',)
 
 class PossibleActionsSerializer(serializers.ModelSerializer):
     """Сериалайзаер для доступных действий с рапортом"""
