@@ -244,6 +244,7 @@ class ReportEditableRetrieveUpdateApiView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
     http_method_names = ['patch', 'get', ]
     my_tags = ['Reports', ]
+    queryset = Report.objects.all()
 
 class ReportStatusCrutchApiView(APIView):
     """ Костыль. Меняет статус между Регер и Пестряковой"""
