@@ -74,7 +74,7 @@ class FileSerializer(serializers.ModelSerializer):
 class ReportEditableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Report
-        fields = ('editable')
+        fields = ('editable',)
 
 class ReportPatchSerializer(serializers.ModelSerializer):
     files = serializers.ListField(
