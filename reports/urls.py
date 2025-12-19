@@ -19,7 +19,7 @@ urlpatterns = [
 
     path('approve/<int:pk>', api.ReportApproveClose.as_view({'patch': 'report_approve'})),
     path('close/<int:pk>', api.ReportApproveClose.as_view({'patch': 'report_close'})),
-    path('waiting/<int:pk>', api.ReportApproveClose.as_view({'patch': 'report_freeze'})),
+    path('set-status/<int:pk>', api.ReportApproveClose.as_view({'patch': 'report_set_status_manually'})),
 
     path('feedback/', api.Feedback.as_view()),
     path('archive/', api.Archive.as_view()),

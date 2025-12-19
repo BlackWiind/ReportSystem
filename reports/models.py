@@ -205,18 +205,6 @@ class Report(models.Model):
         if not isinstance(new_status, Statuses):
             raise TypeError("Это вообще не статус...")
 
-        # Проверяем, что новый статус в принципе существует в цепочке (опционально)
-        # current = self.status
-        # found = False
-        # while current:
-        #     if current == new_status:
-        #         found = True
-        #         break
-        #     current = current.next_status
-        #
-        # if not found:
-        #     raise ValueError("Этот статус *не в цепочке*... Ты что, *нарушаешь логику*?")
-
         self.status = new_status
         self.save()
         default_text = f"Статус изменён вручную на {self.status.name}"

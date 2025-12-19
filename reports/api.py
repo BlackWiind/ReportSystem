@@ -202,13 +202,26 @@ class ReportApproveClose(viewsets.ViewSet):
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True)
-    @swagger_auto_schema(request_body=HistoryUpdateSerializer)
-    def report_freeze(self, request, pk=None):
+    @swagger_auto_schema(request_body=HistoryUpdateSerializer, manual_parameters=[
+        openapi.Parameter(
+            'status_id',
+            openapi.IN_QUERY,
+            description="id статуса",
+            type=openapi.FORMAT_INT32,
+            required=True,
+        )
+    ])
+    def report_set_status_manually(self, request, pk=None):
         # Требуется переименовать после проверки работоспособности
         instance = get_object_or_404(self.queryset, pk=pk)
-        instance.prev_status(self.request.user, request.data['text'])
+        try:
+            new_status = Statuses.objects.get(pk=request.data['status_id'])
+        except Statuses.DoesNotExist:
+            raise ValidationError({'status': 'Такого статуса не существует.'})
+        instance.set_status_manually(self.request.user, new_status, request.data['text'])
         async_create_new_notification.delay(instance.pk)
         return Response(status=status.HTTP_200_OK)
+
 
 class Archive(generics.ListAPIView):
     """Архив"""
