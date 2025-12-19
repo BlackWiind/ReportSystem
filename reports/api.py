@@ -19,7 +19,7 @@ from reports.models import Report, Tag, History, WaitingStatusForUser, SourcesOf
 from reports.permissions import IsSuperuserOrReadOnly
 from reports.serializers import ReportRetrieveUpdateSerializer, DraftSerializer, \
     ReportCreateSerializer, TagsSerializer, ReportListSerializer, HistoryUpdateSerializer, \
-    WaitingStatusForUserSerializer, ReportPatchSerializer, SourcesOfFundingSerializer
+    WaitingStatusForUserSerializer, ReportPatchSerializer, SourcesOfFundingSerializer, ReportEditableSerializer
 from reports.tasks import async_create_new_notification
 from reports.utils.signals import tracked_changes
 from reports.utils.unloads import PdfReports
@@ -238,6 +238,12 @@ class ReportListAll(generics.ListAPIView):
     def get_queryset(self):
         return Report.objects.filter(draft=False, closed=False)
 
+class ReportEditableRetrieveUpdateApiView(generics.RetrieveUpdateAPIView):
+    "Api получение и изменение метки редактирования для рапорта."
+    serializer_class = ReportEditableSerializer
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['patch', 'get', ]
+    my_tags = ['Reports', ]
 
 class ReportStatusCrutchApiView(APIView):
     """ Костыль. Меняет статус между Регер и Пестряковой"""

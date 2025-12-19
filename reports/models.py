@@ -133,6 +133,7 @@ class Report(models.Model):
     parents = models.ManyToManyField(
         'self', blank=True, verbose_name='Родитель', related_name='%(app_label)s_%(class)s_sources'
     )
+    editable = models.BooleanField(default=False, verbose_name='Редактируемый')
 
     objects = models.Manager()
     custom_query = ReportManager()

@@ -15,6 +15,7 @@ urlpatterns = [
     path('reports/create', api.ReportCreate.as_view(), name='report'),
     path('reports/retrieve-update/<int:pk>', api.ReportRetrieveUpdate.as_view(), name='report-detail'),
     path('reports/crutch-status/<int:pk>', api.ReportStatusCrutchApiView.as_view(), name='report-crutch-status'),
+    path('reports/editable/<int:pk>', api.ReportEditableRetrieveUpdateApiView.as_view(), name='report-editable'),
 
     path('approve/<int:pk>', api.ReportApproveClose.as_view({'patch': 'report_approve'})),
     path('close/<int:pk>', api.ReportApproveClose.as_view({'patch': 'report_close'})),

@@ -71,6 +71,11 @@ class FileSerializer(serializers.ModelSerializer):
         model = Files
         fields = ('id', 'file')
 
+class ReportEditableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Report
+        fields = ('editable')
+
 class ReportPatchSerializer(serializers.ModelSerializer):
     files = serializers.ListField(
         child=serializers.FileField(max_length=100000, allow_empty_file=True, use_url=False),
