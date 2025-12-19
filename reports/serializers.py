@@ -124,7 +124,7 @@ class HistoryUpdateSerializer(serializers.ModelSerializer):
         model = History
         fields = ('text', 'waiting',)
 
-class StatusRetrieveSerializer(serializers.ModelSerializer):
+class StatusListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Statuses
         fields = ('id', 'name', 'visible_name')
