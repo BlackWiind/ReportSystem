@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from . import api
+from .service_apis import service_apis
 
 app_name = 'reports'
 
@@ -27,5 +28,7 @@ urlpatterns = [
     path('get-sources-of-funding/', api.SourcesOfFundingListView.as_view()),
     path('status-list/', api.StatusesListApiView.as_view()),
     path('previous-status-list', api.PreviousStatusesListApiView.as_view()),
+
+    path('get-data-for-actions/', service_apis.DocumentDataForActions.as_view()),
 
 ]
