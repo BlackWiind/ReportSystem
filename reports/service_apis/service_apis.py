@@ -106,9 +106,9 @@ class DocumentDataForActions(APIView):
             "department": document.creator.department.id,
             "is_closed": document.closed,
             "curator": document.curators_group == user.curators_group,
-            "responsible_user": getattr(document.responsible, 'id', None),
-            "responsible_economist": getattr(document.assigned_economist, 'id', None),
-            "responsible_purchasing_specialist": getattr(document.assigned_purchasing_specialist, 'id', None),
+            "responsible_user": document.responsible == user,
+            "responsible_economist": document.assigned_economist == user,
+            "responsible_purchasing_specialist": document.assigned_purchasing_specialist == user,
             "user_group": user.custom_permissions.id,
             "user_department": user.department.id,
         }
