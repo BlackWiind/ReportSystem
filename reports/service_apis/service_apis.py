@@ -106,9 +106,9 @@ class DocumentDataForActions(APIView):
             "department": document.creator.department.id,
             "is_closed": document.closed,
             "curator": True if document.curators_group == user.curators_group else False,
-            "responsible_user": document.responsible,
-            "responsible_economist": document.assigned_economist,
-            "responsible_purchasing_specialist": document.assigned_purchasing_specialist,
+            "responsible_user": document.responsible.id,
+            "responsible_economist": document.assigned_economist.id,
+            "responsible_purchasing_specialist": document.assigned_purchasing_specialist.id,
             "user_group": user.custom_permissions.id,
             "user_department": user.department.id,
         }
